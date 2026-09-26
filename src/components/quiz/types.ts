@@ -21,6 +21,7 @@ export const LABELS = {
     remove: 'Remove',
     blank: 'Blank',
     rightAnswer: 'Right answer',
+    hint: 'Hint',
   },
   ms: {
     check: 'Semak',
@@ -32,6 +33,7 @@ export const LABELS = {
     remove: 'Buang',
     blank: 'Tempat kosong',
     rightAnswer: 'Jawapan betul',
+    hint: 'Petunjuk',
   },
 } as const;
 

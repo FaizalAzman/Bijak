@@ -191,7 +191,7 @@ export default function ParentDashboard() {
               </Txt>
             </View>
             <Txt variant="mono" style={{ fontSize: 13 }}>
-              {a.mode === 'timeAttack' ? `⚡${a.correct}` : `${a.correct}/${a.total}`}
+              {a.mode === 'timeAttack' ? `⚡${a.correct}` : `${a.correct}/${a.total}${a.hinted ? ` · 💡${a.hinted}` : ''}`}
             </Txt>
           </View>
         ))}

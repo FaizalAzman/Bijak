@@ -3,7 +3,7 @@
  * Time-Attack wrapper (Module 14). `quizId = "review"` runs a Spaced-Repetition session.
  */
 import { router, useLocalSearchParams } from 'expo-router';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ScrollView, View } from 'react-native';
 import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
 import { LevelUpModal } from '@/components/gamify/LevelUp';
@@ -94,6 +94,10 @@ function QuizRun({ session, onRetry }: { session: Session; onRetry: () => void }
   const [secondsLeft, setSecondsLeft] = useState(session.seconds);
   const sessionXp = useRef(0);
   const mistakes = useRef<Question[]>([]);
+  // The hint for the current question was shown; how many right answers needed one.
+  const [hinted, setHinted] = useState(false);
+  const hintedRight = useRef(0);
+  const onHint = useCallback(() => setHinted(true), []);
   const startXp = useRef(0);
   const started = useRef(0);
   const autoRead = useApp((s) => s.settings.autoRead);
@@ -127,6 +131,7 @@ function QuizRun({ session, onRetry }: { session: Session; onRetry: () => void }
       correct: finalCorrect,
       total: timeAttack ? finalAnswered : session.items.length,
       seconds,
+      hinted: hintedRight.current,
     });
     const after = useApp.getState();
     const xpNow = after.activeProfileId ? (after.progress[after.activeProfileId]?.xp ?? 0) : 0;
@@ -146,6 +151,7 @@ function QuizRun({ session, onRetry }: { session: Session; onRetry: () => void }
       newBest: reward.newBest,
       badges: reward.badges,
       mistakes: mistakes.current,
+      hinted: hintedRight.current,
     });
     setPhase('done');
     if (lvlAfter > lvlBefore) {
@@ -180,8 +186,10 @@ function QuizRun({ session, onRetry }: { session: Session; onRetry: () => void }
 
   const onAnswer = (correct: boolean) => {
     if (phase !== 'play') return;
-    const nextCombo = correct ? combo + 1 : 0;
-    const xp = useApp.getState().answer({ ctx: item.ctx, correct, combo: nextCombo, difficulty: item.q.difficulty, review: session.mode === 'review', fast: timeAttack });
+    // A hinted answer keeps the combo going but doesn't add to it.
+    const nextCombo = !correct ? 0 : hinted ? combo : combo + 1;
+    const xp = useApp.getState().answer({ ctx: item.ctx, correct, combo: nextCombo, difficulty: item.q.difficulty, review: session.mode === 'review', fast: timeAttack, hinted });
+    if (correct && hinted) hintedRight.current++;
     sessionXp.current += xp;
     setCombo(nextCombo);
     setAnswered((n) => n + 1);
@@ -207,6 +215,7 @@ function QuizRun({ session, onRetry }: { session: Session; onRetry: () => void }
     if (i + 1 >= session.items.length) finish(correctCount, answered);
     else {
       setI(i + 1);
+      setHinted(false);
       setPhase('play');
     }
   };
@@ -260,7 +269,7 @@ function QuizRun({ session, onRetry }: { session: Session; onRetry: () => void }
   }
 
   const dragType = ['match', 'sort', 'order', 'fillBlank'].includes(item.q.type);
-  const questionEl = <QuestionView key={`${i}-${item.q.id}`} q={item.q} onAnswer={onAnswer} locked={phase !== 'play'} fast={timeAttack} />;
+  const questionEl = <QuestionView key={`${i}-${item.q.id}`} q={item.q} onAnswer={onAnswer} locked={phase !== 'play'} fast={timeAttack} onHint={timeAttack ? undefined : onHint} />;
 
   return (
     <Screen

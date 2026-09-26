@@ -74,13 +74,14 @@ describe.each(Array.from({ length: RUNS }, (_, i) => [i]))('random run %i', (see
         name = 'answer';
         const quiz = pick(rng, quizzes);
         const q = pick(rng, questionsOf(quiz.id, rng));
-        s().answer({ ctx: contextFor(quiz.id, q), correct: rng() < 0.7, combo: int(rng, -1, 12), difficulty: q.difficulty, review: rng() < 0.1, fast: rng() < 0.1 });
+        s().answer({ ctx: contextFor(quiz.id, q), correct: rng() < 0.7, combo: int(rng, -1, 12), difficulty: q.difficulty, review: rng() < 0.1, fast: rng() < 0.1, hinted: rng() < 0.2 });
       } else if (roll < 0.42) {
         name = 'finishQuiz';
         const quizId = rng() < 0.1 ? REVIEW_QUIZ_ID : rng() < 0.05 ? 'made-up-quiz' : pick(rng, quizzes).id;
         const total = rng() < 0.1 ? junk(rng) : int(rng, 0, 12);
         const correct = rng() < 0.1 ? junk(rng) : int(rng, -1, 14);
-        s().finishQuiz({ quizId, standardId: 'std3', subjectId: 'math', title: 'Fuzz', mode: pick(rng, ['practice', 'timeAttack', 'review'] as const), correct, total, seconds: rng() < 0.1 ? junk(rng) : int(rng, 0, 900) });
+        const hinted = rng() < 0.2 ? (rng() < 0.2 ? junk(rng) : int(rng, -1, 14)) : undefined;
+        s().finishQuiz({ quizId, standardId: 'std3', subjectId: 'math', title: 'Fuzz', mode: pick(rng, ['practice', 'timeAttack', 'review'] as const), correct, total, hinted, seconds: rng() < 0.1 ? junk(rng) : int(rng, 0, 900) });
         // Ignored finishes (nothing answered, unknown quiz) change nothing; counted ones award badges.
         settled = s().progress[active].totals.quizzes > before.totals.quizzes;
       } else if (roll < 0.5) {

@@ -361,6 +361,10 @@ export const child = {
     (n: number) => `Mistakes (${n})`,
     (n: number) => `Kesilapan (${n})`,
   ),
+  'results.hints': f(
+    (n: number) => `💡 ${n} with a hint`,
+    (n: number) => `💡 ${n} dengan petunjuk`,
+  ),
   'mistakes.title': s('Let’s fix these', 'Jom betulkan'),
   'mistakes.intro': s(
     'Here are the questions you missed, with the right answers. They’ll come back in Tricky questions so you can try again.',

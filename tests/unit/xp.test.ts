@@ -1,4 +1,4 @@
-import { levelFromXp, levelProgress, REWARDS, TIERS, tierFor, xpForAnswer, xpForLevel } from '@/features/gamify/xp';
+import { hintedXp, levelFromXp, levelProgress, quizPoints, REWARDS, TIERS, tierFor, xpForAnswer, xpForLevel } from '@/features/gamify/xp';
 import { translate } from '@/i18n';
 
 describe('levels', () => {
@@ -57,6 +57,14 @@ describe('levels', () => {
   it('tiers are sorted and start at level 1', () => {
     expect(TIERS[0].from).toBe(1);
     TIERS.forEach((t, i) => i && expect(t.from).toBeGreaterThan(TIERS[i - 1].from));
+  });
+});
+
+describe('hints', () => {
+  it(`a hinted right answer is worth 1/${REWARDS.hintDivisor} of a point and of the XP (rounded up)`, () => {
+    expect([quizPoints(8, 0), quizPoints(8, 2), quizPoints(3, 3), quizPoints(0, 0)]).toEqual([8, 7, 1.5, 0]);
+    expect([1, 2, 3].map(hintedXp)).toEqual([1, 2, 3].map((d) => Math.ceil(xpForAnswer(d, 0) / REWARDS.hintDivisor)));
+    expect(hintedXp(1)).toBeLessThan(xpForAnswer(1, 0));
   });
 });
 

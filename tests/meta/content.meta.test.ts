@@ -7,6 +7,7 @@
 import { readFileSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import { toSlides } from '@/components/lesson/LessonBlocks';
+import { hintFor } from '@/components/quiz/hints';
 import { answerLines } from '@/components/quiz/types';
 import { translatedSubjects } from '@/features/content/localize';
 import { buildQuizQuestions, getContentIndex, questionKey } from '@/features/content/registry';
@@ -170,6 +171,11 @@ describe.each(quizzes.map((x) => [x.where, x] as const))('%s', (_, { quiz }) => 
         if (quiz.mode === 'timeAttack') expect(q.type).toBe('mcq');
         // A missed question can always be looked back at, with its whole right answer.
         expect(answerLines(q).filter((line) => line.trim() && !/undefined|NaN/.test(line)).length).toBeGreaterThan(0);
+        // Every question can offer a hint, except where any hint would be the answer.
+        const hint = hintFor(q);
+        if (q.type === 'trueFalse' || (q.type === 'mcq' && q.options.length === 2)) expect(hint).toBeNull();
+        else expect(hint).toMatch(/^[^]*\p{L}[^]*$/u);
+        if (hint) expect(hint).not.toMatch(/undefined|NaN|“”/);
         if (quiz.generator && quiz.generator.kind !== 'vocab') expect(answerOf(q)).toEqual(oracle(q));
       }
     }

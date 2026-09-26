@@ -13,8 +13,9 @@ What to improve next, most valuable first. Items move to "Done" as they land on 
       and the explanation, right on the results screen.
 - [ ] **Printable practice sheets** — from the parent zone, a PDF of questions for any topic (or
       the report's weak spots) with an answer key, for practice away from the screen.
-- [ ] **Hints** — a hint button before answering (from the question's explanation) for a smaller
-      reward, so a stuck child can keep going instead of guessing.
+- [x] **Hints** — a hint button that nudges without giving the answer away (two wrong options
+      disappear, the first digit or word shows, one pair is matched). A hinted answer is worth
+      half a point, so a stuck child can keep going instead of guessing.
 
 ## Next
 

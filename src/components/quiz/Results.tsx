@@ -5,6 +5,7 @@ import { Kancil } from '@/components/mascot/Kancil';
 import { Button, Chunky, Txt, useFrame } from '@/components/ui';
 import type { Question } from '@/features/content/schema';
 import { badgeTitle, type BadgeDef } from '@/features/gamify/badges';
+import { quizPoints } from '@/features/gamify/xp';
 import { useT } from '@/i18n';
 import { formatDuration } from '@/lib/format';
 import { accent, colors } from '@/theme';
@@ -38,13 +39,17 @@ export interface ResultsData {
   badges: BadgeDef[];
   /** Questions answered wrongly, to look back at (practice and review; not time attacks). */
   mistakes: Question[];
+  /** Right answers that needed a hint (each worth half a point). */
+  hinted?: number;
 }
 
 export function Results({ data, onDone, onRetry }: { data: ResultsData; onDone: () => void; onRetry: () => void }) {
   const { small, innerWidth } = useFrame();
   const t = useT();
   const [reviewing, setReviewing] = useState(false);
-  const ratio = data.total ? data.correct / data.total : 0;
+  const hinted = data.timeAttack ? 0 : (data.hinted ?? 0);
+  // A hinted right answer is worth half a point, so stars and "perfect" need no hints.
+  const ratio = data.total ? quizPoints(data.correct, hinted) / data.total : 0;
   const stars = data.timeAttack ? (data.correct >= 30 ? 3 : data.correct >= 18 ? 2 : data.correct > 0 ? 1 : 0) : ratio === 1 ? 3 : ratio >= 0.7 ? 2 : ratio > 0 ? 1 : 0;
   const mood = stars >= 2 ? 'cheer' : stars === 1 ? 'happy' : 'think';
   const headline = t(
@@ -96,6 +101,7 @@ export function Results({ data, onDone, onRetry }: { data: ResultsData; onDone: 
         <View style={{ flexDirection: 'row', gap: 16 }}>
           <Txt variant="small">⏱ {formatDuration(data.seconds, t.lang)}</Txt>
           <Txt variant="small">{t('results.streak', data.streak)}</Txt>
+          {hinted > 0 ? <Txt variant="small">{t('results.hints', hinted)}</Txt> : null}
         </View>
         {data.shieldEarned ? (
           <Txt variant="subtitle" style={{ textAlign: 'center' }} testID="shield-earned">

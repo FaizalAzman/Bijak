@@ -32,6 +32,8 @@ export interface Attempt {
   total: number;
   seconds: number;
   at: number;
+  /** Right answers that needed a hint (each counts half in the score). */
+  hinted?: number;
 }
 
 export interface TopicStat {

@@ -49,4 +49,15 @@ export const REWARDS = {
   lessonReread: { xp: 5, coins: 0 },
   timeAttackPerCorrect: 2,
   newBest: { xp: 15, coins: 10 },
+  /**
+   * A right answer after a hint is worth 1/hintDivisor (half): of the XP (no combo bonus, no
+   * coin) and of a point in the quiz score, so a hinted quiz is never "perfect".
+   */
+  hintDivisor: 2,
 } as const;
+
+/** XP for a right answer that needed a hint. */
+export const hintedXp = (difficulty: number) => Math.ceil(xpForAnswer(difficulty, 0) / REWARDS.hintDivisor);
+
+/** A quiz's score in points, where each hinted right answer counts 1/hintDivisor. */
+export const quizPoints = (correct: number, hinted: number) => correct - hinted + hinted / REWARDS.hintDivisor;
