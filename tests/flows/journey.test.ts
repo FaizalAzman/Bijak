@@ -31,7 +31,7 @@ function review() {
   return cards.length;
 }
 
-it('a realistic three weeks: learning, reviewing, quests, shopping and a missed day', async () => {
+it('a realistic three weeks: learning, reviewing, quests, shopping, and a sick day saved by a shield', async () => {
   setNow('2026-03-02T16:30:00'); // Monday after school
   resetStores();
 
@@ -86,13 +86,16 @@ it('a realistic three weeks: learning, reviewing, quests, shopping and a missed 
     }
 
     checkInvariants(`day ${day}`, { settled: true });
-    expect(liveStreak(progressOf())).toBe(day < SKIP ? day + 1 : day - SKIP);
+    // The shield earned on day 7 covers the sick day, so the streak carries on.
+    expect(liveStreak(progressOf())).toBe(day < SKIP ? day + 1 : day);
   }
 
   const p = progressOf();
-  // Streaks: 9 days before the sick day, then a fresh run of 11.
-  expect(p.streak.best).toBe(11);
-  expect(p.streak.current).toBe(11);
+  // Streaks: 20 school days in a row — the sick day was covered by the shield from day 7.
+  expect(p.streak.best).toBe(20);
+  expect(p.streak.current).toBe(20);
+  expect(p.streak.shielded).toEqual(['2026-03-11']);
+  expect(p.streak.shields).toBe(1); // a new one earned on day 14
   expect(p.badges['streak-7']).toBeDefined();
   // He learned, reviewed and grew.
   expect(p.totals.quizzes).toBeGreaterThanOrEqual(20);

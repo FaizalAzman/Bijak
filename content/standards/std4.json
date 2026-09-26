@@ -3,7 +3,7 @@
   "level": 4,
   "title": "Standard 4",
   "titleAlt": "Tahun 4",
-  "version": 1,
+  "version": 2,
   "subjects": [
     {
       "id": "math",
@@ -90,5 +90,36 @@
       "subjectId": "math",
       "quiz": { "id": "s4-arcade-times-quiz", "title": "Times 12 Blitz", "mode": "timeAttack", "seconds": 60, "generator": { "kind": "multiplication", "tables": [6, 7, 8, 9, 11, 12], "maxFactor": 12 } }
     }
-  ]
+  ],
+  "translations": {
+    "ms": {
+      "subjects": {
+        "math": {
+          "name": "Matematik",
+          "topics": {
+            "s4-math-numbers": {
+              "title": "Nombor hingga 100 000",
+              "objectives": [{ "code": "1.1", "text": "Membaca, menulis dan menentukan nilai tempat hingga 100 000" }],
+              "lesson": [{ "type": "placeValue", "number": 52408 }, { "type": "text", "text": "Tempat **puluh ribu** terletak sebelum tempat ribu." }],
+              "quizzes": { "s4-math-numbers-q1": { "title": "Nombor besar" } }
+            },
+            "s4-math-mul": { "title": "Latihan darab", "quizzes": { "s4-math-mul-q1": { "title": "Semua sifir" } } }
+          }
+        },
+        "science": {
+          "name": "Sains",
+          "topics": {
+            "s4-sci-breathing": {
+              "title": "Manusia: Pernafasan",
+              "lesson": [{ "type": "list", "ordered": true, "items": ["Udara masuk melalui **hidung**", "Udara bergerak melalui **trakea**", "Udara memenuhi **peparu**"] }],
+              "quizzes": {
+                "s4-sci-breathing-q1": { "title": "Tarik nafas", "questions": { "q1": { "prompt": "Susun laluan udara.", "tokens": ["hidung", "trakea", "peparu"] } } }
+              }
+            }
+          }
+        }
+      },
+      "arcade": { "s4-arcade-times": "Kilat Sifir 12" }
+    }
+  }
 }

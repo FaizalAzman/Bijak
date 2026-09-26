@@ -137,7 +137,24 @@ describe('updateProfile / removeProfile / selectProfile / resetProgress', () => 
   it('settings merge', () => {
     s().updateSettings({ sound: false });
     s().updateSettings({ autoRead: true });
-    expect(s().settings).toEqual({ sound: false, haptics: true, voice: true, autoRead: true });
+    expect(s().settings).toMatchObject({ sound: false, haptics: true, voice: true, autoRead: true, restDays: [] });
+  });
+
+  it('reminder choices merge into the saved ones and are cleaned before saving', () => {
+    expect(s().settings.reminders).toEqual({ daily: false, time: '17:00', streak: false, weekly: false });
+    s().updateSettings({ reminders: { daily: true, time: '18:00' } });
+    s().updateSettings({ reminders: { weekly: true } });
+    expect(s().settings.reminders).toEqual({ daily: true, time: '18:00', streak: false, weekly: true });
+    s().updateSettings({ reminders: { time: '25:61', streak: 'yes' as never } });
+    expect(s().settings.reminders).toEqual({ daily: true, time: '18:00', streak: false, weekly: true });
+    // Other settings changes never touch reminders.
+    s().updateSettings({ sound: false, reminders: undefined });
+    expect(s().settings.reminders).toEqual({ daily: true, time: '18:00', streak: false, weekly: true });
+  });
+
+  it('rest days from the parent are cleaned before saving', () => {
+    s().updateSettings({ restDays: [6, 0, 6, 12, 3] });
+    expect(s().settings.restDays).toEqual([6, 0]);
   });
 });
 

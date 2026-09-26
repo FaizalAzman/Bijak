@@ -10,41 +10,53 @@ import { TAB_BAR_SPACE } from '@/components/gamify/TabBar';
 import { MascotSays } from '@/components/mascot/MascotSays';
 import type { KancilMood } from '@/components/mascot/Kancil';
 import { Chunky, Grid, HScroll, PressChunky, Screen, SectionLabel, Txt } from '@/components/ui';
-import { useContentIndex } from '@/features/content/registry';
-import { nextTopic, subjectProgress } from '@/features/progress/selectors';
+import { useChildContent } from '@/hooks/useChildContent';
+import { nextTopic, subjectProgress, topicStatus } from '@/features/progress/selectors';
 import { dueCards } from '@/features/srs/srs';
 import { useLayout } from '@/hooks/useLayout';
 import { useNow } from '@/hooks/useNow';
 import { dayKey } from '@/lib/date';
-import { liveStreak, useActiveProfile, useProgress } from '@/store/app';
+import { streakStatus } from '@/features/gamify/streak';
+import { liveStreak, useActiveProfile, useProgress, useRestDays } from '@/store/app';
 import { accent, colors } from '@/theme';
 
 export default function Home() {
   const profile = useActiveProfile();
   const p = useProgress();
-  const index = useContentIndex();
+  const index = useChildContent();
   const standard = profile ? (index.standardByLevel(profile.level) ?? index.standards[0]) : undefined;
   const now = useNow();
   const layout = useLayout('wide');
   const due = useMemo(() => dueCards(p.srs, now, 50).length, [p.srs, now]);
-  const next = useMemo(() => nextTopic(standard, p), [standard, p]);
+  const schoolTopics = profile?.schoolTopics;
+  const next = useMemo(() => nextTopic(standard, p, schoolTopics), [standard, p, schoolTopics]);
   const today = dayKey();
+  const restDays = useRestDays();
   const studiedToday = p.streak.lastDay === today;
-  const streak = liveStreak(p);
+  const streak = liveStreak(p, today, restDays);
+  const status = streakStatus(p.streak, today, restDays);
   const allQuestsDone = p.quests.list.length > 0 && p.quests.list.every((q) => q.claimed);
 
   const mascot: { text: string; mood: KancilMood } = allQuestsDone
     ? { text: 'All quests done today! Hebat! 🎉', mood: 'cheer' }
     : due > 0
       ? { text: `I saved ${due} tricky question${due > 1 ? 's' : ''} for you. Let's beat ${due > 1 ? 'them' : 'it'}!`, mood: 'think' }
-      : !studiedToday && streak > 0
+      : status === 'atRisk'
         ? { text: `Your ${streak}-day streak needs you! One quiz keeps it alive 🔥`, mood: 'wow' }
-        : studiedToday
-          ? { text: 'Great work today! Want to try another challenge?', mood: 'happy' }
-          : { text: 'Ready for today’s adventure? Let’s learn something new!', mood: 'wave' };
+        : status === 'rest'
+          ? { text: 'Rest day! Your streak is safe. Fancy a quick game anyway?', mood: 'happy' }
+          : status === 'protected'
+            ? { text: `Your shield is guarding your ${streak}-day streak. A quiz today saves the shield! 🛡️`, mood: 'think' }
+            : studiedToday
+              ? { text: 'Great work today! Want to try another challenge?', mood: 'happy' }
+              : { text: 'Ready for today’s adventure? Let’s learn something new!', mood: 'wave' };
 
   if (!profile || !standard) return null;
   const twoColumns = layout.innerWidth >= 720;
+  // What the class is on at school (pinned by a parent); the first unfinished one leads "Continue".
+  const atSchool = standard.subjects.flatMap((subject) => subject.topics.filter((t) => t.id === schoolTopics?.[subject.id]).map((topic) => ({ subject, topic })));
+  const nextIsSchool = !!next && atSchool.some((x) => x.topic.id === next.topic.id);
+  const alsoAtSchool = atSchool.filter((x) => x.topic.id !== next?.topic.id);
   const avatarMood = studiedToday ? 'excited' : p.streak.lastDay && streak === 0 ? 'sleepy' : 'happy';
 
   const mascotSize = layout.isTablet ? 100 : layout.small ? 72 : 84;
@@ -115,7 +127,7 @@ export default function Home() {
             </View>
             <View style={{ flex: 1 }}>
               <Txt variant="label" style={{ color: colors.ink, opacity: 0.7 }}>
-                {next.subject.name}
+                {nextIsSchool ? `🏫 At school this week · ${next.subject.name}` : next.subject.name}
               </Txt>
               <Txt variant="title" numberOfLines={2}>
                 {next.topic.title}
@@ -125,6 +137,37 @@ export default function Home() {
               <ArrowRight size={22} color={colors.lime} strokeWidth={3} />
             </View>
           </PressChunky>
+        </View>
+      )}
+      {alsoAtSchool.length > 0 && (
+        <View>
+          <SectionLabel>{nextIsSchool ? 'Also at school this week' : 'At school this week'}</SectionLabel>
+          <View style={{ gap: 10 }}>
+            {alsoAtSchool.map(({ subject, topic }) => {
+              const st = topicStatus(topic, p);
+              return (
+                <PressChunky
+                  key={topic.id}
+                  depth={3}
+                  onPress={() => router.push(`/topic/${topic.id}`)}
+                  bg={accent(subject.color).soft}
+                  innerStyle={{ padding: 12, flexDirection: 'row', alignItems: 'center', gap: 12 }}
+                  accessibilityLabel={`At school: ${topic.title}`}
+                >
+                  <Txt style={{ fontSize: 26 }}>{topic.emoji}</Txt>
+                  <View style={{ flex: 1 }}>
+                    <Txt variant="subtitle" numberOfLines={1}>
+                      {topic.title}
+                    </Txt>
+                    <Txt variant="small">
+                      🏫 {subject.name} · {st.mastered ? 'Mastered ✓' : `${'★'.repeat(st.stars)}${'☆'.repeat(3 - st.stars)}`}
+                    </Txt>
+                  </View>
+                  <ArrowRight size={20} color={colors.ink} strokeWidth={3} />
+                </PressChunky>
+              );
+            })}
+          </View>
         </View>
       )}
     </>

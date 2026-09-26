@@ -5,6 +5,8 @@
 import { getContentIndex } from '@/features/content/registry';
 import { allBadges } from '@/features/gamify/badges';
 import { FREE_ITEMS, itemById, SHOP } from '@/features/gamify/shop';
+import { SHIELD } from '@/features/gamify/streak';
+import { topicStatus } from '@/features/progress/selectors';
 import { MASTERED_BOX } from '@/features/srs/srs';
 import { dayKey } from '@/lib/date';
 import { MAX_ATTEMPTS, MAX_DAYS_KEPT, useApp } from '@/store/app';
@@ -55,10 +57,31 @@ function checkChild(
     if (!p.inventory.includes(id)) fail(`wearing unowned ${id}`);
     if (itemById(id)?.slot !== slot) fail(`${id} in wrong slot ${slot}`);
   }
+  // School: a known teaching language, and pinned topics from the child's own standard
+  if (profile.medium !== undefined && profile.medium !== 'en' && profile.medium !== 'ms') fail(`medium ${String(profile.medium)}`);
+  const standard = getContentIndex().standardByLevel(profile.level);
+  for (const [subjectId, topicId] of Object.entries(profile.schoolTopics ?? {})) {
+    const subject = standard?.subjects.find((s) => s.id === subjectId);
+    if (!subject?.topics.some((t) => t.id === topicId)) fail(`school topic ${subjectId}/${topicId} is not in Standard ${profile.level}`);
+  }
+  // Mastery dates: stamped exactly for mastered topics, never in the future
+  for (const [id, st] of Object.entries(p.topics)) {
+    const ref = getContentIndex().topic(id);
+    const mastered = !!ref && topicStatus(ref.topic, p).mastered;
+    if (mastered !== (st.masteredAt !== undefined)) fail(`topic ${id} mastered=${mastered} but masteredAt=${st.masteredAt}`);
+    if (st.masteredAt !== undefined && st.masteredAt > Date.now()) fail(`topic ${id} mastered in the future`);
+  }
   // Streak
   if (p.streak.current < 0 || p.streak.best < p.streak.current) fail(`streak ${JSON.stringify(p.streak)}`);
   if (p.streak.lastDay && p.streak.lastDay > today) fail('streak in the future');
   if ((p.streak.current > 0) !== (p.streak.lastDay != null)) fail('streak without a day');
+  const shields = p.streak.shields ?? 0;
+  if (!Number.isInteger(shields) || shields < 0 || shields > SHIELD.max) fail(`shields ${shields}`);
+  for (const d of p.streak.shielded ?? []) {
+    // A shield only ever covers a school day the child missed, before their last active day.
+    if (!p.streak.lastDay || d >= p.streak.lastDay) fail(`shielded ${d} not before last day ${p.streak.lastDay}`);
+    if (Object.keys(p.days[d]?.seconds ?? {}).length > 0) fail(`shielded ${d} although the child played`);
+  }
   // Quests
   if (p.quests.list.length > 3) fail('too many quests');
   for (const q of p.quests.list) {

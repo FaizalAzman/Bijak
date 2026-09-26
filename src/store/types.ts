@@ -1,3 +1,5 @@
+import type { Lang } from '@/features/content/schema';
+import type { Reminders } from '@/features/reminders/plan';
 import type { Quest } from '@/features/gamify/quests';
 import type { AvatarConfig, Slot } from '@/features/gamify/shop';
 import type { SrsCard } from '@/features/srs/srs';
@@ -9,6 +11,13 @@ export interface Profile {
   level: number;
   avatar: AvatarConfig;
   createdAt: number;
+  /**
+   * Language the child's school teaches Maths & Science in: 'en' for DLP classes, 'ms' otherwise.
+   * Subjects with a translation in this language are shown in it. Defaults to 'en'.
+   */
+  medium?: Lang;
+  /** Topic the class is on at school right now, per subject id (set by a parent). */
+  schoolTopics?: Record<string, string>;
 }
 
 export interface Attempt {
@@ -31,6 +40,8 @@ export interface TopicStat {
   /** Best score (0–100) per quiz id. */
   best: Record<string, number>;
   lastAt: number;
+  /** When the topic was first mastered (every quiz at 80%+, or its lesson read if it has no quiz). */
+  masteredAt?: number;
   /** Day a re-read of this lesson last earned XP (re-reads earn XP once per day). */
   lessonXpDay?: string;
 }
@@ -45,7 +56,15 @@ export interface DayStat {
 export interface Progress {
   xp: number;
   coins: number;
-  streak: { current: number; best: number; lastDay: string | null };
+  streak: {
+    current: number;
+    best: number;
+    lastDay: string | null;
+    /** Rest-day shields waiting to be used (see features/gamify/streak.ts). */
+    shields?: number;
+    /** Recent days a shield covered. */
+    shielded?: string[];
+  };
   quests: { day: string; list: Quest[] };
   inventory: string[];
   badges: Record<string, number>;
@@ -74,7 +93,16 @@ export interface Settings {
   voice: boolean;
   /** Read each question aloud automatically. */
   autoRead: boolean;
+  /** Weekdays that never break a streak (0 = Sunday … 6 = Saturday), set by a parent. */
+  restDays: number[];
+  /** Read-aloud voice a parent picked per language (a device voice id); the best one when unset. */
+  voices?: Partial<Record<Lang, string>>;
+  /** Gentle reminders (off until a parent turns them on). */
+  reminders?: Reminders;
 }
+
+/** What `updateSettings` accepts: voice and reminder choices merge into the saved ones. */
+export type SettingsPatch = Partial<Omit<Settings, 'reminders'>> & { reminders?: Partial<Reminders> };
 
 export interface Parent {
   name: string;

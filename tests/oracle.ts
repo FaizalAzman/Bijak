@@ -2,8 +2,13 @@
  * An independent answer key for generated questions: it re-derives the answer from the
  * prompt text alone, so a generator bug can't also hide in the check.
  */
-import { PLACES } from '@/features/content/generators';
 import type { Question } from '@/features/content/schema';
+
+/** Place names as taught in KSSR, written out here so a generator typo can't hide. */
+const PLACE_NAMES = {
+  en: ['ones', 'tens', 'hundreds', 'thousands', 'ten thousands', 'hundred thousands', 'millions'],
+  ms: ['sa', 'puluh', 'ratus', 'ribu', 'puluh ribu', 'ratus ribu', 'juta'],
+};
 
 export const num = (s: string) => Number(s.replace(/[\s ]/g, ''));
 
@@ -16,16 +21,25 @@ export function oracle(q: Question): number | string {
   if ((m = p.match(/^([\d ]+(?: \+ [\d ]+)+) = \?$/))) return m[1].split(' + ').reduce((a, b) => a + num(b), 0);
   if ((m = p.match(/^([\d ]+) − ([\d ]+) = \?$/))) return num(m[1]) - num(m[2]);
   if ((m = p.match(/^RM([\d .]+) \+ RM([\d .]+) = RM \?$/))) return Math.round((num(m[1]) + num(m[2])) * 100) / 100;
-  if ((m = p.match(/^You have RM([\d .]+)\. You spend RM([\d .]+)\. How much is left\?$/))) return Math.round((num(m[1]) - num(m[2])) * 100) / 100;
+  if ((m = p.match(/^You have RM([\d .]+)\. You spend RM([\d .]+)\. How much is left\?$/) ?? p.match(/^Kamu ada RM([\d .]+)\. Kamu belanja RM([\d .]+)\. Berapakah baki wang kamu\?$/))) {
+    return Math.round((num(m[1]) - num(m[2])) * 100) / 100;
+  }
   if ((m = p.match(/^([\d ]+) {2}\? {2}([\d ]+)$/))) {
     const [a, b] = [num(m[1]), num(m[2])];
     return a > b ? 'gt' : a < b ? 'lt' : 'eq';
   }
-  if ((m = p.match(/^What is the (place|digit) value of the digit (\d) in ([\d ]+)\?$/) ?? p.match(/^What is the (digit) value of (\d) in ([\d ]+)\?$/))) {
+  if (
+    (m =
+      p.match(/^What is the (place|digit) value of the digit (\d) in ([\d ]+)\?$/) ??
+      p.match(/^What is the (digit) value of (\d) in ([\d ]+)\?$/) ??
+      p.match(/^Apakah nilai (tempat) bagi digit (\d) dalam ([\d ]+)\?$/) ??
+      p.match(/^Apakah nilai (digit) bagi (\d) dalam ([\d ]+)\?$/))
+  ) {
     const digits = String(num(m[3])).split('').reverse();
     expect(digits.filter((d) => d === m![2])).toHaveLength(1); // unambiguous
     const pos = digits.indexOf(m[2]);
-    return m[1] === 'place' ? PLACES[pos] : Number(m[2]) * 10 ** pos;
+    const place = m[1] === 'place' || m[1] === 'tempat';
+    return place ? PLACE_NAMES[q.lang][pos] : Number(m[2]) * 10 ** pos;
   }
   throw new Error(`oracle cannot read prompt: ${p}`);
 }

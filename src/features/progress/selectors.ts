@@ -45,9 +45,17 @@ export function subjectProgress(subject: Subject, p: Progress): { ratio: number;
   };
 }
 
-/** Suggest what to learn next: first unmastered topic, rotating across subjects. */
-export function nextTopic(standard: Standard | undefined, p: Progress): { subject: Subject; topic: Topic } | null {
+/**
+ * Suggest what to learn next: what the class is on at school (if a parent pinned it and it
+ * isn't mastered yet), else a topic in progress, else the first unmastered topic, rotating
+ * across subjects.
+ */
+export function nextTopic(standard: Standard | undefined, p: Progress, schoolTopics: Record<string, string> = {}): { subject: Subject; topic: Topic } | null {
   if (!standard) return null;
+  for (const subject of standard.subjects) {
+    const topic = subject.topics.find((t) => t.id === schoolTopics[subject.id]);
+    if (topic && topic.quizzes.length && !topicStatus(topic, p).mastered) return { subject, topic };
+  }
   const candidates: { subject: Subject; topic: Topic; order: number }[] = [];
   standard.subjects.forEach((subject) => {
     subject.topics.forEach((topic, i) => {

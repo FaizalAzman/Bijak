@@ -8,10 +8,24 @@ npx expo start          # scan the QR code with Expo Go (Android/iOS)
 npx expo start --web    # browser preview
 ```
 
-Every native module Bijak uses ships in Expo Go (SQLite, SecureStore, audio, speech,
-haptics, Reanimated, Gesture Handler, SVG), so no custom dev build is needed to try it.
+Almost every native module Bijak uses ships in Expo Go (SQLite, SecureStore, audio, speech,
+haptics, Reanimated, Gesture Handler, SVG), so you can try it there. **Reminders** use local
+notifications (`expo-notifications`, with its config plugin in `app.json`); try them in a
+development build (`npx eas-cli@latest build --profile development`), where they behave as
+in the store app. The web preview explains that reminders need the phone app.
 
 Checks: `npm run typecheck`, `npm run lint`, `npm run validate-content`.
+
+## Read-aloud voices
+
+Bijak reads with the most natural voice installed on the device (Parent zone → Settings →
+Read-aloud voice lets a parent pick another and hear it first). For the best sound:
+
+- **iPhone/iPad**: Settings → Accessibility → Spoken Content → Voices → English → download
+  an *Enhanced* or *Premium* voice. iOS has no Malay voice, so Bahasa Melayu is read with
+  the Indonesian voice (Damayanti), which sounds very close.
+- **Android**: Settings → Accessibility → Text-to-speech → Google → Install voice data →
+  English (UK) and Malay.
 
 ## Environment variables (all optional)
 

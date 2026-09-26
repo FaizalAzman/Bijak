@@ -2,6 +2,7 @@ import { fireEvent, render, screen } from '@testing-library/react-native';
 import Quests from '@/app/(tabs)/quests';
 import type { Quest } from '@/features/gamify/quests';
 import { dayKey } from '@/lib/date';
+import { useApp } from '@/store/app';
 import { advanceDays, authoredQuiz, patchProgress, playQuiz, progressOf, resetStores, setNow, setupChild } from '../helpers';
 
 const quest = (over: Partial<Quest>): Quest => ({ id: `${dayKey()}-0`, kind: 'correct', title: 'Get 2 answers right', emoji: '✅', target: 2, progress: 0, reward: 30, claimed: false, ...over });
@@ -47,4 +48,49 @@ it('the streak card and calendar agree with the streak rule', async () => {
   expect(screen.getByText('2 days')).toBeOnTheScreen();
   expect(screen.getByText('Streak safe today! 🎉')).toBeOnTheScreen();
   expect(day('2026-03-05')).toBe('Thursday: streak day');
+});
+
+describe('rest-day shields and rest days on the streak card', () => {
+  it('buying a shield takes coins and shows it; the button goes when you hold the maximum', async () => {
+    patchProgress({ coins: 100 });
+    await render(<Quests />);
+    expect(screen.getByText('Rest-day shields · 0/2')).toBeOnTheScreen();
+    await fireEvent.press(screen.getByTestId('buy-shield'));
+    expect(screen.getByText('Rest-day shields · 1/2')).toBeOnTheScreen();
+    await fireEvent.press(screen.getByTestId('buy-shield'));
+    expect(progressOf().coins).toBe(20);
+    expect(screen.queryByTestId('buy-shield')).toBeNull();
+  });
+
+  it('the buy button is disabled without enough coins', async () => {
+    patchProgress({ coins: 10 });
+    await render(<Quests />);
+    expect(screen.getByTestId('buy-shield')).toBeDisabled();
+  });
+
+  it('marks rest days and days saved by a shield, and says the streak is safe on a rest day', async () => {
+    useApp.getState().updateSettings({ restDays: [6, 0] });
+    setNow('2026-03-06T17:00:00'); // Friday
+    playQuiz(authoredQuiz().quiz.id);
+    setNow('2026-03-07T10:00:00'); // Saturday
+    await render(<Quests />);
+    expect(screen.getByText('Rest day — your streak is safe 💤')).toBeOnTheScreen();
+    expect(screen.getByTestId('day-2026-03-06').props.accessibilityLabel).toBe('Friday: streak day');
+    expect(screen.getByTestId('day-2026-03-07').props.accessibilityLabel).toBe('Saturday: rest day');
+  });
+
+  it('a covered day shows the shield and the status reflects protection', async () => {
+    const quiz = authoredQuiz().quiz.id;
+    playQuiz(quiz); // Wed 4th
+    patchProgress((p) => (p.streak.shields = 2));
+    setNow('2026-03-06T18:00:00'); // Friday — Thursday was missed
+    const before = await render(<Quests />);
+    expect(screen.getByText('Your shield saves the streak if you miss today 🛡️')).toBeOnTheScreen();
+    await before.unmount();
+    playQuiz(quiz);
+    const view = await render(<Quests />);
+    expect(screen.getByTestId('day-2026-03-05').props.accessibilityLabel).toBe('Thursday: saved by a shield');
+    expect(screen.getAllByText('Streak safe today! 🎉').length).toBeGreaterThan(0);
+    await view.unmount();
+  });
 });

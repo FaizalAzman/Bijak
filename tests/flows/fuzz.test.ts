@@ -6,6 +6,7 @@
 import { buildQuizQuestions, getContentIndex } from '@/features/content/registry';
 import type { Question } from '@/features/content/schema';
 import { EYES, HAIR_COLORS, HAIR_STYLES, SHOP, SKIN_TONES, type Slot } from '@/features/gamify/shop';
+import { REST_DAY_PRESETS } from '@/features/gamify/streak';
 import { int, pick, seeded, type Rng } from '@/lib/random';
 import { REVIEW_QUIZ_ID, useApp } from '@/store/app';
 import type { Progress } from '@/store/types';
@@ -93,6 +94,10 @@ describe.each(Array.from({ length: RUNS }, (_, i) => [i]))('random run %i', (see
         name = 'buy';
         spent = true;
         settled = s().buy(rng() < 0.9 ? pick(rng, SHOP).id : 'arcade:hack');
+      } else if (roll < 0.635) {
+        name = 'buyShield';
+        spent = true;
+        s().buyShield();
       } else if (roll < 0.65) {
         name = 'unlockArcade';
         spent = true;
@@ -128,9 +133,24 @@ describe.each(Array.from({ length: RUNS }, (_, i) => [i]))('random run %i', (see
         name = 'parent resets progress';
         s().resetProgress(active);
         resetOrSwitched = true;
-      } else {
+      } else if (roll < 0.96) {
         name = 'change standard';
         s().updateProfile(active, { level: int(rng, 1, 6) });
+      } else if (roll < 0.97) {
+        name = 'parent changes rest days';
+        s().updateSettings({ restDays: [...pick(rng, Object.values(REST_DAY_PRESETS))] });
+      } else if (roll < 0.99) {
+        name = 'parent pins a school topic';
+        const level = s().profiles.find((p) => p.id === active)!.level;
+        const subject = pick(rng, index.standardByLevel(level)?.subjects ?? []);
+        const r = rng();
+        // Mostly real topics, sometimes "Not sure", a topic from elsewhere, or a child that doesn't exist.
+        const topicId = r < 0.2 ? null : r < 0.35 ? pick(rng, topics).id : subject ? pick(rng, subject.topics).id : 'none';
+        const ok = s().setSchoolTopic(r > 0.97 ? 'ghost' : active, subject?.id ?? 'math', topicId);
+        if (ok) expect(s().profiles.find((p) => p.id === active)!.schoolTopics?.[subject!.id]).toBe(topicId ?? undefined);
+      } else {
+        name = 'parent changes the teaching language';
+        s().updateProfile(active, { medium: pick(rng, ['en', 'ms'] as const) });
       }
 
       const where = `seed ${seed} step ${step} (${name})`;

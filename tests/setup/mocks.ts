@@ -47,7 +47,38 @@ jest.mock('expo-speech', () => ({
   speak: jest.fn(),
   stop: jest.fn(() => Promise.resolve()),
   isSpeakingAsync: jest.fn(() => Promise.resolve(false)),
+  // No voices by default (like a browser before it has loaded them); tests provide device lists.
+  getAvailableVoicesAsync: jest.fn(() => Promise.resolve([])),
 }));
+
+// Local notifications: a fake OS schedule the reminder tests can inspect (`__scheduled`).
+jest.mock('expo-notifications', () => {
+  const scheduled: { identifier: string; content: unknown; trigger: unknown }[] = [];
+  const denied = { granted: false, canAskAgain: true, status: 'undetermined' };
+  return {
+    __esModule: true,
+    __scheduled: scheduled,
+    AndroidImportance: { MIN: 3, LOW: 4, DEFAULT: 5, HIGH: 6 },
+    SchedulableTriggerInputTypes: { DATE: 'date', DAILY: 'daily', WEEKLY: 'weekly', TIME_INTERVAL: 'timeInterval' },
+    getPermissionsAsync: jest.fn(() => Promise.resolve(denied)),
+    requestPermissionsAsync: jest.fn(() => Promise.resolve(denied)),
+    setNotificationChannelAsync: jest.fn(() => Promise.resolve(null)),
+    setNotificationHandler: jest.fn(),
+    scheduleNotificationAsync: jest.fn((req: { identifier: string; content: unknown; trigger: unknown }) => {
+      scheduled.push({ identifier: req.identifier, content: req.content, trigger: req.trigger });
+      return Promise.resolve(req.identifier);
+    }),
+    cancelScheduledNotificationAsync: jest.fn((id: string) => {
+      const i = scheduled.findIndex((n) => n.identifier === id);
+      if (i >= 0) scheduled.splice(i, 1);
+      return Promise.resolve();
+    }),
+    getAllScheduledNotificationsAsync: jest.fn(() => Promise.resolve(scheduled.map((n) => ({ ...n })))),
+    addNotificationResponseReceivedListener: jest.fn(() => ({ remove: jest.fn() })),
+    getLastNotificationResponse: jest.fn(() => null),
+    clearLastNotificationResponse: jest.fn(),
+  };
+});
 
 jest.mock('expo-haptics', () => ({
   __esModule: true,

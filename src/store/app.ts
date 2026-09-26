@@ -10,20 +10,27 @@
  * - Quiz completion and perfect bonuses need ≥ `REWARDS.minBonusQuestions` questions and each
  *   pays once per quiz per day (a retry that turns perfect still earns the perfect bonus);
  *   lesson re-reads earn XP once per topic per day.
- * - Streaks count days with a finished quiz or lesson; quests roll over at local midnight.
+ * - Streaks count days with a finished quiz or lesson; parent-set rest days never break them and
+ *   rest-day shields cover a missed school day (see features/gamify/streak.ts). Quests roll over
+ *   at local midnight.
  */
 import * as Crypto from 'expo-crypto';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 import { getContentIndex } from '@/features/content/registry';
+import { Lang } from '@/features/content/schema';
 import { newlyEarned, type BadgeDef } from '@/features/gamify/badges';
 import { applyQuestEvent, generateDailyQuests, type Quest, type QuestEvent } from '@/features/gamify/quests';
+import { advanceStreak, cleanRestDays, liveStreak as streakShown, SHIELD } from '@/features/gamify/streak';
 import { DEFAULT_AVATAR, EYES, FREE_ITEMS, HAIR_COLORS, HAIR_STYLES, itemById, SKIN_TONES, type AvatarConfig, type Slot } from '@/features/gamify/shop';
 import { levelFromXp, REWARDS, xpForAnswer } from '@/features/gamify/xp';
+import { topicStatus } from '@/features/progress/selectors';
+import { cleanReminders, DEFAULT_REMINDERS } from '@/features/reminders/plan';
 import { dueCards, srsUpdate, type SrsContext } from '@/features/srs/srs';
-import { addDays, dayKey } from '@/lib/date';
+import { dayKey } from '@/lib/date';
 import { kv } from '@/lib/storage';
-import type { Attempt, Parent, Profile, Progress, Settings, TopicStat } from './types';
+import { cleanVoiceChoices } from '@/lib/voice';
+import type { Attempt, Parent, Profile, Progress, Settings, SettingsPatch, TopicStat } from './types';
 
 export function emptyProgress(): Progress {
   return {
@@ -72,6 +79,8 @@ export interface FinishReward {
   badges: BadgeDef[];
   questsDone: Quest[];
   streak: number;
+  /** A rest-day shield was earned (every `SHIELD.earnEvery` streak days). */
+  shieldEarned: boolean;
 }
 
 interface AppState {
@@ -85,11 +94,14 @@ interface AppState {
   syncedRevision: number | null;
 
   setupFamily: (parentName: string) => void;
-  addProfile: (p: { name: string; level: number; avatar?: AvatarConfig }) => string;
-  updateProfile: (id: string, patch: Partial<Pick<Profile, 'name' | 'level' | 'avatar'>>) => void;
+  addProfile: (p: { name: string; level: number; avatar?: AvatarConfig; medium?: Profile['medium'] }) => string;
+  /** Changing the standard clears the "at school now" topics (they belong to the old year). */
+  updateProfile: (id: string, patch: Partial<Pick<Profile, 'name' | 'level' | 'avatar' | 'medium'>>) => void;
+  /** Pin the topic the child's class is on at school (null clears it). Returns false if it isn't in their standard. */
+  setSchoolTopic: (profileId: string, subjectId: string, topicId: string | null) => boolean;
   removeProfile: (id: string) => void;
   selectProfile: (id: string | null) => void;
-  updateSettings: (patch: Partial<Settings>) => void;
+  updateSettings: (patch: SettingsPatch) => void;
   resetProgress: (id: string) => void;
   /** Record a finished backup of the snapshot taken at revision `revision` (its `dirtyAt`). */
   markSynced: (at: number, revision: number) => void;
@@ -100,6 +112,8 @@ interface AppState {
   /** Returns null for a topic that isn't in the syllabus (or without an active child). */
   finishLesson: (i: { topicId: string; seconds: number }) => FinishReward | null;
   claimQuest: (questId: string) => number;
+  /** Buy a rest-day shield for `SHIELD.price` coins (at most `SHIELD.max` held). */
+  buyShield: () => boolean;
   buy: (itemId: string) => boolean;
   unlockArcade: (gameId: string) => boolean;
   equip: (slot: Slot, itemId: string | undefined) => boolean;
@@ -109,7 +123,9 @@ interface AppState {
 /** Quiz id used for spaced-repetition review sessions (they mix questions from many quizzes). */
 export const REVIEW_QUIZ_ID = 'review';
 
-const NO_REWARD: FinishReward = { xp: 0, coins: 0, newBest: false, badges: [], questsDone: [], streak: 0 };
+const NO_REWARD: FinishReward = { xp: 0, coins: 0, newBest: false, badges: [], questsDone: [], streak: 0, shieldEarned: false };
+
+export const DEFAULT_SETTINGS: Settings = { sound: true, haptics: true, voice: true, autoRead: false, restDays: [], voices: {}, reminders: DEFAULT_REMINDERS };
 const OPTIONAL_SLOTS: Slot[] = ['hat', 'glasses', 'pet'];
 const MAX_NAME = 30;
 export const MAX_ATTEMPTS = 200;
@@ -129,17 +145,22 @@ function validName(name: string): string {
   return trimmed;
 }
 
+function validMedium(medium: unknown): Profile['medium'] {
+  const parsed = Lang.safeParse(medium);
+  if (!parsed.success) throw new Error(`Invalid teaching language: ${String(medium)}`);
+  return parsed.data;
+}
+
 function validLevel(level: number): number {
   if (!Number.isInteger(level) || level < 1 || level > 12) throw new Error(`Invalid standard level: ${level}`);
   return level;
 }
 
-function bumpStreak(p: Progress, today: string) {
-  const { lastDay } = p.streak;
-  if (lastDay === today) return;
-  p.streak.current = lastDay === addDays(today, -1) ? p.streak.current + 1 : 1;
-  p.streak.best = Math.max(p.streak.best, p.streak.current);
-  p.streak.lastDay = today;
+/** Count today for the streak (spending shields on missed school days); returns whether a shield was earned. */
+function bumpStreak(p: Progress, today: string, restDays: readonly number[]): boolean {
+  const { streak, shieldEarned } = advanceStreak(p.streak, today, restDays);
+  p.streak = streak;
+  return shieldEarned;
 }
 
 function dayStat(p: Progress, today: string) {
@@ -157,9 +178,19 @@ function topicStat(p: Progress, topicId: string): TopicStat {
 /** Today's quests for this child (regenerated the first time anything happens on a new day). */
 function rollDay(p: Progress, profile: Profile, today: string) {
   if (p.quests.day === today) return;
-  const std = getContentIndex().standardByLevel(profile.level);
-  const subjects = (std?.subjects ?? []).filter((s) => s.topics.some((t) => t.quizzes.length > 0));
+  const std = getContentIndex(profile.medium).standardByLevel(profile.level);
+  const withQuizzes = (std?.subjects ?? []).filter((s) => s.topics.some((t) => t.quizzes.length > 0));
+  // The subject quest follows what the class is doing at school, when a parent has said.
+  const atSchool = withQuizzes.filter((s) => profile.schoolTopics?.[s.id]);
+  const subjects = atSchool.length ? atSchool : withQuizzes;
   p.quests = { day: today, list: generateDailyQuests(profile.id, today, subjects, dueCards(p.srs).length) };
+}
+
+/** Stamp the moment a topic is first mastered (for the weekly parent report). */
+function markMastered(p: Progress, topicId: string) {
+  const ref = getContentIndex().topic(topicId);
+  const stat = p.topics[topicId];
+  if (ref && stat && !stat.masteredAt && topicStatus(ref.topic, p).mastered) stat.masteredAt = Date.now();
 }
 
 function questEvent(p: Progress, e: QuestEvent) {
@@ -205,6 +236,8 @@ export const useApp = create<AppState>()(
         return result;
       };
 
+      const restDays = () => get().settings.restDays ?? [];
+
       /** Strictly increasing, so two changes in the same millisecond still look different to sync. */
       const nextRevision = () => Math.max(Date.now(), get().dirtyAt + 1);
 
@@ -218,16 +251,23 @@ export const useApp = create<AppState>()(
         profiles: [],
         activeProfileId: null,
         progress: {},
-        settings: { sound: true, haptics: true, voice: true, autoRead: false },
+        settings: DEFAULT_SETTINGS,
         dirtyAt: 0,
         syncedAt: null,
         syncedRevision: null,
 
         setupFamily: (name) => set({ parent: { name: validName(name), createdAt: Date.now(), familyId: Crypto.randomUUID() }, dirtyAt: nextRevision() }),
 
-        addProfile: ({ name, level, avatar }) => {
+        addProfile: ({ name, level, avatar, medium }) => {
           const id = Crypto.randomUUID();
-          const profile: Profile = { id, name: validName(name), level: validLevel(level), avatar: clone(avatar ?? DEFAULT_AVATAR), createdAt: Date.now() };
+          const profile: Profile = {
+            id,
+            name: validName(name),
+            level: validLevel(level),
+            avatar: clone(avatar ?? DEFAULT_AVATAR),
+            createdAt: Date.now(),
+            medium: validMedium(medium ?? 'en'),
+          };
           set((s) => ({ profiles: [...s.profiles, profile], progress: { ...s.progress, [id]: emptyProgress() }, dirtyAt: nextRevision() }));
           return id;
         },
@@ -237,7 +277,23 @@ export const useApp = create<AppState>()(
           const clean: Partial<Profile> = { ...patch };
           if (patch.name !== undefined) clean.name = validName(patch.name);
           if (patch.level !== undefined) clean.level = validLevel(patch.level);
-          set((s) => ({ profiles: s.profiles.map((p) => (p.id === id ? { ...p, ...clean } : p)), dirtyAt: nextRevision() }));
+          if (patch.medium !== undefined) clean.medium = validMedium(patch.medium);
+          set((s) => ({
+            profiles: s.profiles.map((p) => (p.id === id ? { ...p, ...clean, ...(clean.level !== undefined && clean.level !== p.level ? { schoolTopics: {} } : {}) } : p)),
+            dirtyAt: nextRevision(),
+          }));
+        },
+
+        setSchoolTopic: (profileId, subjectId, topicId) => {
+          const profile = get().profiles.find((p) => p.id === profileId);
+          const subject = profile && getContentIndex().standardByLevel(profile.level)?.subjects.find((s) => s.id === subjectId);
+          if (!profile || !subject) return false;
+          if (topicId !== null && !subject.topics.some((t) => t.id === topicId)) return false;
+          const schoolTopics = { ...profile.schoolTopics };
+          if (topicId === null) delete schoolTopics[subjectId];
+          else schoolTopics[subjectId] = topicId;
+          set((s) => ({ profiles: s.profiles.map((p) => (p.id === profileId ? { ...p, schoolTopics } : p)), dirtyAt: nextRevision() }));
+          return true;
         },
 
         removeProfile: (id) =>
@@ -258,7 +314,15 @@ export const useApp = create<AppState>()(
           if (id) get().ensureToday();
         },
 
-        updateSettings: (patch) => set((s) => ({ settings: { ...s.settings, ...patch } })),
+        updateSettings: (patch) =>
+          set((s) => {
+            const settings: Settings = { ...s.settings, ...patch, reminders: s.settings.reminders };
+            if (patch.restDays) settings.restDays = cleanRestDays(patch.restDays);
+            // Voice choices merge per language; an empty choice goes back to automatic.
+            if (patch.voices) settings.voices = cleanVoiceChoices({ ...s.settings.voices, ...patch.voices });
+            if (patch.reminders) settings.reminders = cleanReminders({ ...s.settings.reminders, ...patch.reminders }, s.settings.reminders ?? DEFAULT_REMINDERS);
+            return { settings };
+          }),
 
         resetProgress: (id) => {
           if (!get().profiles.some((p) => p.id === id)) return;
@@ -317,7 +381,7 @@ export const useApp = create<AppState>()(
           mutate((p, profile) => {
             // The syllabus, not the caller, says what kind of quiz this was (and where it lives).
             const ref = input.quizId === REVIEW_QUIZ_ID ? undefined : getContentIndex().quiz(input.quizId);
-            if (input.quizId !== REVIEW_QUIZ_ID && !ref) return { ...NO_REWARD, streak: liveStreak(p, dayKey()) };
+            if (input.quizId !== REVIEW_QUIZ_ID && !ref) return { ...NO_REWARD, streak: liveStreak(p, dayKey(), restDays()) };
             const f: FinishInput = ref
               ? { ...input, mode: ref.quiz.mode, topicId: ref.topic?.id, standardId: ref.standard.id, subjectId: ref.subject.id }
               : { ...input, mode: 'review', topicId: undefined };
@@ -325,7 +389,7 @@ export const useApp = create<AppState>()(
             const correct = Math.min(total, whole(f.correct));
             const seconds = sessionSeconds(f.seconds);
             // Nothing answered (e.g. a time-attack left idle): no rewards, no streak.
-            if (total === 0) return { ...NO_REWARD, streak: liveStreak(p, dayKey()) };
+            if (total === 0) return { ...NO_REWARD, streak: liveStreak(p, dayKey(), restDays()) };
             const today = dayKey();
             rollDay(p, profile, today);
             const timeAttack = f.mode === 'timeAttack';
@@ -365,11 +429,12 @@ export const useApp = create<AppState>()(
             if (f.topicId && !review) {
               const best = topicStat(p, f.topicId).best;
               best[f.quizId] = Math.max(best[f.quizId] ?? 0, Math.round((correct / total) * 100));
+              markMastered(p, f.topicId);
             }
             p.xp += xp;
             p.coins += coins;
             p.totals.quizzes++;
-            bumpStreak(p, today);
+            const shieldEarned = bumpStreak(p, today, restDays());
             const d = dayStat(p, today);
             const key = `${f.standardId}/${f.subjectId}`;
             d.seconds[key] = (d.seconds[key] ?? 0) + seconds;
@@ -378,7 +443,7 @@ export const useApp = create<AppState>()(
             questEvent(p, { type: 'quizComplete', subjectId: f.subjectId, perfect: perfect && bonusEligible, timeAttack, review });
             if (xp) questEvent(p, { type: 'xp', amount: xp });
             const badges = awardBadges(p);
-            return { xp, coins, newBest, badges, questsDone: announceQuests(p), streak: p.streak.current };
+            return { xp, coins, newBest, badges, questsDone: announceQuests(p), streak: p.streak.current, shieldEarned };
           }) ?? NO_REWARD,
 
         finishLesson: ({ topicId, seconds }) =>
@@ -394,18 +459,19 @@ export const useApp = create<AppState>()(
             const rereadPays = !first && t.lessonXpDay !== today;
             t.lessonDone = true;
             t.lastAt = Date.now();
+            markMastered(p, topicId);
             if (first || rereadPays) t.lessonXpDay = today;
             const d = dayStat(p, today);
             const key = `${standardId}/${subjectId}`;
             d.seconds[key] = (d.seconds[key] ?? 0) + sessionSeconds(seconds);
-            bumpStreak(p, today);
+            const shieldEarned = bumpStreak(p, today, restDays());
             const reward = first ? REWARDS.lesson : rereadPays ? REWARDS.lessonReread : { xp: 0, coins: 0 };
             p.xp += reward.xp;
             p.coins += reward.coins;
             if (first) p.totals.lessons++;
             questEvent(p, { type: 'lesson' });
             if (reward.xp) questEvent(p, { type: 'xp', amount: reward.xp });
-            return { xp: reward.xp, coins: reward.coins, newBest: false, badges: awardBadges(p), questsDone: announceQuests(p), streak: p.streak.current };
+            return { xp: reward.xp, coins: reward.coins, newBest: false, badges: awardBadges(p), questsDone: announceQuests(p), streak: p.streak.current, shieldEarned };
           }) ?? null,
 
         claimQuest: (questId) =>
@@ -416,6 +482,17 @@ export const useApp = create<AppState>()(
             p.coins += q.reward;
             return q.reward;
           }) ?? 0,
+
+        buyShield: () =>
+          mutate((p) => {
+            const held = p.streak.shields ?? 0;
+            if (held >= SHIELD.max || p.coins < SHIELD.price) return false;
+            p.coins -= SHIELD.price;
+            p.streak.shields = held + 1;
+            p.totals.purchases++;
+            awardBadges(p);
+            return true;
+          }) ?? false,
 
         buy: (itemId) =>
           mutate((p) => {
@@ -493,6 +570,11 @@ export const useApp = create<AppState>()(
         syncedAt: s.syncedAt,
         syncedRevision: s.syncedRevision,
       }),
+      // Settings added in later versions get their defaults on devices with an older save.
+      merge: (persisted, current) => {
+        const saved = (persisted ?? {}) as Partial<AppState>;
+        return { ...current, ...saved, settings: { ...current.settings, ...saved.settings } };
+      },
     },
   ),
 );
@@ -509,9 +591,11 @@ export function useProgress(): Progress {
   return useApp((s) => (s.activeProfileId ? s.progress[s.activeProfileId] : undefined) ?? EMPTY);
 }
 
-/** Streak shown to the child: drops to 0 once a whole day has been missed. */
-export function liveStreak(p: Progress, today = dayKey()): number {
-  const { lastDay, current } = p.streak;
-  if (!lastDay) return 0;
-  return lastDay === today || lastDay === addDays(today, -1) ? current : 0;
+/** Streak shown to the child: drops to 0 once a school day is missed that no shield can cover. */
+export function liveStreak(p: Progress, today = dayKey(), restDays: readonly number[] = []): number {
+  return streakShown(p.streak, today, restDays);
 }
+
+/** Family rest days (reactive), for passing to `liveStreak` in screens. */
+export const useRestDays = () => useApp((s) => s.settings.restDays ?? EMPTY_DAYS);
+const EMPTY_DAYS: number[] = [];

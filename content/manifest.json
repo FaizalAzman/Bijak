@@ -1,11 +1,11 @@
 {
   "schema": 1,
   "standards": [
-    { "id": "std1", "level": 1, "version": 1, "file": "standards/std1.json" },
-    { "id": "std2", "level": 2, "version": 1, "file": "standards/std2.json" },
-    { "id": "std3", "level": 3, "version": 1, "file": "standards/std3.json" },
-    { "id": "std4", "level": 4, "version": 1, "file": "standards/std4.json" },
-    { "id": "std5", "level": 5, "version": 1, "file": "standards/std5.json" },
-    { "id": "std6", "level": 6, "version": 2, "file": "standards/std6.json" }
+    { "id": "std1", "level": 1, "version": 2, "file": "standards/std1.json" },
+    { "id": "std2", "level": 2, "version": 2, "file": "standards/std2.json" },
+    { "id": "std3", "level": 3, "version": 2, "file": "standards/std3.json" },
+    { "id": "std4", "level": 4, "version": 2, "file": "standards/std4.json" },
+    { "id": "std5", "level": 5, "version": 2, "file": "standards/std5.json" },
+    { "id": "std6", "level": 6, "version": 3, "file": "standards/std6.json" }
   ]
 }

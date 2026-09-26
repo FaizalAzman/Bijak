@@ -40,9 +40,12 @@ it('older saves without new optional fields still work', async () => {
   const id = setupChild();
   const raw = JSON.parse(kv.getItem('bijak-app')!);
   delete raw.state.syncedRevision;
+  delete raw.state.settings.restDays;
   delete raw.state.progress[id].quizBonusDay;
   await coldStart(JSON.stringify(raw));
   expect(useApp.getState().syncedRevision).toBeNull();
+  expect(useApp.getState().settings.restDays).toEqual([]);
+  expect(useApp.getState().settings.sound).toBe(true);
   expect(() => playQuiz(authoredQuiz().quiz.id)).not.toThrow();
   expect(useApp.getState().progress[id].quizBonusDay).toBeDefined();
 });

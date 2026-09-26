@@ -4,7 +4,7 @@ import { View } from 'react-native';
 import Svg, { Circle } from 'react-native-svg';
 import { Kancil } from '@/components/mascot/Kancil';
 import { Chunky, PressChunky, ProgressBar, Screen, TopBar, Txt } from '@/components/ui';
-import { useContentIndex } from '@/features/content/registry';
+import { useChildContent } from '@/hooks/useChildContent';
 import { subjectProgress, topicStatus } from '@/features/progress/selectors';
 import { useLayout } from '@/hooks/useLayout';
 import { useProgress } from '@/store/app';
@@ -36,7 +36,7 @@ function Ring({ ratio, color, size }: { ratio: number; color: string; size: numb
 /** Duolingo-style winding learning path of topics. */
 export default function SubjectPath() {
   const { standardId, subjectId } = useLocalSearchParams<{ standardId: string; subjectId: string }>();
-  const index = useContentIndex();
+  const index = useChildContent();
   // Keep the winding path inside the screen: 180px-wide nodes swing at most to the edges.
   const { innerWidth } = useLayout();
   const swing = Math.max(0, Math.min(90, (innerWidth - 180) / 2));

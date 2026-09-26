@@ -7,8 +7,10 @@ import { Avatar } from '@/components/avatar/Avatar';
 import { AvatarBasics } from '@/components/avatar/AvatarBasics';
 import { MascotSays } from '@/components/mascot/MascotSays';
 import { Kancil } from '@/components/mascot/Kancil';
+import { MediumPicker } from '@/components/parent/MediumPicker';
 import { Button, Chip, Chunky, Field, FrameRow, Keypad, PinDots, ProgressBar, Screen, Txt } from '@/components/ui';
 import { useContentIndex } from '@/features/content/registry';
+import type { Lang } from '@/features/content/schema';
 import { DEFAULT_AVATAR, type AvatarConfig } from '@/features/gamify/shop';
 import { useLayout } from '@/hooks/useLayout';
 import { fx } from '@/lib/feedback';
@@ -31,6 +33,7 @@ export default function Onboarding() {
   const [pinError, setPinError] = useState(false);
   const [childName, setChildName] = useState('');
   const [level, setLevel] = useState(3);
+  const [medium, setMedium] = useState<Lang | null>(null);
   const [avatar, setAvatar] = useState<AvatarConfig>(DEFAULT_AVATAR);
   const [saving, setSaving] = useState(false);
 
@@ -64,7 +67,7 @@ export default function Onboarding() {
         s.setupFamily(parentName.trim() || 'Parent');
         await setParentPin(pin);
       }
-      const id = s.addProfile({ name: childName.trim(), level, avatar });
+      const id = s.addProfile({ name: childName.trim(), level, avatar, medium: medium ?? 'en' });
       useApp.getState().selectProfile(id);
       fx.levelUp();
       router.replace('/home');
@@ -188,7 +191,8 @@ export default function Onboarding() {
                     ))}
                   </View>
                 </View>
-                <Button label="Continue" full size="lg" disabled={!childName.trim()} onPress={() => setStep('avatar')} />
+                <MediumPicker value={medium} onChange={setMedium} />
+                <Button label="Continue" full size="lg" disabled={!childName.trim() || !medium} onPress={() => setStep('avatar')} />
               </View>
             )}
 

@@ -19,7 +19,8 @@ import std6 from '../../../content/standards/std6.json';
 import { kv } from '@/lib/storage';
 import { telemetry } from '@/lib/telemetry';
 import { generate } from './generators';
-import { Manifest, Standard, type ArcadeGame, type Question, type Quiz, type Subject, type Topic } from './schema';
+import { localizeStandard } from './localize';
+import { Manifest, Standard, type ArcadeGame, type Lang, type Question, type Quiz, type Subject, type Topic } from './schema';
 import { crossStandardIssues, parseStandard } from './validate';
 import { shuffle, type Rng } from '@/lib/random';
 
@@ -150,21 +151,31 @@ export function buildIndex(standards: Standard[]): ContentIndex {
   };
 }
 
-let cached: { remote: Record<string, Standard>; index: ContentIndex } | null = null;
+let cached: { remote: Record<string, Standard>; byLang: Map<string, ContentIndex> } | null = null;
 
-/** Non-hook accessor (for stores / services). */
-export function getContentIndex(): ContentIndex {
+/**
+ * Non-hook accessor (for stores / services). With `lang`, subjects that have a translation in
+ * that language are switched to it (ids and answers are identical in every language).
+ */
+export function getContentIndex(lang?: Lang): ContentIndex {
   const remote = useContent.getState().remote;
-  if (!cached || cached.remote !== remote) cached = { remote, index: buildIndex(effectiveStandards(remote)) };
-  return cached.index;
+  if (!cached || cached.remote !== remote) cached = { remote, byLang: new Map() };
+  const key = lang ?? 'base';
+  let index = cached.byLang.get(key);
+  if (!index) {
+    const standards = effectiveStandards(remote);
+    index = buildIndex(lang ? standards.map((s) => localizeStandard(s, lang)) : standards);
+    cached.byLang.set(key, index);
+  }
+  return index;
 }
 
-export function useContentIndex(): ContentIndex {
+export function useContentIndex(lang?: Lang): ContentIndex {
   const remote = useContent((s) => s.remote);
   return useMemo(() => {
     void remote;
-    return getContentIndex();
-  }, [remote]);
+    return getContentIndex(lang);
+  }, [remote, lang]);
 }
 
 /* ------------------------------------------------------------------ Quiz building */

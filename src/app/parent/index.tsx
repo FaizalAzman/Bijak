@@ -24,7 +24,8 @@ export default function ParentGate() {
   const locked = waitMs > 0;
   const { style, shake } = useShake();
 
-  const go = () => (next === 'add-child' ? router.replace('/onboarding') : router.replace('/parent/dashboard'));
+  // Where the parent was heading: adding a learner, the weekly report (from its reminder), or the dashboard.
+  const go = () => router.replace(next === 'add-child' ? '/onboarding' : next === 'report' ? '/parent/report' : '/parent/dashboard');
 
   useEffect(() => {
     if (isParentUnlocked()) go();

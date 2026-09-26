@@ -133,6 +133,21 @@ describe('nextTopic', () => {
     });
     expect(nextTopic(std, all)).toBeNull();
   });
+
+  it('prefers the topic the class is on at school this week', () => {
+    const p = progress({ both: stat({ lessonDone: true, lastAt: 5 }) });
+    expect(nextTopic(std, p)?.topic.id).toBe('both');
+    expect(nextTopic(std, p, { sci: 'sci1' })).toMatchObject({ subject: { id: 'sci' }, topic: { id: 'sci1' } });
+    // Several subjects pinned: the first subject's school topic leads.
+    expect(nextTopic(std, p, { sci: 'sci1', math: 'quizonly' })?.topic.id).toBe('quizonly');
+  });
+
+  it('falls back to the usual order when the school topic is mastered, lesson-only or unknown', () => {
+    const p = progress({ both: stat({ lessonDone: true, lastAt: 5 }), sci1: stat({ best: { 'sci1-q1': 100 } }) });
+    expect(nextTopic(std, p, { sci: 'sci1' })?.topic.id).toBe('both');
+    expect(nextTopic(std, p, { math: 'lessononly' })?.topic.id).toBe('both');
+    expect(nextTopic(std, p, { math: 'gone' })?.topic.id).toBe('both');
+  });
 });
 
 describe('greeting', () => {

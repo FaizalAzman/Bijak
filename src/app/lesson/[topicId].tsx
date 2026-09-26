@@ -6,7 +6,7 @@ import { toast } from '@/components/gamify/Toaster';
 import { LessonBlockView, toSlides } from '@/components/lesson/LessonBlocks';
 import { MascotSays } from '@/components/mascot/MascotSays';
 import { BackButton, Button, FrameRow, ProgressBar, Screen, Tag, Txt } from '@/components/ui';
-import { useContentIndex } from '@/features/content/registry';
+import { useChildContent } from '@/hooks/useChildContent';
 import { fx, stopSpeaking } from '@/lib/feedback';
 import { useApp } from '@/store/app';
 import { accent, colors } from '@/theme';
@@ -14,7 +14,7 @@ import { swapIn } from '@/theme/motion';
 
 export default function LessonScreen() {
   const { topicId } = useLocalSearchParams<{ topicId: string }>();
-  const ref = useContentIndex().topic(topicId);
+  const ref = useChildContent().topic(topicId);
   const slides = useMemo(() => (ref ? toSlides(ref.topic.lesson) : []), [ref]);
   const [i, setI] = useState(0);
   const [done, setDone] = useState(false);
@@ -48,6 +48,7 @@ export default function LessonScreen() {
       setEarned({ xp: reward.xp, coins: reward.coins });
       reward.badges.forEach((b) => toast({ emoji: b.emoji, title: `Badge unlocked: ${b.title}`, subtitle: b.description }));
       reward.questsDone.forEach((q) => toast({ emoji: q.emoji, title: 'Quest complete!', subtitle: q.title, bg: colors.sun }));
+      if (reward.shieldEarned) toast({ emoji: '🛡️', title: 'Rest-day shield earned!', subtitle: 'It saves your streak if you miss a day.' });
     }
   };
 

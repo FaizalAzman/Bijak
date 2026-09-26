@@ -95,6 +95,57 @@ Kinds: `multiplication`, `division`, `addition`, `subtraction`, `compare`, `plac
 `money`, `vocab` (with `pairs: [["word","meaning"], …]`). Set `"mode": "timeAttack"` and
 `"seconds": 60` for a race against the clock.
 
+## Teaching language: Maths & Science in Bahasa Melayu
+
+Schools teach Maths and Science either in English (DLP classes) or in Bahasa Melayu, so
+each child has a **teaching language** (Parent zone → Children). A standard carries the
+Bahasa Melayu text of its English subjects in a `translations` overlay — the same topics,
+quizzes, ids and answers, only the words change — so stars, mastery and review cards carry
+over when a parent switches language.
+
+```jsonc
+"translations": {
+  "ms": {
+    "subjects": {
+      "math": {
+        "name": "Matematik",
+        "topics": {
+          "s3-math-money": {
+            "title": "Wang hingga RM1000",
+            "objectives": [{ "code": "4.1", "text": "Mewakilkan nilai wang hingga RM1000" }],
+            "offlineActivity": "…",
+            "lesson": [ /* the whole lesson, in BM */ ],
+            "quizzes": {
+              "s3-math-money-q1": {
+                "title": "Kedai runcit",
+                "questions": {
+                  "q1": { "prompt": "Berapakah sen dalam RM3?" },
+                  "q5": { "prompt": "Bolehkah kamu membelinya dengan RM10?", "buckets": { "yes": "Boleh", "no": "Terlalu mahal" } }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "arcade": { "s3-arcade-times": "Kilat Sifir" }
+  }
+}
+```
+
+Per question you may translate `prompt`, `explain` and the words the child sees:
+`options` (by option id), `pairs` (same count, same order), `tokens`/`distractors` (the
+correct order in BM), `buckets` (by bucket id), `items` (same count, same order),
+`text`/`blanks`/`bank` (fill-in-the-blank) and `unit`. Generated quizzes need only a
+`title`: their questions switch to BM wording automatically (KSSR terms such as *nilai
+tempat*, *sa/puluh/ratus/ribu*, *baki wang*).
+
+`npm run validate-content` rejects a translation that points at an unknown id, changes
+the number of pairs/items/blanks, or breaks any normal rule once applied (e.g. a blank
+missing from the word bank), and lists anything still in English under each standard
+(`↳ ms: math, science` means complete). Numbers, units, ringgit amounts and emoji don't
+need translating.
+
 ## Publishing updates without an app release
 
 1. Host the `content/` folder anywhere static (GitHub raw, Supabase Storage, Netlify…).

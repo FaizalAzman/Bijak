@@ -3,16 +3,17 @@ import { BookOpen, ChevronRight, Play, Timer } from 'lucide-react-native';
 import { View } from 'react-native';
 import { toSlides } from '@/components/lesson/LessonBlocks';
 import { Chunky, PressChunky, Screen, SectionLabel, Tag, TopBar, Txt } from '@/components/ui';
-import { useContentIndex } from '@/features/content/registry';
+import { useChildContent } from '@/hooks/useChildContent';
 import { REWARDS } from '@/features/gamify/xp';
 import { topicStatus } from '@/features/progress/selectors';
-import { useProgress } from '@/store/app';
+import { useActiveProfile, useProgress } from '@/store/app';
 import { accent, colors } from '@/theme';
 
 export default function TopicScreen() {
   const { topicId } = useLocalSearchParams<{ topicId: string }>();
-  const ref = useContentIndex().topic(topicId);
+  const ref = useChildContent().topic(topicId);
   const p = useProgress();
+  const profile = useActiveProfile();
   if (!ref) {
     return (
       <Screen header={<TopBar title="Not found" />}>
@@ -58,6 +59,7 @@ export default function TopicScreen() {
             <Tag label={`${'★'.repeat(st.stars)}${'☆'.repeat(3 - st.stars)}`} bg={colors.sun} />
             {stat?.answered ? <Tag label={`${Math.round((stat.correct / stat.answered) * 100)}% accuracy`} bg={colors.paper} /> : null}
             {st.mastered ? <Tag label="Mastered" /> : null}
+            {profile?.schoolTopics?.[subject.id] === topic.id ? <Tag label="🏫 At school this week" bg={colors['sky-soft']} /> : null}
           </View>
         </Chunky>
       </View>

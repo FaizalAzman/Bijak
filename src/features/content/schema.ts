@@ -115,15 +115,18 @@ export type QuestionType = Question['type'];
 
 /* ------------------------------------------------------------------ Generators */
 
+/** Language of the words in generated questions (set automatically when a subject is translated). */
+const genLang = { lang: Lang.optional() };
+
 export const GeneratorSpec = z.discriminatedUnion('kind', [
-  z.object({ kind: z.literal('multiplication'), tables: z.array(z.number().int().positive()).min(1), maxFactor: z.number().int().positive().default(10) }),
-  z.object({ kind: z.literal('division'), tables: z.array(z.number().int().positive()).min(1), maxFactor: z.number().int().positive().default(10) }),
-  z.object({ kind: z.literal('addition'), max: z.number().int().min(2), terms: z.number().int().min(2).max(3).default(2) }),
-  z.object({ kind: z.literal('subtraction'), max: z.number().int().min(2) }),
-  z.object({ kind: z.literal('compare'), max: z.number().int().positive() }),
+  z.object({ kind: z.literal('multiplication'), tables: z.array(z.number().int().positive()).min(1), maxFactor: z.number().int().positive().default(10), ...genLang }),
+  z.object({ kind: z.literal('division'), tables: z.array(z.number().int().positive()).min(1), maxFactor: z.number().int().positive().default(10), ...genLang }),
+  z.object({ kind: z.literal('addition'), max: z.number().int().min(2), terms: z.number().int().min(2).max(3).default(2), ...genLang }),
+  z.object({ kind: z.literal('subtraction'), max: z.number().int().min(2), ...genLang }),
+  z.object({ kind: z.literal('compare'), max: z.number().int().positive(), ...genLang }),
   /** Up to 7 digits (millions), the largest numbers in KSSR primary maths. */
-  z.object({ kind: z.literal('placeValue'), max: z.number().int().min(10).max(9_999_999) }),
-  z.object({ kind: z.literal('money'), maxRinggit: z.number().int().positive() }),
+  z.object({ kind: z.literal('placeValue'), max: z.number().int().min(10).max(9_999_999), ...genLang }),
+  z.object({ kind: z.literal('money'), maxRinggit: z.number().int().positive(), ...genLang }),
   z.object({
     kind: z.literal('vocab'),
     lang: Lang.default('en'),
@@ -175,6 +178,53 @@ export const Subject = z.object({
 });
 export type Subject = z.infer<typeof Subject>;
 
+/* ------------------------------------------------------------------ Translations */
+
+/**
+ * A subject in another teaching language — e.g. Maths and Science in Bahasa Melayu for
+ * classes outside the Dual Language Programme (DLP). Ids, answers and structure come from
+ * the original, so progress carries across languages; a translation only swaps the words.
+ * Anything left out stays in the original language.
+ */
+export const QuestionText = z.object({
+  prompt: z.string().optional(),
+  explain: z.string().optional(),
+  /** Option id → text (mcq). */
+  options: z.record(z.string(), z.string()).optional(),
+  /** Same order as the original pairs (match). */
+  pairs: z.array(z.object({ left: z.string(), right: z.string() })).optional(),
+  /** The translated sentence in its correct order — word order may differ (order). */
+  tokens: z.array(z.string()).optional(),
+  distractors: z.array(z.string()).optional(),
+  /** Bucket id → label (sort). */
+  buckets: z.record(z.string(), z.string()).optional(),
+  /** Item texts in the original order (sort). */
+  items: z.array(z.string()).optional(),
+  /** fillBlank */
+  text: z.string().optional(),
+  blanks: z.array(z.string()).optional(),
+  bank: z.array(z.string()).optional(),
+  /** numpad */
+  unit: z.string().optional(),
+});
+export type QuestionText = z.infer<typeof QuestionText>;
+
+export const TopicText = z.object({
+  title: z.string().optional(),
+  objectives: z.array(z.object({ code: z.string(), text: z.string() })).optional(),
+  lesson: z.array(LessonBlock).optional(),
+  offlineActivity: z.string().optional(),
+  quizzes: z.record(z.string(), z.object({ title: z.string().optional(), questions: z.record(z.string(), QuestionText).default({}) })).default({}),
+});
+export type TopicText = z.infer<typeof TopicText>;
+
+export const Translation = z.object({
+  subjects: z.record(z.string(), z.object({ name: z.string().optional(), topics: z.record(z.string(), TopicText).default({}) })).default({}),
+  /** Arcade game id → title. */
+  arcade: z.record(z.string(), z.string()).default({}),
+});
+export type Translation = z.infer<typeof Translation>;
+
 export const Standard = z.object({
   id,
   level: z.number().int().positive(),
@@ -196,6 +246,8 @@ export const Standard = z.object({
       }),
     )
     .default([]),
+  /** Subjects in other teaching languages, keyed by language. */
+  translations: z.partialRecord(Lang, Translation).optional(),
 });
 export type Standard = z.infer<typeof Standard>;
 export type ArcadeGame = Standard['arcade'][number];

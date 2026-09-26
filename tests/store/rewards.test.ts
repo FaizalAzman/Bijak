@@ -3,6 +3,7 @@
  * Numbers come from REWARDS so the tests keep describing the rules if values are tuned.
  */
 import type { Quest } from '@/features/gamify/quests';
+import { REST_DAY_PRESETS, SHIELD } from '@/features/gamify/streak';
 import { REWARDS, xpForAnswer } from '@/features/gamify/xp';
 import { dayKey } from '@/lib/date';
 import { liveStreak, MAX_ATTEMPTS, MAX_DAYS_KEPT, MAX_SESSION_SECONDS, useApp } from '@/store/app';
@@ -271,12 +272,57 @@ describe('streaks', () => {
     expect(r?.streak).toBe(2);
   });
 
+  it(`a shield is earned on day ${SHIELD.earnEvery} and silently saves a missed school day`, () => {
+    let r = playQuiz(QUIZ).reward;
+    for (let d = 1; d < SHIELD.earnEvery; d++) {
+      advanceDays(1);
+      r = playQuiz(QUIZ).reward;
+    }
+    expect(r).toMatchObject({ streak: SHIELD.earnEvery, shieldEarned: true });
+    expect(progressOf().streak.shields).toBe(1);
+    advanceDays(2); // one day missed
+    expect(liveStreak(progressOf())).toBe(SHIELD.earnEvery);
+    r = playQuiz(QUIZ).reward;
+    expect(r.streak).toBe(SHIELD.earnEvery + 1);
+    expect(progressOf().streak).toMatchObject({ shields: 0, shielded: [dayKey(new Date(Date.now() - DAY))] });
+  });
+
+  it('parent rest days never break the streak', () => {
+    s().updateSettings({ restDays: [...REST_DAY_PRESETS.satSun] });
+    setNow('2026-03-06T16:00:00'); // Friday
+    playQuiz(QUIZ);
+    setNow('2026-03-09T16:00:00'); // Monday
+    expect(liveStreak(progressOf(), dayKey(), s().settings.restDays)).toBe(1);
+    expect(playQuiz(QUIZ).reward.streak).toBe(2);
+    s().updateSettings({ restDays: [] });
+  });
+
   it('streak badges unlock on day 3', () => {
     playQuiz(QUIZ);
     advanceDays(1);
     playQuiz(QUIZ);
     advanceDays(1);
     expect(playQuiz(QUIZ).reward.badges.map((b) => b.id)).toContain('streak-3');
+  });
+});
+
+describe('rest-day shields', () => {
+  it(`cost ${SHIELD.price} coins, count as a purchase, and are capped at ${SHIELD.max}`, () => {
+    patchProgress({ coins: SHIELD.price * 5 });
+    expect(s().buyShield()).toBe(true);
+    expect(s().buyShield()).toBe(true);
+    expect(s().buyShield()).toBe(false);
+    expect(progressOf()).toMatchObject({ coins: SHIELD.price * 3, streak: expect.objectContaining({ shields: SHIELD.max }) });
+    expect(progressOf().totals.purchases).toBe(2);
+    expect(progressOf().badges.shopper).toBeDefined();
+  });
+
+  it('cannot be bought without enough coins', () => {
+    patchProgress({ coins: SHIELD.price - 1 });
+    const dirty = s().dirtyAt;
+    expect(s().buyShield()).toBe(false);
+    expect(progressOf().streak.shields ?? 0).toBe(0);
+    expect(s().dirtyAt).toBe(dirty);
   });
 });
 

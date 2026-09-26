@@ -3,7 +3,7 @@
   "level": 6,
   "title": "Standard 6",
   "titleAlt": "Tahun 6",
-  "version": 2,
+  "version": 3,
   "subjects": [
     {
       "id": "math",
@@ -25,5 +25,20 @@
       ]
     }
   ],
-  "arcade": []
+  "arcade": [],
+  "translations": {
+    "ms": {
+      "subjects": {
+        "math": {
+          "name": "Matematik",
+          "topics": {
+            "s6-math-mixed": {
+              "title": "Latihan campuran Tahun 6",
+              "quizzes": { "s6-math-mixed-q1": { "title": "Bahagi campuran" }, "s6-math-mixed-q2": { "title": "Masalah wang" } }
+            }
+          }
+        }
+      }
+    }
+  }
 }

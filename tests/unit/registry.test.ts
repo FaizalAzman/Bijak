@@ -62,6 +62,23 @@ describe('bundled content', () => {
     expect(getContentIndex()).toBe(getContentIndex());
   });
 
+  it('keeps one index per teaching language, rebuilt when remote content changes', () => {
+    const ms = getContentIndex('ms');
+    expect(getContentIndex('ms')).toBe(ms);
+    expect(ms).not.toBe(getContentIndex());
+    expect(getContentIndex('en')).not.toBe(ms);
+    expect(ms.topic('s3-math-money')?.topic.title).toBe('Wang hingga RM1000');
+    expect(ms.topic('s3-math-money')?.subject).toMatchObject({ name: 'Matematik', lang: 'ms' });
+    // Same ids everywhere: a quiz found in one language is the same quiz in the other.
+    expect(ms.quiz('s3-math-money-q1')?.topic?.id).toBe(getContentIndex().quiz('s3-math-money-q1')?.topic?.id);
+    const bundled3 = getContentIndex().standardByLevel(3)!;
+    useContent.setState({ remote: { std3: { ...bundled3, version: bundled3.version + 1, translations: undefined } } });
+    const fresh = getContentIndex('ms');
+    expect(fresh).not.toBe(ms);
+    // A newer payload without a translation shows its original text.
+    expect(fresh.topic('s3-math-money')?.topic.title).toBe('Money up to RM1000');
+  });
+
   it('questionKey is quiz-scoped', () => {
     expect(questionKey('quiz-a', { id: 'q1' } as never)).toBe('quiz-a::q1');
   });
