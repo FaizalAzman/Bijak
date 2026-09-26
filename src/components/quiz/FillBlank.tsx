@@ -1,7 +1,7 @@
 /** Module 13 — Fill-in-the-blanks with a kid-friendly word bank (tap or drag, no keyboard). */
 import { useMemo, useState } from 'react';
 import { Pressable, View } from 'react-native';
-import Animated, { ZoomIn } from 'react-native-reanimated';
+import Animated from 'react-native-reanimated';
 import { Button, Txt } from '@/components/ui';
 import { BLANK } from '@/features/content/validate';
 import { fx } from '@/lib/feedback';
@@ -103,11 +103,7 @@ export function FillBlank({ q, onAnswer, locked }: QuestionProps<'fillBlank'>) {
                     paddingHorizontal: 10,
                   }}
                 >
-                  {filled[p.blank] != null ? (
-                    <Animated.View entering={ZoomIn.springify()}>
-                      <Txt variant="title">{bank[filled[p.blank] as number].text}</Txt>
-                    </Animated.View>
-                  ) : null}
+                  {filled[p.blank] != null ? <Txt variant="title">{bank[filled[p.blank] as number].text}</Txt> : null}
                 </Pressable>
               </DropZone>
             ),

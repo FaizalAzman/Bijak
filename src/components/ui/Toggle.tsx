@@ -1,11 +1,11 @@
 import { Pressable, View } from 'react-native';
-import Animated, { useAnimatedStyle, withSpring } from 'react-native-reanimated';
+import Animated, { useAnimatedStyle, withTiming } from 'react-native-reanimated';
 import { fx } from '@/lib/feedback';
 import { colors } from '@/theme';
 import { Txt } from './Txt';
 
 export function Toggle({ label, value, onChange, hint }: { label: string; value: boolean; onChange: (v: boolean) => void; hint?: string }) {
-  const knob = useAnimatedStyle(() => ({ transform: [{ translateX: withSpring(value ? 22 : 0, { damping: 14 }) }] }));
+  const knob = useAnimatedStyle(() => ({ transform: [{ translateX: withTiming(value ? 22 : 0, { duration: 150 }) }] }));
   return (
     <Pressable
       accessibilityRole="switch"

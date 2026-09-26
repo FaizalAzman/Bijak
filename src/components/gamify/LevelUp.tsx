@@ -1,5 +1,4 @@
 import { Modal, View } from 'react-native';
-import Animated, { FadeIn, ZoomIn } from 'react-native-reanimated';
 import { Kancil } from '@/components/mascot/Kancil';
 import { Button, Txt } from '@/components/ui';
 import { tierFor } from '@/features/gamify/xp';
@@ -10,9 +9,9 @@ export function LevelUpModal({ level, onClose }: { level: number | null; onClose
   const tier = level ? tierFor(level) : null;
   return (
     <Modal visible={level != null} transparent animationType="fade" onRequestClose={onClose}>
-      <Animated.View entering={FadeIn} style={{ flex: 1, backgroundColor: 'rgba(22,20,15,0.93)', alignItems: 'center', justifyContent: 'center', padding: 24 }}>
-        <Confetti count={60} />
-        <Animated.View entering={ZoomIn.springify().damping(10)} style={{ alignItems: 'center', gap: 10, width: '100%', maxWidth: 380 }}>
+      <View style={{ flex: 1, backgroundColor: 'rgba(22,20,15,0.93)', alignItems: 'center', justifyContent: 'center', padding: 24 }}>
+        <Confetti count={30} />
+        <View style={{ alignItems: 'center', gap: 10, width: '100%', maxWidth: 380 }}>
           <Kancil mood="cheer" size={170} />
           <Txt variant="label" style={{ color: colors.lime, fontSize: 14 }}>
             Level up!
@@ -43,8 +42,8 @@ export function LevelUpModal({ level, onClose }: { level: number | null; onClose
           <View style={{ width: '100%', marginTop: 10 }}>
             <Button label="Awesome!" tone="lime" size="lg" full onPress={onClose} testID="levelup-ok" />
           </View>
-        </Animated.View>
-      </Animated.View>
+        </View>
+      </View>
     </Modal>
   );
 }

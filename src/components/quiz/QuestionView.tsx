@@ -1,10 +1,11 @@
 import { Volume2 } from 'lucide-react-native';
 import { Pressable, View } from 'react-native';
-import Animated, { FadeInDown } from 'react-native-reanimated';
+import Animated from 'react-native-reanimated';
 import { Txt } from '@/components/ui';
 import type { Question } from '@/features/content/schema';
 import { fx, speak } from '@/lib/feedback';
 import { colors } from '@/theme';
+import { swapIn } from '@/theme/motion';
 import { FillBlank } from './FillBlank';
 import { Match } from './Match';
 import { MCQ } from './MCQ';
@@ -53,8 +54,9 @@ export function QuestionView({ q, onAnswer, locked, fast }: { q: Question; onAns
   })();
   const bigPrompt = q.prompt.length < 26 && fast;
   return (
-    <View style={{ gap: 18 }}>
-      <Animated.View entering={FadeInDown.springify().damping(16)} style={{ gap: 10 }}>
+    // A quick fade marks the new question; time-attack skips it so answers stay instant.
+    <Animated.View entering={fast ? undefined : swapIn} style={{ gap: 18 }}>
+      <View style={{ gap: 10 }}>
         {!fast && <Txt variant="label">{(q.lang === 'ms' ? KIND_LABEL_MS : KIND_LABEL)[q.type]}</Txt>}
         <View style={{ flexDirection: 'row', alignItems: 'flex-start', gap: 12 }}>
           {q.visual ? (
@@ -106,8 +108,8 @@ export function QuestionView({ q, onAnswer, locked, fast }: { q: Question; onAns
             </Pressable>
           )}
         </View>
-      </Animated.View>
+      </View>
       {body}
-    </View>
+    </Animated.View>
   );
 }

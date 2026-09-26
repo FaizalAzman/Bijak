@@ -2,7 +2,6 @@ import { router } from 'expo-router';
 import { ArrowRight, Brain } from 'lucide-react-native';
 import { useMemo } from 'react';
 import { ScrollView, View } from 'react-native';
-import Animated, { FadeInDown } from 'react-native-reanimated';
 import { ArcadeCard, SubjectCard } from '@/components/gamify/Cards';
 import { KidHeader } from '@/components/gamify/KidHeader';
 import { LevelCard } from '@/components/gamify/LevelCard';
@@ -47,13 +46,13 @@ export default function Home() {
 
   return (
     <Screen header={<KidHeader />} bottomInset={TAB_BAR_SPACE}>
-      <Animated.View entering={FadeInDown.duration(400)} style={{ gap: 16 }}>
+      <View style={{ gap: 16 }}>
         <MascotSays text={mascot.text} mood={mascot.mood} size={84} />
         <LevelCard profile={profile} progress={p} mood={avatarMood} />
-      </Animated.View>
+      </View>
 
       {due > 0 && (
-        <Animated.View entering={FadeInDown.delay(80)} style={{ marginTop: 16 }}>
+        <View style={{ marginTop: 16 }}>
           <PressChunky
             onPress={() => router.push('/quiz/review')}
             bg={colors['grape-soft']}
@@ -80,11 +79,11 @@ export default function Home() {
             </View>
             <ArrowRight size={22} color={colors.ink} strokeWidth={3} />
           </PressChunky>
-        </Animated.View>
+        </View>
       )}
 
       {next && (
-        <Animated.View entering={FadeInDown.delay(120)}>
+        <View>
           <SectionLabel>Continue learning</SectionLabel>
           <PressChunky
             onPress={() => router.push(`/topic/${next.topic.id}`)}
@@ -118,10 +117,10 @@ export default function Home() {
               <ArrowRight size={22} color={colors.lime} strokeWidth={3} />
             </View>
           </PressChunky>
-        </Animated.View>
+        </View>
       )}
 
-      <Animated.View entering={FadeInDown.delay(160)}>
+      <View>
         <SectionLabel
           right={
             <Txt variant="small" onPress={() => router.push('/quests')} style={{ color: colors.grape }}>
@@ -136,9 +135,9 @@ export default function Home() {
             <QuestRow key={q.id} quest={q} compact onClaim={() => router.push('/quests')} />
           ))}
         </View>
-      </Animated.View>
+      </View>
 
-      <Animated.View entering={FadeInDown.delay(200)}>
+      <View>
         <SectionLabel right={<Txt variant="small">{standard.title}</Txt>}>Subjects</SectionLabel>
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 12 }}>
           {standard.subjects.map((s) => {
@@ -150,10 +149,10 @@ export default function Home() {
             );
           })}
         </View>
-      </Animated.View>
+      </View>
 
       {standard.arcade.length > 0 && (
-        <Animated.View entering={FadeInDown.delay(240)}>
+        <View>
           <SectionLabel>⚡ Arcade · time attack</SectionLabel>
           <ScrollView
             horizontal
@@ -168,7 +167,7 @@ export default function Home() {
               );
             })}
           </ScrollView>
-        </Animated.View>
+        </View>
       )}
 
       {standard.subjects.length === 0 && (

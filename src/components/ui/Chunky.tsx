@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import { Pressable, View, type StyleProp, type ViewStyle } from 'react-native';
-import Animated, { useAnimatedStyle, useSharedValue, withSpring, withTiming } from 'react-native-reanimated';
+import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 import { fx } from '@/lib/feedback';
 import { colors, SHADOW_OFFSET } from '@/theme';
 
@@ -80,7 +80,7 @@ export function PressChunky({
         pressed.value = withTiming(1, { duration: 70 });
       }}
       onPressOut={() => {
-        pressed.value = withSpring(0, { damping: 12, stiffness: 400 });
+        pressed.value = withTiming(0, { duration: 90 });
       }}
       onPress={() => {
         if (sound) fx.tap();

@@ -1,7 +1,6 @@
 import { router } from 'expo-router';
 import { ChevronRight, Lock, Palette, Trophy, Users } from 'lucide-react-native';
 import { View } from 'react-native';
-import Animated, { FadeInDown } from 'react-native-reanimated';
 import { Avatar } from '@/components/avatar/Avatar';
 import { KidHeader } from '@/components/gamify/KidHeader';
 import { TAB_BAR_SPACE } from '@/components/gamify/TabBar';
@@ -52,7 +51,7 @@ export default function Me() {
 
   return (
     <Screen header={<KidHeader title="Me" />} bottomInset={TAB_BAR_SPACE}>
-      <Animated.View entering={FadeInDown} style={{ alignItems: 'center', gap: 8 }}>
+      <View style={{ alignItems: 'center', gap: 8 }}>
         <Avatar config={profile.avatar} size={150} mood="happy" />
         <Txt variant="hero">{profile.name}</Txt>
         <View style={{ flexDirection: 'row', gap: 8 }}>
@@ -65,7 +64,7 @@ export default function Me() {
             <Txt style={{ fontFamily: 'PlusJakartaSans_800ExtraBold', fontSize: 13 }}>{std?.title ?? `Standard ${profile.level}`}</Txt>
           </View>
         </View>
-      </Animated.View>
+      </View>
 
       <View style={{ flexDirection: 'row', gap: 10, marginTop: 20 }}>
         <Stat label="Correct answers" value={p.totals.correct} bg={colors['mint-soft']} />

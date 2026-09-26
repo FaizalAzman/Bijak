@@ -4,7 +4,6 @@
  */
 import { memo, useEffect, useState } from 'react';
 import { View } from 'react-native';
-import Animated, { Easing, useAnimatedStyle, useSharedValue, withDelay, withRepeat, withSequence, withSpring, withTiming } from 'react-native-reanimated';
 import Svg, { Circle, Ellipse, G, Path, Text as SvgText } from 'react-native-svg';
 import { colors } from '@/theme';
 
@@ -154,11 +153,12 @@ const KancilSvg = memo(function KancilSvg({ mood, blink, size }: { mood: KancilM
   );
 });
 
+/**
+ * Kancil holds still: his mood shows in his face and pose, not in motion, so he never
+ * pulls attention away from the question. Only an occasional blink keeps him alive.
+ */
 export function Kancil({ mood = 'idle', size = 120, animate = true }: { mood?: KancilMood; size?: number; animate?: boolean }) {
   const [blink, setBlink] = useState(false);
-  const bob = useSharedValue(0);
-  const pop = useSharedValue(1);
-  const tilt = useSharedValue(0);
 
   useEffect(() => {
     if (!animate) return;
@@ -172,7 +172,7 @@ export function Kancil({ mood = 'idle', size = 120, animate = true }: { mood?: K
           setTimeout(() => alive && setBlink(false), 130);
           loop();
         },
-        2600 + Math.random() * 2200,
+        3500 + Math.random() * 3000,
       );
     };
     loop();
@@ -182,43 +182,9 @@ export function Kancil({ mood = 'idle', size = 120, animate = true }: { mood?: K
     };
   }, [animate]);
 
-  useEffect(() => {
-    if (!animate) return;
-    pop.value = withSequence(withTiming(0.9, { duration: 90 }), withSpring(1, { damping: 6, stiffness: 260 }));
-    if (mood === 'cheer') {
-      bob.value = withRepeat(
-        withSequence(withTiming(-14, { duration: 220, easing: Easing.out(Easing.quad) }), withTiming(0, { duration: 220, easing: Easing.in(Easing.quad) })),
-        -1,
-      );
-      tilt.value = 0;
-    } else if (mood === 'sad') {
-      bob.value = withTiming(4, { duration: 300 });
-      tilt.value = withSequence(
-        withTiming(-6, { duration: 90 }),
-        withRepeat(withSequence(withTiming(6, { duration: 90 }), withTiming(-6, { duration: 90 })), 3),
-        withTiming(0, { duration: 90 }),
-      );
-    } else if (mood === 'wave') {
-      tilt.value = withRepeat(withSequence(withTiming(-4, { duration: 300 }), withTiming(4, { duration: 300 })), -1, true);
-      bob.value = withRepeat(withSequence(withTiming(-4, { duration: 900 }), withTiming(0, { duration: 900 })), -1);
-    } else {
-      tilt.value = withTiming(mood === 'think' ? 5 : 0, { duration: 250 });
-      bob.value = withDelay(
-        100,
-        withRepeat(withSequence(withTiming(-5, { duration: 1100, easing: Easing.inOut(Easing.sin) }), withTiming(0, { duration: 1100, easing: Easing.inOut(Easing.sin) })), -1),
-      );
-    }
-  }, [mood, animate, bob, pop, tilt]);
-
-  const style = useAnimatedStyle(() => ({
-    transform: [{ translateY: bob.value }, { rotate: `${tilt.value}deg` }, { scale: pop.value }],
-  }));
-
   return (
     <View style={{ width: size, height: size * 1.1 }} accessibilityLabel="Sang Kancil">
-      <Animated.View style={style}>
-        <KancilSvg mood={mood} blink={blink} size={size} />
-      </Animated.View>
+      <KancilSvg mood={mood} blink={blink} size={size} />
     </View>
   );
 }

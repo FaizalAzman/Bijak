@@ -1,5 +1,4 @@
 import { View } from 'react-native';
-import Animated, { ZoomIn } from 'react-native-reanimated';
 import { router } from 'expo-router';
 import { Avatar } from '@/components/avatar/Avatar';
 import { AvatarBasics } from '@/components/avatar/AvatarBasics';
@@ -19,9 +18,9 @@ export default function AvatarScreen() {
   return (
     <Screen header={<TopBar title="My avatar" />}>
       <View style={{ alignItems: 'center', paddingVertical: 8 }}>
-        <Animated.View key={JSON.stringify(profile.avatar)} entering={ZoomIn.springify().damping(12)}>
+        <View>
           <Avatar config={profile.avatar} size={170} mood="excited" />
-        </Animated.View>
+        </View>
       </View>
       <Chunky innerStyle={{ padding: 16 }}>
         <AvatarBasics value={profile.avatar} onChange={setAvatar} />

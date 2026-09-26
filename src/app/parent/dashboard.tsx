@@ -2,7 +2,6 @@ import { router } from 'expo-router';
 import { Activity, ChevronRight, Download, Settings, Users } from 'lucide-react-native';
 import { useMemo, useState } from 'react';
 import { ScrollView, View } from 'react-native';
-import Animated, { FadeInDown } from 'react-native-reanimated';
 import { Avatar } from '@/components/avatar/Avatar';
 import { BarList, ColumnChart } from '@/components/parent/Charts';
 import { Chip, Chunky, PressChunky, Screen, SectionLabel, Tag, TopBar, Txt } from '@/components/ui';
@@ -73,7 +72,7 @@ export default function ParentDashboard() {
       )}
 
       {child && (
-        <Animated.View entering={FadeInDown}>
+        <View>
           <Chunky bg={colors.ink} shadowColor={colors.lime} innerStyle={{ padding: 16, flexDirection: 'row', alignItems: 'center', gap: 14 }}>
             <Avatar config={child.avatar} size={64} />
             <View style={{ flex: 1 }}>
@@ -85,7 +84,7 @@ export default function ParentDashboard() {
               </Txt>
             </View>
           </Chunky>
-        </Animated.View>
+        </View>
       )}
 
       <View style={{ flexDirection: 'row', gap: 10, marginTop: 16 }}>

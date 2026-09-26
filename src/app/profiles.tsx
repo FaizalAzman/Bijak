@@ -1,7 +1,6 @@
 import { router } from 'expo-router';
 import { Plus } from 'lucide-react-native';
 import { View } from 'react-native';
-import Animated, { FadeInDown } from 'react-native-reanimated';
 import { Avatar } from '@/components/avatar/Avatar';
 import { MascotSays } from '@/components/mascot/MascotSays';
 import { Button, PressChunky, Screen, Txt } from '@/components/ui';
@@ -19,7 +18,7 @@ export default function Profiles() {
         <MascotSays text="Who's learning today?" mood="wave" size={100} />
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 14 }}>
           {profiles.map((p, i) => (
-            <Animated.View key={p.id} entering={FadeInDown.delay(i * 80).springify()} style={{ width: '47%', flexGrow: 1 }}>
+            <View key={p.id} style={{ width: '47%', flexGrow: 1 }}>
               <PressChunky
                 onPress={() => {
                   select(p.id);
@@ -34,7 +33,7 @@ export default function Profiles() {
                   Standard {p.level} · Lv {levelFromXp(progress[p.id]?.xp ?? 0)}
                 </Txt>
               </PressChunky>
-            </Animated.View>
+            </View>
           ))}
           <View style={{ width: '47%', flexGrow: 1 }}>
             <PressChunky

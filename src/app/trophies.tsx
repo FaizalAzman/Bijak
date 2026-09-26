@@ -1,5 +1,4 @@
 import { View } from 'react-native';
-import Animated, { FadeInDown } from 'react-native-reanimated';
 import { Chunky, ProgressBar, Screen, TopBar, Txt } from '@/components/ui';
 import { useContentIndex } from '@/features/content/registry';
 import { allBadges } from '@/features/gamify/badges';
@@ -28,7 +27,7 @@ export default function Trophies() {
           const a = accent(b.color);
           const prog = b.progress?.(p) ?? (got ? 1 : 0);
           return (
-            <Animated.View key={b.id} entering={FadeInDown.delay(Math.min(i, 12) * 40)} style={{ width: '47%', flexGrow: 1 }}>
+            <View key={b.id} style={{ width: '47%', flexGrow: 1 }}>
               <Chunky bg={got ? a.soft : colors.paper} depth={got ? 4 : 2} innerStyle={{ padding: 12, alignItems: 'center', gap: 6, minHeight: 176 }}>
                 <View
                   style={{
@@ -60,7 +59,7 @@ export default function Trophies() {
                   </Txt>
                 ) : null}
               </Chunky>
-            </Animated.View>
+            </View>
           );
         })}
       </View>

@@ -1,7 +1,7 @@
 import { router, useLocalSearchParams } from 'expo-router';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { ScrollView, View } from 'react-native';
-import Animated, { FadeInRight, FadeOutLeft } from 'react-native-reanimated';
+import Animated from 'react-native-reanimated';
 import { toast } from '@/components/gamify/Toaster';
 import { LessonBlockView, toSlides } from '@/components/lesson/LessonBlocks';
 import { MascotSays } from '@/components/mascot/MascotSays';
@@ -10,6 +10,7 @@ import { useContentIndex } from '@/features/content/registry';
 import { fx, stopSpeaking } from '@/lib/feedback';
 import { useApp } from '@/store/app';
 import { accent, colors } from '@/theme';
+import { swapIn } from '@/theme/motion';
 
 export default function LessonScreen() {
   const { topicId } = useLocalSearchParams<{ topicId: string }>();
@@ -82,11 +83,11 @@ export default function LessonScreen() {
     >
       <ScrollView ref={scroll} showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingVertical: 12, gap: 16 }}>
         {done ? (
-          <Animated.View entering={FadeInRight} style={{ gap: 20, paddingTop: 40 }}>
+          <Animated.View entering={swapIn} style={{ gap: 20, paddingTop: 40 }}>
             <MascotSays text={`Lesson complete! You're ready for the ${topic.title} quiz.`} mood="cheer" size={120} />
           </Animated.View>
         ) : (
-          <Animated.View key={i} entering={FadeInRight.springify().damping(18)} exiting={FadeOutLeft.duration(150)} style={{ gap: 16 }}>
+          <Animated.View key={i} entering={swapIn} style={{ gap: 16 }}>
             {i === 0 && (
               <View style={{ gap: 4 }}>
                 <Txt variant="label">

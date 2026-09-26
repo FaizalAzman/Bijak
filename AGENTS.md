@@ -45,4 +45,5 @@ Docs: https://docs.expo.dev/eas/index.md
 - Curriculum lives in `content/**/*.json`; run `npm run validate-content` after edits. See `docs/CONTENT.md`.
 - Design tokens: `src/theme/tokens.js` (shared with `tailwind.config.js`). Reuse `src/components/ui` (Chunky, Button, Txt…).
 - Reanimated shared values: prefer `.set()` in callbacks returned from hooks (React Compiler lint).
+- Motion must stay calm (see `src/theme/motion.ts`): animate only to confirm an action or mark a rare milestone. No looping/idle animations, staggered list entrances, or bouncy springs — they distract from learning.
 - Verify with `npm run typecheck && npm run lint && npm run validate-content`.

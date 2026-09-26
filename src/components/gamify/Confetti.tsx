@@ -49,8 +49,8 @@ export const Confetti = memo(function Confetti({ count = 40 }: { count?: number 
     const rnd = seeded(count * 7919 + Math.round(width));
     return Array.from({ length: count }, (_, i) => ({
       x: rnd() * width,
-      delay: rnd() * 400,
-      duration: 2200 + rnd() * 900,
+      delay: rnd() * 200,
+      duration: 1500 + rnd() * 500,
       color: PALETTE[i % PALETTE.length],
       w: 8 + rnd() * 6,
       h: 12 + rnd() * 8,

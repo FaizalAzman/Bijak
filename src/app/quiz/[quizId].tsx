@@ -5,7 +5,7 @@
 import { router, useLocalSearchParams } from 'expo-router';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { ScrollView, View } from 'react-native';
-import Animated, { FadeIn, FadeOut, ZoomIn } from 'react-native-reanimated';
+import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
 import { LevelUpModal } from '@/components/gamify/LevelUp';
 import { toast } from '@/components/gamify/Toaster';
 import { Kancil } from '@/components/mascot/Kancil';
@@ -273,9 +273,7 @@ function QuizRun({ session, onRetry }: { session: Session; onRetry: () => void }
               </Txt>
             </View>
           ) : combo >= 2 ? (
-            <Animated.View
-              key={combo}
-              entering={ZoomIn.springify().damping(8)}
+            <View
               style={{
                 flexDirection: 'row',
                 alignItems: 'center',
@@ -290,7 +288,7 @@ function QuizRun({ session, onRetry }: { session: Session; onRetry: () => void }
               <Txt variant="number" style={{ fontSize: 16 }}>
                 🔥{combo}
               </Txt>
-            </Animated.View>
+            </View>
           ) : (
             <Txt variant="mono">
               {i + 1}/{session.items.length}

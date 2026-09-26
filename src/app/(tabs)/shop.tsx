@@ -2,7 +2,6 @@ import { useLocalSearchParams } from 'expo-router';
 import { Lock } from 'lucide-react-native';
 import { useMemo, useState } from 'react';
 import { ScrollView, View } from 'react-native';
-import Animated, { FadeInDown, ZoomIn } from 'react-native-reanimated';
 import { Avatar } from '@/components/avatar/Avatar';
 import { KidHeader } from '@/components/gamify/KidHeader';
 import { TAB_BAR_SPACE } from '@/components/gamify/TabBar';
@@ -59,9 +58,9 @@ export default function Shop() {
   return (
     <Screen header={<KidHeader title="Shop" />} bottomInset={TAB_BAR_SPACE}>
       <Chunky bg={colors['grape-soft']} innerStyle={{ padding: 16, flexDirection: 'row', alignItems: 'center', gap: 16 }}>
-        <Animated.View key={preview?.id ?? 'self'} entering={ZoomIn.springify().damping(12)}>
+        <View>
           <Avatar config={previewConfig} size={110} mood={preview ? 'excited' : 'happy'} />
-        </Animated.View>
+        </View>
         <View style={{ flex: 1, gap: 8 }}>
           {preview ? (
             <>
@@ -158,7 +157,7 @@ export default function Shop() {
             const equipped = profile.avatar[item.slot] === item.id;
             const locked = !owned && !!item.minLevel && level < item.minLevel;
             return (
-              <Animated.View key={item.id} entering={FadeInDown.delay(k * 40)} style={{ width: '47%', flexGrow: 1 }}>
+              <View key={item.id} style={{ width: '47%', flexGrow: 1 }}>
                 <PressChunky
                   onPress={() => onItem(item)}
                   bg={equipped ? colors.lime : preview?.id === item.id ? colors['sun-soft'] : colors.paper}
@@ -200,7 +199,7 @@ export default function Shop() {
                     </Txt>
                   )}
                 </PressChunky>
-              </Animated.View>
+              </View>
             );
           })}
         </View>

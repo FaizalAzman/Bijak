@@ -2,7 +2,6 @@ import { router } from 'expo-router';
 import { ChevronRight, Search } from 'lucide-react-native';
 import { useMemo, useState } from 'react';
 import { ScrollView, TextInput, View } from 'react-native';
-import Animated, { FadeInDown } from 'react-native-reanimated';
 import { KidHeader } from '@/components/gamify/KidHeader';
 import { TAB_BAR_SPACE } from '@/components/gamify/TabBar';
 import { Chip, Chunky, PressChunky, ProgressBar, Screen, SectionLabel, Tag, Txt } from '@/components/ui';
@@ -83,7 +82,7 @@ export default function Learn() {
               const a = accent(s.color);
               const started = s.topics.filter((t) => topicStatus(t, p).stars > 0).length;
               return (
-                <Animated.View key={s.id} entering={FadeInDown.delay(i * 60)}>
+                <View key={s.id}>
                   <PressChunky onPress={() => router.push(`/subject/${standard.id}/${s.id}`)} innerStyle={{ padding: 14, gap: 12 }} accessibilityLabel={s.name}>
                     <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
                       <View
@@ -118,7 +117,7 @@ export default function Learn() {
                       </Txt>
                     </View>
                   </PressChunky>
-                </Animated.View>
+                </View>
               );
             })}
           </View>

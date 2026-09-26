@@ -1,6 +1,5 @@
 import { Check } from 'lucide-react-native';
 import { View } from 'react-native';
-import Animated, { ZoomIn } from 'react-native-reanimated';
 import { Button, Chunky, ProgressBar, Txt } from '@/components/ui';
 import type { Quest } from '@/features/gamify/quests';
 import { colors } from '@/theme';
@@ -41,12 +40,11 @@ export function QuestRow({ quest, onClaim, compact }: { quest: Quest; onClaim?: 
         </View>
       </View>
       {quest.claimed ? (
-        <Animated.View
-          entering={ZoomIn}
+        <View
           style={{ width: 34, height: 34, borderRadius: 17, backgroundColor: colors.mint, borderWidth: 2, borderColor: colors.ink, alignItems: 'center', justifyContent: 'center' }}
         >
           <Check size={18} color={colors.ink} strokeWidth={3.5} />
-        </Animated.View>
+        </View>
       ) : done && onClaim ? (
         <Button label={`+${quest.reward} 🪙`} tone="lime" size="sm" onPress={onClaim} />
       ) : (
