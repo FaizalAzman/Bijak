@@ -2,6 +2,7 @@ import { Delete } from 'lucide-react-native';
 import { View } from 'react-native';
 import { colors } from '@/theme';
 import { PressChunky } from './Chunky';
+import { useFrame } from './Frame';
 import { Txt } from './Txt';
 
 /** Kid-friendly on-screen keypad (no system keyboard). Used for PINs and numeric answers. */
@@ -12,9 +13,10 @@ export function Keypad({ onKey, extraKey, disabled, compact }: { onKey: (k: stri
     ['7', '8', '9'],
     [extraKey ?? '', '0', 'del'],
   ];
-  const h = compact ? 50 : 60;
+  const { small, isTablet } = useFrame();
+  const h = isTablet ? 64 : small ? (compact ? 44 : 52) : compact ? 50 : 60;
   return (
-    <View style={{ gap: compact ? 8 : 10 }}>
+    <View style={{ gap: compact ? 8 : 10, width: '100%', maxWidth: 440, alignSelf: 'center' }}>
       {rows.map((row, i) => (
         <View key={i} style={{ flexDirection: 'row', gap: compact ? 8 : 10 }}>
           {row.map((k, j) =>

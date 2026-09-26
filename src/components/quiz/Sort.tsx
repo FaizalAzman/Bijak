@@ -1,7 +1,7 @@
 /** Module 12 — Sorting into buckets (drag, or tap item then tap bucket). Instant per-drop validation. */
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Pressable, View } from 'react-native';
-import Animated, { FadeIn, ZoomIn } from 'react-native-reanimated';
+import Animated from 'react-native-reanimated';
 import { Txt } from '@/components/ui';
 import { fx } from '@/lib/feedback';
 import { shuffle } from '@/lib/random';
@@ -59,15 +59,11 @@ function Bucket({
           </View>
           <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6, justifyContent: 'center' }}>
             {items.map((t) => (
-              <Animated.View
-                key={t}
-                entering={ZoomIn.springify().damping(12)}
-                style={{ backgroundColor: colors.paper, borderRadius: 10, borderWidth: 1.5, borderColor: colors.ink, paddingHorizontal: 8, paddingVertical: 4 }}
-              >
+              <View key={t} style={{ backgroundColor: colors.paper, borderRadius: 10, borderWidth: 1.5, borderColor: colors.ink, paddingHorizontal: 8, paddingVertical: 4 }}>
                 <Txt variant="small" style={{ color: colors.ink }}>
                   {t}
                 </Txt>
-              </Animated.View>
+              </View>
             ))}
           </View>
         </Pressable>
@@ -118,11 +114,9 @@ export function Sort({ q, onAnswer, locked }: QuestionProps<'sort'>) {
             </Draggable>
           ))}
           {pool.length === 0 && (
-            <Animated.View entering={FadeIn}>
-              <Txt variant="subtitle" style={{ color: colors.muted }}>
-                All sorted! ✨
-              </Txt>
-            </Animated.View>
+            <Txt variant="subtitle" style={{ color: colors.muted }}>
+              All sorted! ✨
+            </Txt>
           )}
         </View>
         <View style={{ flexDirection: 'row', gap: 12 }}>

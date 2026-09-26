@@ -1,7 +1,7 @@
 /** Module 12 — Sentence / sequence builder. Tap or drag tiles into the answer line, then Check. */
 import { useMemo, useState } from 'react';
 import { Pressable, View } from 'react-native';
-import Animated, { LinearTransition, ZoomIn } from 'react-native-reanimated';
+import Animated from 'react-native-reanimated';
 import { Button, Txt } from '@/components/ui';
 import { fx } from '@/lib/feedback';
 import { shuffleNotIdentity } from '@/lib/random';
@@ -71,11 +71,9 @@ export function Order({ q, onAnswer, locked }: QuestionProps<'order'>) {
                 </Txt>
               )}
               {answer.map((t) => (
-                <Animated.View key={t.id} entering={ZoomIn.springify().damping(14)} layout={LinearTransition.springify()}>
-                  <Pressable onPress={() => remove(t)} accessibilityRole="button" accessibilityLabel={`Remove ${t.text}`}>
-                    <WordChip text={t.text} bg={colors.lime} />
-                  </Pressable>
-                </Animated.View>
+                <Pressable key={t.id} onPress={() => remove(t)} accessibilityRole="button" accessibilityLabel={`Remove ${t.text}`}>
+                  <WordChip text={t.text} bg={colors.lime} />
+                </Pressable>
               ))}
             </View>
           </DropZone>

@@ -1,7 +1,7 @@
 import { router } from 'expo-router';
 import { Pressable, View } from 'react-native';
 import { Avatar } from '@/components/avatar/Avatar';
-import { Pill, Txt } from '@/components/ui';
+import { FrameRow, Pill, Txt, useFrame } from '@/components/ui';
 import { greeting } from '@/features/progress/selectors';
 import { liveStreak, useActiveProfile, useProgress } from '@/store/app';
 import { colors } from '@/theme';
@@ -10,13 +10,12 @@ export function KidHeader({ title }: { title?: string }) {
   const profile = useActiveProfile();
   const p = useProgress();
   const streak = liveStreak(p);
+  const { small, isTablet } = useFrame();
   if (!profile) return null;
   return (
-    <View
-      style={{ flexDirection: 'row', alignItems: 'center', gap: 10, paddingHorizontal: 18, paddingTop: 8, paddingBottom: 6, maxWidth: 720, width: '100%', alignSelf: 'center' }}
-    >
+    <FrameRow style={{ flexDirection: 'row', alignItems: 'center', gap: small ? 8 : 10, paddingTop: 8, paddingBottom: 6 }}>
       <Pressable accessibilityLabel="My profile" onPress={() => router.push('/me')}>
-        <Avatar config={profile.avatar} size={44} />
+        <Avatar config={profile.avatar} size={isTablet ? 52 : small ? 38 : 44} />
       </Pressable>
       <View style={{ flex: 1 }}>
         {title ? (
@@ -34,6 +33,6 @@ export function KidHeader({ title }: { title?: string }) {
       </View>
       <Pill icon="🔥" value={streak} bg={streak > 0 ? colors['tangerine-soft'] : colors.paper} testID="streak-pill" />
       <Pill icon="🪙" value={p.coins} bg={colors['sun-soft']} testID="coin-pill" />
-    </View>
+    </FrameRow>
   );
 }

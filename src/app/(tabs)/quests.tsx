@@ -1,7 +1,6 @@
 import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { View } from 'react-native';
-import Animated, { FadeInDown } from 'react-native-reanimated';
 import { KidHeader } from '@/components/gamify/KidHeader';
 import { QuestRow } from '@/components/gamify/QuestRow';
 import { TAB_BAR_SPACE } from '@/components/gamify/TabBar';
@@ -36,7 +35,7 @@ export default function Quests() {
 
   return (
     <Screen header={<KidHeader title="Quests" />} bottomInset={TAB_BAR_SPACE}>
-      <Animated.View entering={FadeInDown}>
+      <View>
         <Chunky bg={colors.tangerine} innerStyle={{ padding: 16, gap: 14 }}>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 14 }}>
             <Txt style={{ fontSize: 50 }}>🔥</Txt>
@@ -79,12 +78,12 @@ export default function Quests() {
             Best streak: {p.streak.best} day{p.streak.best === 1 ? '' : 's'}
           </Txt>
         </Chunky>
-      </Animated.View>
+      </View>
 
       <SectionLabel right={<Txt variant="small">Resets in {countdown}</Txt>}>{`Today's quests · ${done}/${p.quests.list.length}`}</SectionLabel>
       <View style={{ gap: 12 }}>
         {p.quests.list.map((q, i) => (
-          <Animated.View key={q.id} entering={FadeInDown.delay(i * 70)}>
+          <View key={q.id}>
             <QuestRow
               quest={q}
               onClaim={() => {
@@ -92,7 +91,7 @@ export default function Quests() {
                 if (got) fx.coin();
               }}
             />
-          </Animated.View>
+          </View>
         ))}
       </View>
 

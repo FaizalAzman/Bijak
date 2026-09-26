@@ -3,7 +3,7 @@
   "level": 6,
   "title": "Standard 6",
   "titleAlt": "Tahun 6",
-  "version": 1,
+  "version": 2,
   "subjects": [
     {
       "id": "math",
@@ -14,7 +14,7 @@
       "topics": [
         {
           "id": "s6-math-mixed",
-          "title": "UPSR-style mixed practice",
+          "title": "Year 6 mixed practice",
           "titleAlt": "Latihan campuran",
           "emoji": "🎯",
           "quizzes": [

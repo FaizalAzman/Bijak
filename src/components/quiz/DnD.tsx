@@ -6,8 +6,9 @@
 import { createContext, useCallback, useContext, useRef, type ReactNode } from 'react';
 import { View, type StyleProp, type ViewStyle } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
-import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
+import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 import { haptic } from '@/lib/feedback';
+import { DURATION, EASE_OUT } from '@/theme/motion';
 
 type Rect = { x: number; y: number; w: number; h: number };
 interface Zones {
@@ -69,7 +70,7 @@ export function Draggable({
     .runOnJS(true)
     .onStart(() => {
       lifted.value = 1;
-      scale.value = withSpring(1.1, { damping: 12 });
+      scale.value = withTiming(1.04, { duration: DURATION.fast });
       haptic('select');
     })
     .onUpdate((e) => {
@@ -79,13 +80,13 @@ export function Draggable({
     .onEnd(async (e) => {
       const zone = zones ? await zones.hitTest(e.absoluteX, e.absoluteY) : null;
       const accepted = await onDrop(zone);
-      scale.value = withSpring(1);
+      scale.value = withTiming(1, { duration: DURATION.fast });
       if (accepted) {
         tx.value = 0;
         ty.value = 0;
       } else {
-        tx.value = withSpring(0, { damping: 14, stiffness: 180 });
-        ty.value = withSpring(0, { damping: 14, stiffness: 180 });
+        tx.value = withTiming(0, { duration: DURATION.base, easing: EASE_OUT });
+        ty.value = withTiming(0, { duration: DURATION.base, easing: EASE_OUT });
       }
       lifted.value = 0;
     });

@@ -1,13 +1,12 @@
 import { router, useLocalSearchParams } from 'expo-router';
 import { Check, Lock } from 'lucide-react-native';
 import { View } from 'react-native';
-import Animated, { FadeInUp, useAnimatedStyle, useSharedValue, withRepeat, withSequence, withTiming } from 'react-native-reanimated';
 import Svg, { Circle } from 'react-native-svg';
-import { useEffect } from 'react';
 import { Kancil } from '@/components/mascot/Kancil';
 import { Chunky, PressChunky, ProgressBar, Screen, TopBar, Txt } from '@/components/ui';
 import { useContentIndex } from '@/features/content/registry';
 import { subjectProgress, topicStatus } from '@/features/progress/selectors';
+import { useLayout } from '@/hooks/useLayout';
 import { useProgress } from '@/store/app';
 import { accent, colors } from '@/theme';
 
@@ -34,19 +33,13 @@ function Ring({ ratio, color, size }: { ratio: number; color: string; size: numb
   );
 }
 
-function Pulse({ children, active }: { children: React.ReactNode; active: boolean }) {
-  const s = useSharedValue(1);
-  useEffect(() => {
-    s.value = active ? withRepeat(withSequence(withTiming(1.06, { duration: 700 }), withTiming(1, { duration: 700 })), -1) : 1;
-  }, [active, s]);
-  const style = useAnimatedStyle(() => ({ transform: [{ scale: s.value }] }));
-  return <Animated.View style={style}>{children}</Animated.View>;
-}
-
 /** Duolingo-style winding learning path of topics. */
 export default function SubjectPath() {
   const { standardId, subjectId } = useLocalSearchParams<{ standardId: string; subjectId: string }>();
   const index = useContentIndex();
+  // Keep the winding path inside the screen: 180px-wide nodes swing at most to the edges.
+  const { innerWidth } = useLayout();
+  const swing = Math.max(0, Math.min(90, (innerWidth - 180) / 2));
   const p = useProgress();
   const standard = index.standard(standardId);
   const subject = index.subject(standardId, subjectId);
@@ -83,61 +76,53 @@ export default function SubjectPath() {
       <View style={{ paddingVertical: 26, alignItems: 'center' }}>
         {subject.topics.map((t, i) => {
           const st = statuses[i];
-          const offset = Math.sin(i * 1.15) * 80;
+          const offset = Math.sin(i * 1.15) * swing;
           const isCurrent = i === current;
           const size = 92;
           return (
-            <Animated.View
-              key={t.id}
-              entering={FadeInUp.delay(i * 50)
-                .springify()
-                .damping(14)}
-              style={{ marginBottom: 18 }}
-            >
+            <View key={t.id} style={{ marginBottom: 18 }}>
               <View style={{ alignItems: 'center', transform: [{ translateX: offset }], width: 180 }}>
                 {isCurrent && (
                   <View style={{ backgroundColor: colors.ink, paddingHorizontal: 12, paddingVertical: 5, borderRadius: 10, marginBottom: 8 }}>
                     <Txt style={{ color: colors.lime, fontFamily: 'PlusJakartaSans_800ExtraBold', fontSize: 12, letterSpacing: 1 }}>{st.stars ? 'CONTINUE' : 'START'}</Txt>
                   </View>
                 )}
-                <Pulse active={isCurrent}>
-                  <View style={{ width: size, height: size, alignItems: 'center', justifyContent: 'center' }}>
-                    <Ring ratio={st.ratio} color={st.mastered ? colors.mint : a.strong} size={size} />
-                    <PressChunky
-                      onPress={() => router.push(`/topic/${t.id}`)}
-                      bg={st.mastered ? colors.mint : isCurrent ? a.strong : colors.paper}
-                      radius={34}
-                      depth={5}
-                      accessibilityLabel={t.title}
-                      innerStyle={{ width: 68, height: 68, alignItems: 'center', justifyContent: 'center' }}
+                <View style={{ width: size, height: size, alignItems: 'center', justifyContent: 'center' }}>
+                  <Ring ratio={st.ratio} color={st.mastered ? colors.mint : a.strong} size={size} />
+                  <PressChunky
+                    onPress={() => router.push(`/topic/${t.id}`)}
+                    bg={st.mastered ? colors.mint : isCurrent ? a.strong : colors.paper}
+                    radius={34}
+                    depth={5}
+                    accessibilityLabel={t.title}
+                    innerStyle={{ width: 68, height: 68, alignItems: 'center', justifyContent: 'center' }}
+                  >
+                    <Txt style={{ fontSize: 30 }}>{t.emoji}</Txt>
+                  </PressChunky>
+                  {st.mastered && (
+                    <View
+                      style={{
+                        position: 'absolute',
+                        right: 2,
+                        top: 2,
+                        width: 26,
+                        height: 26,
+                        borderRadius: 13,
+                        backgroundColor: colors.ink,
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                      }}
                     >
-                      <Txt style={{ fontSize: 30 }}>{t.emoji}</Txt>
-                    </PressChunky>
-                    {st.mastered && (
-                      <View
-                        style={{
-                          position: 'absolute',
-                          right: 2,
-                          top: 2,
-                          width: 26,
-                          height: 26,
-                          borderRadius: 13,
-                          backgroundColor: colors.ink,
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                        }}
-                      >
-                        <Check size={15} color={colors.lime} strokeWidth={3.5} />
-                      </View>
-                    )}
-                  </View>
-                </Pulse>
+                      <Check size={15} color={colors.lime} strokeWidth={3.5} />
+                    </View>
+                  )}
+                </View>
                 <Txt variant="subtitle" numberOfLines={2} style={{ textAlign: 'center', marginTop: 4, fontSize: 14 }}>
                   {t.title}
                 </Txt>
                 <Txt style={{ fontSize: 13, letterSpacing: 2 }}>{'★'.repeat(st.stars) + '☆'.repeat(3 - st.stars)}</Txt>
               </View>
-            </Animated.View>
+            </View>
           );
         })}
         <View style={{ alignItems: 'center', marginTop: 8, gap: 6 }}>

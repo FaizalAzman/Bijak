@@ -1,7 +1,7 @@
 /** Module 10 — Multiple Choice engine: text / emoji options, instant validation, shake on wrong. */
 import { useEffect, useState } from 'react';
 import { View } from 'react-native';
-import Animated, { FadeInDown, useAnimatedStyle, useSharedValue, withSequence, withSpring, withTiming } from 'react-native-reanimated';
+import Animated from 'react-native-reanimated';
 import { PressChunky, Txt } from '@/components/ui';
 import { fx } from '@/lib/feedback';
 import { colors } from '@/theme';
@@ -26,23 +26,15 @@ function OptionTile({
   compact: boolean;
 }) {
   const { style: shakeStyle, shake } = useShake();
-  const pop = useSharedValue(1);
-  const popStyle = useAnimatedStyle(() => ({ transform: [{ scale: pop.value }] }));
   useEffect(() => {
     if (state === 'wrong') shake();
-    if (state === 'right') pop.set(withSequence(withTiming(1.08, { duration: 120 }), withSpring(1, { damping: 6 })));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state]);
   const bg = state === 'right' || state === 'reveal' ? colors.mint : state === 'wrong' ? colors.berry : colors.paper;
   const fg = state === 'wrong' ? colors.paper : colors.ink;
   return (
-    <Animated.View
-      entering={FadeInDown.delay(index * 50)
-        .springify()
-        .damping(16)}
-      style={{ flexBasis: compact ? '46%' : '100%', flexGrow: 1 }}
-    >
-      <Animated.View style={[shakeStyle, popStyle]}>
+    <View style={{ flexBasis: compact ? '46%' : '100%', flexGrow: 1 }}>
+      <Animated.View style={shakeStyle}>
         <PressChunky
           sound={false}
           disabled={disabled && state === 'idle'}
@@ -72,7 +64,7 @@ function OptionTile({
           ) : null}
         </PressChunky>
       </Animated.View>
-    </Animated.View>
+    </View>
   );
 }
 

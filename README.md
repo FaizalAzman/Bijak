@@ -46,5 +46,10 @@ See [`docs/SETUP.md`](docs/SETUP.md) for builds, env vars and cloud sync, and
 | 20 | Parent analytics: time per day/subject, accuracy, weak KSSR topics + offline activities | `src/app/parent/` |
 
 **Design:** NativeWind (Tailwind) tokens in `src/theme/tokens.js`; chunky neo-brutalist
-cards with hard ink shadows; Fredoka display + Plus Jakarta Sans body; Reanimated for all
-motion (press-down buttons, springs, confetti); Expo Haptics on every interaction.
+cards with hard ink shadows; Fredoka display + Plus Jakarta Sans body; Expo Haptics on
+every interaction. Motion is deliberately calm (`src/theme/motion.ts`): animation only
+confirms an action (press, right/wrong, drag, progress) or marks a rare milestone; no
+looping decoration or staggered entrances, and the device's Reduce Motion setting is honoured.
+Layouts adapt to the screen (`src/hooks/useLayout.ts`, `Grid`, `Screen frame`): tighter
+spacing on small phones, 2–5 column grids and two-column Home on tablets, and tablets can
+rotate while phones stay in portrait.

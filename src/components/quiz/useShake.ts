@@ -1,19 +1,11 @@
 import { useAnimatedStyle, useSharedValue, withSequence, withTiming } from 'react-native-reanimated';
 
-/** Horizontal "nope" shake used for wrong answers. */
+/** Short, small horizontal "nope" shake for a wrong answer (~200 ms). */
 export function useShake() {
   const x = useSharedValue(0);
   const style = useAnimatedStyle(() => ({ transform: [{ translateX: x.value }] }));
   const shake = () => {
-    x.set(
-      withSequence(
-        withTiming(-10, { duration: 50 }),
-        withTiming(10, { duration: 60 }),
-        withTiming(-8, { duration: 60 }),
-        withTiming(8, { duration: 60 }),
-        withTiming(0, { duration: 50 }),
-      ),
-    );
+    x.set(withSequence(withTiming(-6, { duration: 50 }), withTiming(6, { duration: 50 }), withTiming(-3, { duration: 50 }), withTiming(0, { duration: 50 })));
   };
   return { style, shake };
 }

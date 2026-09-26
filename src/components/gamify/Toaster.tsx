@@ -1,10 +1,11 @@
 import { useEffect } from 'react';
 import { View } from 'react-native';
-import Animated, { FadeOutUp, SlideInUp } from 'react-native-reanimated';
+import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { create } from 'zustand';
 import { Chunky, Txt } from '@/components/ui';
 import { colors } from '@/theme';
+import { DURATION } from '@/theme/motion';
 
 interface Toast {
   id: number;
@@ -42,7 +43,7 @@ export function Toaster() {
   if (!current) return null;
   return (
     <View pointerEvents="none" style={{ position: 'absolute', top: insets.top + 8, left: 16, right: 16, alignItems: 'center' }}>
-      <Animated.View key={current.id} entering={SlideInUp.springify().damping(14)} exiting={FadeOutUp} style={{ width: '100%', maxWidth: 460 }}>
+      <Animated.View key={current.id} entering={FadeIn.duration(DURATION.base)} exiting={FadeOut.duration(DURATION.base)} style={{ width: '100%', maxWidth: 460 }}>
         <Chunky bg={current.bg ?? colors.lime} innerStyle={{ flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 14, paddingVertical: 12 }}>
           <Txt style={{ fontSize: 30 }}>{current.emoji}</Txt>
           <View style={{ flex: 1 }}>

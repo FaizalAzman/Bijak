@@ -1,4 +1,4 @@
-import { Text, type TextProps } from 'react-native';
+import { StyleSheet, Text, type TextProps } from 'react-native';
 
 type Variant = 'hero' | 'display' | 'title' | 'subtitle' | 'body' | 'small' | 'label' | 'mono' | 'number';
 
@@ -17,9 +17,19 @@ const VARIANTS: Record<Variant, string> = {
 /** Keep grouped numbers like "10 000" or "RM 5" on one line. */
 const keepNumbersTogether = (s: string) => s.replace(/(\d) (?=\d{3}\b)/g, '$1\u00A0');
 
-export function Txt({ variant = 'body', className = '', children, ...rest }: TextProps & { variant?: Variant; className?: string }) {
+/**
+ * A custom fontSize without a matching lineHeight inherits the variant's line height, and
+ * iOS/Android then crop anything taller (emoji especially). Keep line height ≥ 1.3× size.
+ */
+function withSafeLineHeight(style: TextProps['style']): TextProps['style'] {
+  const flat = StyleSheet.flatten(style);
+  if (!flat?.fontSize || flat.lineHeight != null) return style;
+  return [style, { lineHeight: Math.ceil(flat.fontSize * 1.3) }];
+}
+
+export function Txt({ variant = 'body', className = '', children, style, maxFontSizeMultiplier = 1.4, ...rest }: TextProps & { variant?: Variant; className?: string }) {
   return (
-    <Text {...rest} className={`${VARIANTS[variant]} ${className}`}>
+    <Text {...rest} style={withSafeLineHeight(style)} maxFontSizeMultiplier={maxFontSizeMultiplier} className={`${VARIANTS[variant]} ${className}`}>
       {typeof children === 'string' ? keepNumbersTogether(children) : children}
     </Text>
   );

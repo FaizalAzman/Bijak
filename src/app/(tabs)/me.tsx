@@ -1,14 +1,14 @@
 import { router } from 'expo-router';
 import { ChevronRight, Lock, Palette, Trophy, Users } from 'lucide-react-native';
 import { View } from 'react-native';
-import Animated, { FadeInDown } from 'react-native-reanimated';
 import { Avatar } from '@/components/avatar/Avatar';
 import { KidHeader } from '@/components/gamify/KidHeader';
 import { TAB_BAR_SPACE } from '@/components/gamify/TabBar';
-import { Chunky, PressChunky, Screen, SectionLabel, Toggle, Txt } from '@/components/ui';
+import { Chunky, Grid, PressChunky, Screen, SectionLabel, Toggle, Txt } from '@/components/ui';
 import { allBadges } from '@/features/gamify/badges';
 import { levelProgress, tierFor } from '@/features/gamify/xp';
 import { useContentIndex } from '@/features/content/registry';
+import { useLayout } from '@/hooks/useLayout';
 import { pct } from '@/lib/format';
 import { liveStreak, useActiveProfile, useApp, useProgress } from '@/store/app';
 import { accent, colors } from '@/theme';
@@ -44,6 +44,7 @@ export default function Me() {
   const index = useContentIndex();
   const settings = useApp((s) => s.settings);
   const update = useApp((s) => s.updateSettings);
+  const layout = useLayout();
   if (!profile) return null;
   const lp = levelProgress(p.xp);
   const tier = tierFor(lp.level);
@@ -52,8 +53,8 @@ export default function Me() {
 
   return (
     <Screen header={<KidHeader title="Me" />} bottomInset={TAB_BAR_SPACE}>
-      <Animated.View entering={FadeInDown} style={{ alignItems: 'center', gap: 8 }}>
-        <Avatar config={profile.avatar} size={150} mood="happy" />
+      <View style={{ alignItems: 'center', gap: 8 }}>
+        <Avatar config={profile.avatar} size={layout.isTablet ? 170 : layout.small ? 120 : 150} mood="happy" />
         <Txt variant="hero">{profile.name}</Txt>
         <View style={{ flexDirection: 'row', gap: 8 }}>
           <View style={{ backgroundColor: colors.ink, borderRadius: 999, paddingHorizontal: 12, paddingVertical: 4 }}>
@@ -65,16 +66,15 @@ export default function Me() {
             <Txt style={{ fontFamily: 'PlusJakartaSans_800ExtraBold', fontSize: 13 }}>{std?.title ?? `Standard ${profile.level}`}</Txt>
           </View>
         </View>
-      </Animated.View>
+      </View>
 
-      <View style={{ flexDirection: 'row', gap: 10, marginTop: 20 }}>
-        <Stat label="Correct answers" value={p.totals.correct} bg={colors['mint-soft']} />
-        <Stat label="Accuracy" value={`${pct(p.totals.correct, p.totals.answered)}%`} bg={colors['sky-soft']} />
-      </View>
-      <View style={{ flexDirection: 'row', gap: 10, marginTop: 10 }}>
-        <Stat label="Day streak" value={`🔥 ${liveStreak(p)}`} bg={colors['tangerine-soft']} />
-        <Stat label="Badges" value={`🏅 ${badges.length}`} bg={colors['sun-soft']} />
-      </View>
+      <View style={{ height: 20 }} />
+      <Grid minItemWidth={140} maxColumns={4} gap={10}>
+        <Stat key="correct" label="Correct answers" value={p.totals.correct} bg={colors['mint-soft']} />
+        <Stat key="accuracy" label="Accuracy" value={`${pct(p.totals.correct, p.totals.answered)}%`} bg={colors['sky-soft']} />
+        <Stat key="streak" label="Day streak" value={`🔥 ${liveStreak(p)}`} bg={colors['tangerine-soft']} />
+        <Stat key="badges" label="Badges" value={`🏅 ${badges.length}`} bg={colors['sun-soft']} />
+      </Grid>
 
       {badges.length > 0 && (
         <>

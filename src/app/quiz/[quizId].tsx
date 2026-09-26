@@ -5,7 +5,7 @@
 import { router, useLocalSearchParams } from 'expo-router';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { ScrollView, View } from 'react-native';
-import Animated, { FadeIn, FadeOut, ZoomIn } from 'react-native-reanimated';
+import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
 import { LevelUpModal } from '@/components/gamify/LevelUp';
 import { toast } from '@/components/gamify/Toaster';
 import { Kancil } from '@/components/mascot/Kancil';
@@ -13,7 +13,7 @@ import { FeedbackSheet } from '@/components/quiz/FeedbackSheet';
 import { QuestionView } from '@/components/quiz/QuestionView';
 import { Results, type ResultsData } from '@/components/quiz/Results';
 import { TimerBar } from '@/components/quiz/TimerBar';
-import { BackButton, Button, ProgressBar, Screen, Txt } from '@/components/ui';
+import { BackButton, Button, FrameRow, ProgressBar, Screen, Txt } from '@/components/ui';
 import { buildQuizQuestions, getContentIndex, questionKey } from '@/features/content/registry';
 import type { Question } from '@/features/content/schema';
 import { levelFromXp } from '@/features/gamify/xp';
@@ -213,9 +213,9 @@ function QuizRun({ session, onRetry }: { session: Session; onRetry: () => void }
       <Screen
         scroll={false}
         header={
-          <View style={{ paddingHorizontal: 18, paddingTop: 8 }}>
+          <FrameRow style={{ paddingTop: 8 }}>
             <BackButton close />
-          </View>
+          </FrameRow>
         }
       >
         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', gap: 16 }}>
@@ -254,7 +254,7 @@ function QuizRun({ session, onRetry }: { session: Session; onRetry: () => void }
     <Screen
       scroll={false}
       header={
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 18, paddingVertical: 8, maxWidth: 720, width: '100%', alignSelf: 'center' }}>
+        <FrameRow style={{ flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 8 }}>
           <BackButton close />
           <View style={{ flex: 1 }}>
             {timeAttack ? (
@@ -273,9 +273,7 @@ function QuizRun({ session, onRetry }: { session: Session; onRetry: () => void }
               </Txt>
             </View>
           ) : combo >= 2 ? (
-            <Animated.View
-              key={combo}
-              entering={ZoomIn.springify().damping(8)}
+            <View
               style={{
                 flexDirection: 'row',
                 alignItems: 'center',
@@ -290,13 +288,13 @@ function QuizRun({ session, onRetry }: { session: Session; onRetry: () => void }
               <Txt variant="number" style={{ fontSize: 16 }}>
                 🔥{combo}
               </Txt>
-            </Animated.View>
+            </View>
           ) : (
             <Txt variant="mono">
               {i + 1}/{session.items.length}
             </Txt>
           )}
-        </View>
+        </FrameRow>
       }
     >
       {dragType ? (
@@ -330,9 +328,9 @@ export default function QuizScreen() {
       <Screen
         scroll={false}
         header={
-          <View style={{ paddingHorizontal: 18, paddingTop: 8 }}>
+          <FrameRow style={{ paddingTop: 8 }}>
             <BackButton close />
-          </View>
+          </FrameRow>
         }
       >
         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', gap: 14 }}>

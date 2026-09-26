@@ -1,9 +1,9 @@
 import type { BottomTabBarProps } from 'expo-router/js-tabs';
 import { BookOpen, Home, ShoppingBag, Target, UserRound } from 'lucide-react-native';
 import { Pressable, View } from 'react-native';
-import Animated, { useAnimatedStyle, withSpring } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Txt } from '@/components/ui';
+import { useLayout } from '@/hooks/useLayout';
 import { fx } from '@/lib/feedback';
 import { useProgress } from '@/store/app';
 import { colors } from '@/theme';
@@ -11,11 +11,8 @@ import { colors } from '@/theme';
 const ICONS = { home: Home, learn: BookOpen, quests: Target, shop: ShoppingBag, me: UserRound } as const;
 const LABELS = { home: 'Home', learn: 'Learn', quests: 'Quests', shop: 'Shop', me: 'Me' } as const;
 
-function Tab({ name, focused, onPress, badge }: { name: keyof typeof ICONS; focused: boolean; onPress: () => void; badge?: number }) {
+function Tab({ name, focused, onPress, badge, small }: { name: keyof typeof ICONS; focused: boolean; onPress: () => void; badge?: number; small: boolean }) {
   const Icon = ICONS[name];
-  const style = useAnimatedStyle(() => ({
-    transform: [{ translateY: withSpring(focused ? -3 : 0, { damping: 12 }) }, { scale: withSpring(focused ? 1.05 : 1, { damping: 12 }) }],
-  }));
   return (
     <Pressable
       accessibilityRole="tab"
@@ -27,26 +24,23 @@ function Tab({ name, focused, onPress, badge }: { name: keyof typeof ICONS; focu
       }}
       style={{ flex: 1, alignItems: 'center' }}
     >
-      <Animated.View
-        style={[
-          {
-            alignItems: 'center',
-            gap: 2,
-            paddingVertical: 6,
-            paddingHorizontal: 12,
-            borderRadius: 16,
-            backgroundColor: focused ? colors.lime : 'transparent',
-            borderWidth: 2,
-            borderColor: focused ? colors.ink : 'transparent',
-          },
-          style,
-        ]}
+      <View
+        style={{
+          alignItems: 'center',
+          gap: 2,
+          paddingVertical: 6,
+          paddingHorizontal: small ? 6 : 12,
+          borderRadius: 16,
+          backgroundColor: focused ? colors.lime : 'transparent',
+          borderWidth: 2,
+          borderColor: focused ? colors.ink : 'transparent',
+        }}
       >
-        <Icon size={22} color={colors.ink} strokeWidth={focused ? 2.75 : 2.25} />
-        <Txt variant="small" style={{ fontSize: 11, color: colors.ink, fontFamily: focused ? 'PlusJakartaSans_800ExtraBold' : 'PlusJakartaSans_600SemiBold' }}>
+        <Icon size={small ? 20 : 22} color={colors.ink} strokeWidth={focused ? 2.75 : 2.25} />
+        <Txt variant="small" style={{ fontSize: small ? 10 : 11, color: colors.ink, fontFamily: focused ? 'PlusJakartaSans_800ExtraBold' : 'PlusJakartaSans_600SemiBold' }}>
           {LABELS[name]}
         </Txt>
-      </Animated.View>
+      </View>
       {!!badge && (
         <View
           style={{
@@ -76,6 +70,7 @@ export const TAB_BAR_SPACE = 96;
 /** Floating chunky tab bar. */
 export function TabBar({ state, navigation }: BottomTabBarProps) {
   const insets = useSafeAreaInsets();
+  const { small } = useLayout();
   const progress = useProgress();
   const claimable = progress.quests.list.filter((q) => q.progress >= q.target && !q.claimed).length;
   return (
@@ -100,6 +95,7 @@ export function TabBar({ state, navigation }: BottomTabBarProps) {
                   const event = navigation.emit({ type: 'tabPress', target: route.key, canPreventDefault: true });
                   if (!focused && !event.defaultPrevented) navigation.navigate(route.name);
                 }}
+                small={small}
               />
             );
           })}

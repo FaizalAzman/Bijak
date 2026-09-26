@@ -1,7 +1,7 @@
 import { Check, X } from 'lucide-react-native';
 import { useState } from 'react';
 import { View } from 'react-native';
-import Animated, { ZoomIn } from 'react-native-reanimated';
+import Animated from 'react-native-reanimated';
 import { PressChunky, Txt } from '@/components/ui';
 import { fx } from '@/lib/feedback';
 import { colors } from '@/theme';
@@ -28,7 +28,7 @@ export function TrueFalse({ q, onAnswer, locked }: QuestionProps<'trueFalse'>) {
     const bg = picked == null ? (v ? colors['mint-soft'] : colors['berry-soft']) : v === q.answer ? colors.mint : chosen ? colors.berry : colors.paper;
     const Icon = v ? Check : X;
     return (
-      <Animated.View entering={ZoomIn.delay(v ? 0 : 80).springify()} style={{ flex: 1 }}>
+      <View style={{ flex: 1 }}>
         <PressChunky
           sound={false}
           onPress={() => pick(v)}
@@ -53,7 +53,7 @@ export function TrueFalse({ q, onAnswer, locked }: QuestionProps<'trueFalse'>) {
           </View>
           <Txt variant="display">{v ? L.true : L.false}</Txt>
         </PressChunky>
-      </Animated.View>
+      </View>
     );
   };
   return (

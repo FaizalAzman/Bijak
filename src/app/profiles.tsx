@@ -1,10 +1,9 @@
 import { router } from 'expo-router';
 import { Plus } from 'lucide-react-native';
 import { View } from 'react-native';
-import Animated, { FadeInDown } from 'react-native-reanimated';
 import { Avatar } from '@/components/avatar/Avatar';
 import { MascotSays } from '@/components/mascot/MascotSays';
-import { Button, PressChunky, Screen, Txt } from '@/components/ui';
+import { Button, Grid, PressChunky, Screen, Txt } from '@/components/ui';
 import { levelFromXp } from '@/features/gamify/xp';
 import { useApp } from '@/store/app';
 import { colors } from '@/theme';
@@ -14,19 +13,20 @@ export default function Profiles() {
   const progress = useApp((s) => s.progress);
   const select = useApp((s) => s.selectProfile);
   return (
-    <Screen>
+    <Screen frame="wide">
       <View style={{ paddingTop: 24, gap: 22 }}>
         <MascotSays text="Who's learning today?" mood="wave" size={100} />
-        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 14 }}>
-          {profiles.map((p, i) => (
-            <Animated.View key={p.id} entering={FadeInDown.delay(i * 80).springify()} style={{ width: '47%', flexGrow: 1 }}>
+        <Grid minItemWidth={150} maxColumns={4} gap={14}>
+          {profiles.map((p) => (
+            <View key={p.id} style={{ flex: 1 }}>
               <PressChunky
                 onPress={() => {
                   select(p.id);
                   router.replace('/home');
                 }}
-                innerStyle={{ padding: 16, alignItems: 'center', gap: 8 }}
+                innerStyle={{ flex: 1, padding: 16, alignItems: 'center', gap: 8 }}
                 accessibilityLabel={p.name}
+                style={{ flex: 1 }}
               >
                 <Avatar config={p.avatar} size={96} />
                 <Txt variant="title">{p.name}</Txt>
@@ -34,13 +34,14 @@ export default function Profiles() {
                   Standard {p.level} · Lv {levelFromXp(progress[p.id]?.xp ?? 0)}
                 </Txt>
               </PressChunky>
-            </Animated.View>
+            </View>
           ))}
-          <View style={{ width: '47%', flexGrow: 1 }}>
+          <View key="add" style={{ flex: 1 }}>
             <PressChunky
+              style={{ flex: 1 }}
               onPress={() => router.push('/parent?next=add-child')}
               bg={colors.sand}
-              innerStyle={{ padding: 16, alignItems: 'center', justifyContent: 'center', gap: 8, minHeight: 172 }}
+              innerStyle={{ flex: 1, padding: 16, alignItems: 'center', justifyContent: 'center', gap: 8, minHeight: 172 }}
               accessibilityLabel="Add learner"
             >
               <View
@@ -51,7 +52,7 @@ export default function Profiles() {
               <Txt variant="subtitle">Add learner</Txt>
             </PressChunky>
           </View>
-        </View>
+        </Grid>
         <Button label="Parent zone 🔒" tone="paper" onPress={() => router.push('/parent')} />
       </View>
     </Screen>

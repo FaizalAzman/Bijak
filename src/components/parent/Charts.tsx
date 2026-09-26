@@ -4,6 +4,7 @@ import { Pressable, View } from 'react-native';
 import Animated, { FadeIn } from 'react-native-reanimated';
 import { Txt } from '@/components/ui';
 import { colors } from '@/theme';
+import { DURATION } from '@/theme/motion';
 
 const BAR = colors.grape;
 
@@ -25,7 +26,10 @@ export function ColumnChart({ data, unit, height = 150 }: { data: { label: strin
               style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-end', height: height + 24 }}
             >
               {shown === i && (
-                <Animated.View entering={FadeIn} style={{ marginBottom: 4, backgroundColor: colors.ink, borderRadius: 6, paddingHorizontal: 5, paddingVertical: 2 }}>
+                <Animated.View
+                  entering={FadeIn.duration(DURATION.fast)}
+                  style={{ marginBottom: 4, backgroundColor: colors.ink, borderRadius: 6, paddingHorizontal: 5, paddingVertical: 2 }}
+                >
                   <Txt style={{ color: colors.paper, fontFamily: 'PlusJakartaSans_800ExtraBold', fontSize: 11 }}>
                     {d.value}
                     {unit}

@@ -1,11 +1,10 @@
 import { router } from 'expo-router';
 import { ChevronRight, Search } from 'lucide-react-native';
 import { useMemo, useState } from 'react';
-import { ScrollView, TextInput, View } from 'react-native';
-import Animated, { FadeInDown } from 'react-native-reanimated';
+import { TextInput, View } from 'react-native';
 import { KidHeader } from '@/components/gamify/KidHeader';
 import { TAB_BAR_SPACE } from '@/components/gamify/TabBar';
-import { Chip, Chunky, PressChunky, ProgressBar, Screen, SectionLabel, Tag, Txt } from '@/components/ui';
+import { Chip, Chunky, Grid, HScroll, PressChunky, ProgressBar, Screen, SectionLabel, Tag, Txt } from '@/components/ui';
 import { useContentIndex } from '@/features/content/registry';
 import { subjectProgress, topicStatus } from '@/features/progress/selectors';
 import { useActiveProfile, useProgress } from '@/store/app';
@@ -31,15 +30,15 @@ export default function Learn() {
 
   if (!standard) return null;
   return (
-    <Screen header={<KidHeader title="Learn" />} bottomInset={TAB_BAR_SPACE}>
+    <Screen frame="wide" header={<KidHeader title="Learn" />} bottomInset={TAB_BAR_SPACE}>
       <Txt variant="body" style={{ color: colors.muted, marginBottom: 12 }}>
         Every KSSR topic, lesson and quiz, by standard.
       </Txt>
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginHorizontal: -18 }} contentContainerStyle={{ gap: 8, paddingHorizontal: 18 }}>
+      <HScroll>
         {index.standards.map((s) => (
           <Chip key={s.id} label={s.title} count={s.subjects.reduce((n, x) => n + x.topics.length, 0)} selected={s.id === standard.id} onPress={() => setStdId(s.id)} />
         ))}
-      </ScrollView>
+      </HScroll>
 
       <Chunky style={{ marginTop: 16 }} depth={3} innerStyle={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: 14, gap: 10 }}>
         <Search size={18} color={colors.muted} strokeWidth={2.5} />
@@ -53,20 +52,22 @@ export default function Learn() {
       </Chunky>
 
       {query.trim() ? (
-        <View style={{ marginTop: 14, gap: 10 }}>
+        <View style={{ marginTop: 14 }}>
           <SectionLabel>{`${results.length} result${results.length === 1 ? '' : 's'}`}</SectionLabel>
-          {results.map(({ std, sub, t }) => (
-            <PressChunky key={t.id} depth={3} onPress={() => router.push(`/topic/${t.id}`)} innerStyle={{ padding: 12, flexDirection: 'row', gap: 12, alignItems: 'center' }}>
-              <Txt style={{ fontSize: 26 }}>{t.emoji}</Txt>
-              <View style={{ flex: 1 }}>
-                <Txt variant="subtitle">{t.title}</Txt>
-                <Txt variant="small">
-                  {std.title} · {sub.name}
-                </Txt>
-              </View>
-              <ChevronRight size={20} color={colors.ink} />
-            </PressChunky>
-          ))}
+          <Grid minItemWidth={300} maxColumns={2} gap={10}>
+            {results.map(({ std, sub, t }) => (
+              <PressChunky key={t.id} depth={3} onPress={() => router.push(`/topic/${t.id}`)} innerStyle={{ padding: 12, flexDirection: 'row', gap: 12, alignItems: 'center' }}>
+                <Txt style={{ fontSize: 26 }}>{t.emoji}</Txt>
+                <View style={{ flex: 1 }}>
+                  <Txt variant="subtitle">{t.title}</Txt>
+                  <Txt variant="small">
+                    {std.title} · {sub.name}
+                  </Txt>
+                </View>
+                <ChevronRight size={20} color={colors.ink} />
+              </PressChunky>
+            ))}
+          </Grid>
         </View>
       ) : (
         <View style={{ marginTop: 6 }}>
@@ -77,13 +78,13 @@ export default function Learn() {
               <Txt variant="small">New lessons for {standard.title} will download automatically.</Txt>
             </Chunky>
           )}
-          <View style={{ gap: 14 }}>
-            {standard.subjects.map((s, i) => {
+          <Grid minItemWidth={300} maxColumns={2} gap={14}>
+            {standard.subjects.map((s) => {
               const sp = subjectProgress(s, p);
               const a = accent(s.color);
               const started = s.topics.filter((t) => topicStatus(t, p).stars > 0).length;
               return (
-                <Animated.View key={s.id} entering={FadeInDown.delay(i * 60)}>
+                <View key={s.id}>
                   <PressChunky onPress={() => router.push(`/subject/${standard.id}/${s.id}`)} innerStyle={{ padding: 14, gap: 12 }} accessibilityLabel={s.name}>
                     <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
                       <View
@@ -118,10 +119,10 @@ export default function Learn() {
                       </Txt>
                     </View>
                   </PressChunky>
-                </Animated.View>
+                </View>
               );
             })}
-          </View>
+          </Grid>
         </View>
       )}
     </Screen>

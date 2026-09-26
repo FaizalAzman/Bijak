@@ -2,24 +2,27 @@ import { router } from 'expo-router';
 import { ArrowRight } from 'lucide-react-native';
 import { useState } from 'react';
 import { KeyboardAvoidingView, Platform, View } from 'react-native';
-import Animated, { FadeInDown, FadeInRight } from 'react-native-reanimated';
+import Animated from 'react-native-reanimated';
 import { Avatar } from '@/components/avatar/Avatar';
 import { AvatarBasics } from '@/components/avatar/AvatarBasics';
 import { MascotSays } from '@/components/mascot/MascotSays';
 import { Kancil } from '@/components/mascot/Kancil';
-import { Button, Chip, Chunky, Field, Keypad, PinDots, ProgressBar, Screen, Txt } from '@/components/ui';
+import { Button, Chip, Chunky, Field, FrameRow, Keypad, PinDots, ProgressBar, Screen, Txt } from '@/components/ui';
 import { useContentIndex } from '@/features/content/registry';
 import { DEFAULT_AVATAR, type AvatarConfig } from '@/features/gamify/shop';
+import { useLayout } from '@/hooks/useLayout';
 import { fx } from '@/lib/feedback';
 import { setParentPin } from '@/lib/secure';
 import { useApp } from '@/store/app';
 import { colors } from '@/theme';
+import { swapIn } from '@/theme/motion';
 
 type Step = 'welcome' | 'parent' | 'pin' | 'confirm' | 'child' | 'avatar';
 const ORDER: Step[] = ['welcome', 'parent', 'pin', 'confirm', 'child', 'avatar'];
 
 export default function Onboarding() {
   const index = useContentIndex();
+  const layout = useLayout();
   const hasParent = useApp((s) => !!s.parent);
   const [step, setStep] = useState<Step>(hasParent ? 'child' : 'welcome');
   const [parentName, setParentName] = useState('');
@@ -80,18 +83,18 @@ export default function Onboarding() {
       <Screen
         header={
           step !== 'welcome' ? (
-            <View style={{ paddingHorizontal: 18, paddingTop: 10, maxWidth: 720, width: '100%', alignSelf: 'center' }}>
+            <FrameRow style={{ paddingTop: 10 }}>
               <ProgressBar value={progress} height={12} />
-            </View>
+            </FrameRow>
           ) : null
         }
       >
         {step === 'welcome' ? (
           <View style={{ alignItems: 'center', paddingTop: 40, gap: 18 }}>
-            <Animated.View entering={FadeInDown.springify().damping(12)}>
-              <Kancil mood="wave" size={190} />
-            </Animated.View>
-            <Animated.View entering={FadeInDown.delay(150)} style={{ alignItems: 'center', gap: 8 }}>
+            <View>
+              <Kancil mood="wave" size={layout.isTablet ? 220 : layout.small ? 140 : 190} />
+            </View>
+            <View style={{ alignItems: 'center', gap: 8 }}>
               <View style={{ flexDirection: 'row', alignItems: 'baseline' }}>
                 <Txt variant="hero" style={{ fontSize: 56, lineHeight: 64 }}>
                   bijak
@@ -101,8 +104,8 @@ export default function Onboarding() {
               <Txt variant="subtitle" style={{ textAlign: 'center', color: colors.muted, maxWidth: 300 }}>
                 Fun KSSR learning for Standard 1–6. Maths, Science, English & Bahasa Melayu.
               </Txt>
-            </Animated.View>
-            <Animated.View entering={FadeInDown.delay(300)} style={{ width: '100%', gap: 12, marginTop: 20 }}>
+            </View>
+            <View style={{ width: '100%', gap: 12, marginTop: 20 }}>
               {[
                 ['🎮', 'Quizzes that feel like games'],
                 ['🧠', 'Smart review of tricky questions'],
@@ -113,7 +116,7 @@ export default function Onboarding() {
                   <Txt variant="subtitle">{t}</Txt>
                 </Chunky>
               ))}
-            </Animated.View>
+            </View>
             <View style={{ width: '100%', marginTop: 18 }}>
               <Button
                 label="Let's go!"
@@ -127,7 +130,7 @@ export default function Onboarding() {
             </View>
           </View>
         ) : (
-          <Animated.View key={step} entering={FadeInRight.springify().damping(16)} style={{ gap: 20, paddingTop: 12 }}>
+          <Animated.View key={step} entering={swapIn} style={{ gap: 20, paddingTop: 12 }}>
             <MascotSays text={mascot[step].text} mood={mascot[step].mood} />
 
             {step === 'parent' && (

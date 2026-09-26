@@ -45,4 +45,6 @@ Docs: https://docs.expo.dev/eas/index.md
 - Curriculum lives in `content/**/*.json`; run `npm run validate-content` after edits. See `docs/CONTENT.md`.
 - Design tokens: `src/theme/tokens.js` (shared with `tailwind.config.js`). Reuse `src/components/ui` (Chunky, Button, Txt…).
 - Reanimated shared values: prefer `.set()` in callbacks returned from hooks (React Compiler lint).
+- Layout must work from a 320px phone to a landscape tablet: wrap screens in `Screen` (`frame="wide"` for grid screens), use `Grid` instead of fixed `%` widths, `HScroll` for edge-to-edge scrollers, and `useLayout()`/`useFrame()` for size decisions. When a card stretches to its row, pass `style={{ flex: 1 }}` to it.
+- Motion must stay calm (see `src/theme/motion.ts`): animate only to confirm an action or mark a rare milestone. No looping/idle animations, staggered list entrances, or bouncy springs — they distract from learning.
 - Verify with `npm run typecheck && npm run lint && npm run validate-content`.

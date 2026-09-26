@@ -1,7 +1,6 @@
 import { router, useLocalSearchParams } from 'expo-router';
 import { BookOpen, ChevronRight, Play, Timer } from 'lucide-react-native';
 import { View } from 'react-native';
-import Animated, { FadeInDown } from 'react-native-reanimated';
 import { toSlides } from '@/components/lesson/LessonBlocks';
 import { Chunky, PressChunky, Screen, SectionLabel, Tag, TopBar, Txt } from '@/components/ui';
 import { useContentIndex } from '@/features/content/registry';
@@ -27,7 +26,7 @@ export default function TopicScreen() {
 
   return (
     <Screen header={<TopBar title={subject.name} />}>
-      <Animated.View entering={FadeInDown.duration(350)}>
+      <View>
         <Chunky bg={a.soft} innerStyle={{ padding: 18, gap: 10, alignItems: 'flex-start' }}>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 14 }}>
             <View
@@ -60,10 +59,10 @@ export default function TopicScreen() {
             {st.mastered ? <Tag label="Mastered" /> : null}
           </View>
         </Chunky>
-      </Animated.View>
+      </View>
 
       {topic.objectives.length > 0 && (
-        <Animated.View entering={FadeInDown.delay(60)}>
+        <View>
           <SectionLabel>You will learn</SectionLabel>
           <Chunky depth={3} innerStyle={{ padding: 14, gap: 10 }}>
             {topic.objectives.map((o) => (
@@ -79,11 +78,11 @@ export default function TopicScreen() {
               </View>
             ))}
           </Chunky>
-        </Animated.View>
+        </View>
       )}
 
       {topic.lesson.length > 0 && (
-        <Animated.View entering={FadeInDown.delay(120)}>
+        <View>
           <SectionLabel>Lesson</SectionLabel>
           <PressChunky
             onPress={() => router.push(`/lesson/${topic.id}`)}
@@ -100,10 +99,10 @@ export default function TopicScreen() {
             </View>
             <ChevronRight size={22} color={colors.ink} strokeWidth={3} />
           </PressChunky>
-        </Animated.View>
+        </View>
       )}
 
-      <Animated.View entering={FadeInDown.delay(180)}>
+      <View>
         <SectionLabel>Quizzes</SectionLabel>
         <View style={{ gap: 12 }}>
           {topic.quizzes.map((q) => {
@@ -143,7 +142,7 @@ export default function TopicScreen() {
             );
           })}
         </View>
-      </Animated.View>
+      </View>
     </Screen>
   );
 }
