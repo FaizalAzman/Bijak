@@ -16,11 +16,11 @@ import { TimerBar } from '@/components/quiz/TimerBar';
 import { BackButton, Button, FrameRow, ProgressBar, Screen, Txt } from '@/components/ui';
 import { buildQuizQuestions, getContentIndex, questionKey } from '@/features/content/registry';
 import type { Question } from '@/features/content/schema';
-import { levelFromXp } from '@/features/gamify/xp';
+import { levelFromXp, REWARDS } from '@/features/gamify/xp';
 import { dueCards, type SrsContext } from '@/features/srs/srs';
 import { fx, playSfx, speak, stopSpeaking } from '@/lib/feedback';
 import { telemetry } from '@/lib/telemetry';
-import { useApp } from '@/store/app';
+import { REVIEW_QUIZ_ID, useApp } from '@/store/app';
 import { colors } from '@/theme';
 
 interface Item {
@@ -40,7 +40,7 @@ interface Session {
 }
 
 function buildSession(quizId: string, fixed = false): Session | null {
-  if (quizId === 'review') {
+  if (quizId === REVIEW_QUIZ_ID) {
     const p = useApp.getState();
     const prog = p.activeProfileId ? p.progress[p.activeProfileId] : undefined;
     const cards = prog ? dueCards(prog.srs, Date.now(), 10) : [];
@@ -50,7 +50,7 @@ function buildSession(quizId: string, fixed = false): Session | null {
       title: 'Tricky questions',
       mode: 'review',
       seconds: 0,
-      quizId: 'review',
+      quizId: REVIEW_QUIZ_ID,
       standardId: first.standardId,
       subjectId: first.subjectId,
       items: cards.map((c) => ({ q: c.q, ctx: { key: c.key, quizId: c.quizId, standardId: c.standardId, subjectId: c.subjectId, topicId: c.topicId, q: c.q } })),
@@ -131,7 +131,7 @@ function QuizRun({ session, onRetry }: { session: Session; onRetry: () => void }
       correct: finalCorrect,
       total: timeAttack ? finalAnswered : session.items.length,
       xp: sessionXp.current + reward.xp,
-      coins: finalCorrect + reward.coins,
+      coins: finalCorrect * REWARDS.coinPerCorrect + reward.coins,
       seconds,
       streak: reward.streak,
       newBest: reward.newBest,

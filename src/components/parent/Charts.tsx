@@ -21,6 +21,7 @@ export function ColumnChart({ data, unit, height = 150 }: { data: { label: strin
           return (
             <Pressable
               key={d.label + i}
+              accessibilityRole="button"
               accessibilityLabel={`${d.label}: ${d.value} ${unit}`}
               onPress={() => setSel(sel === i ? null : i)}
               style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-end', height: height + 24 }}

@@ -3,7 +3,8 @@
  *
  * A card is created the first time a question is answered wrongly. Each correct review
  * moves it up a box (longer gap); a mistake drops it back to box 0. After box 5 the
- * concept is considered mastered and the card retires.
+ * concept is considered mastered and the card retires. Getting a card right again before
+ * it is due (e.g. replaying the same quiz) does not promote it — spacing is the point.
  */
 import type { Question } from '@/features/content/schema';
 import { DAY_MS } from '@/lib/date';
@@ -42,6 +43,7 @@ export function srsUpdate(card: SrsCard | undefined, ctx: SrsContext, correct: b
     return { ...ctx, box: 0, due: now, lapses: 1, reviews: 0, lastAt: now };
   }
   if (!correct) return { ...card, q: ctx.q, box: 0, due: now, lapses: card.lapses + 1, reviews: card.reviews + 1, lastAt: now };
+  if (card.due > now) return { ...card, q: ctx.q, lastAt: now };
   const box = card.box + 1;
   if (box >= MASTERED_BOX) return null;
   return { ...card, q: ctx.q, box, due: now + BOX_INTERVAL_DAYS[box] * DAY_MS, reviews: card.reviews + 1, lastAt: now };

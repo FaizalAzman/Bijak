@@ -34,6 +34,8 @@ export default function Shop() {
 
   if (!profile) return null;
   const previewConfig = preview && preview.slot ? { ...profile.avatar, [preview.slot]: preview.id } : profile.avatar;
+  const previewLocked = !!preview?.minLevel && level < preview.minLevel;
+  const canAfford = !!preview && p.coins >= preview.price;
 
   const onItem = (item: ShopItem) => {
     const owned = p.inventory.includes(item.id);
@@ -49,7 +51,7 @@ export default function Shop() {
   };
 
   const purchase = (item: ShopItem) => {
-    if (buy(item)) {
+    if (buy(item.id)) {
       fx.coin();
       equip(item.slot, item.id);
       toast({ emoji: item.emoji ?? '🛍️', title: `${item.name} unlocked!`, subtitle: 'Equipped on your avatar' });
@@ -57,38 +59,52 @@ export default function Shop() {
     } else fx.wrong();
   };
 
+  // Wide screens have room beside the avatar; there the actions sit under the text, capped in width.
+  const wide = layout.innerWidth >= 560;
+  const actions = preview && (
+    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, width: '100%', maxWidth: 440, marginTop: wide ? 6 : 0 }}>
+      <View style={{ flex: 1 }}>
+        <Button
+          label={previewLocked ? `Level ${preview.minLevel} needed` : `Buy · ${preview.price} 🪙`}
+          tone="lime"
+          full
+          disabled={previewLocked || !canAfford}
+          onPress={() => purchase(preview)}
+          testID="buy"
+        />
+      </View>
+      <Button label="Cancel" tone="paper" align="center" onPress={() => setPreview(null)} testID="cancel-preview" />
+    </View>
+  );
+
   return (
     <Screen frame="wide" header={<KidHeader title="Shop" />} bottomInset={TAB_BAR_SPACE}>
-      <Chunky bg={colors['grape-soft']} innerStyle={{ padding: 16, flexDirection: 'row', alignItems: 'center', gap: 16 }}>
-        <View>
+      <Chunky bg={colors['grape-soft']} innerStyle={{ padding: 16, gap: 14 }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
           <Avatar config={previewConfig} size={layout.isTablet ? 140 : layout.small ? 88 : 110} mood={preview ? 'excited' : 'happy'} />
+          <View style={{ flex: 1, gap: 6 }}>
+            {preview ? (
+              <>
+                <Txt variant="label">Trying on</Txt>
+                <Txt variant="title" numberOfLines={2}>
+                  {preview.name}
+                </Txt>
+                <Txt variant="small" testID="preview-status">
+                  {previewLocked ? `🔒 Unlocks at level ${preview.minLevel}` : canAfford ? `🪙 ${preview.price} coins` : `Need ${preview.price - p.coins} more coins`}
+                </Txt>
+                {wide && actions}
+              </>
+            ) : (
+              <>
+                <Txt variant="label">Your coins</Txt>
+                <Txt variant="hero">🪙 {p.coins}</Txt>
+                <Txt variant="small">Tap an item to try it on!</Txt>
+              </>
+            )}
+          </View>
         </View>
-        <View style={{ flex: 1, gap: 8 }}>
-          {preview ? (
-            <>
-              <Txt variant="label">Trying on</Txt>
-              <Txt variant="title">{preview.name}</Txt>
-              {preview.minLevel && level < preview.minLevel ? (
-                <Txt variant="small">Unlocks at level {preview.minLevel}</Txt>
-              ) : (
-                <Button
-                  label={`Buy · ${preview.price} 🪙`}
-                  tone={p.coins >= preview.price ? 'lime' : 'paper'}
-                  disabled={p.coins < preview.price}
-                  onPress={() => purchase(preview)}
-                  testID="buy"
-                />
-              )}
-              {p.coins < preview.price && <Txt variant="small">Need {preview.price - p.coins} more coins</Txt>}
-            </>
-          ) : (
-            <>
-              <Txt variant="label">Your coins</Txt>
-              <Txt variant="hero">🪙 {p.coins}</Txt>
-              <Txt variant="small">Tap an item to try it on!</Txt>
-            </>
-          )}
-        </View>
+        {/* On phones the actions get their own full-width row, so Buy is never squeezed beside the avatar. */}
+        {!wide && actions}
       </Chunky>
 
       <HScroll paddingVertical={16}>
@@ -134,9 +150,11 @@ export default function Shop() {
                     label={`${g.price} 🪙`}
                     size="sm"
                     tone="lime"
+                    align="center"
                     disabled={p.coins < g.price}
+                    testID={`unlock-${g.id}`}
                     onPress={() => {
-                      if (unlockArcade(g.id, g.price)) {
+                      if (unlockArcade(g.id)) {
                         fx.coin();
                         toast({ emoji: g.emoji, title: `${g.title} unlocked!`, subtitle: 'Find it in the Arcade on Home' });
                       }

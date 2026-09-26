@@ -9,29 +9,23 @@ import { SpaceMono_400Regular } from '@expo-google-fonts/space-mono/400Regular';
 import { SpaceMono_700Bold } from '@expo-google-fonts/space-mono/700Bold';
 import { useFonts } from 'expo-font';
 import { Stack, usePathname, type ErrorBoundaryProps } from 'expo-router';
-import * as ScreenOrientation from 'expo-screen-orientation';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useRef } from 'react';
-import { Dimensions, Platform, View } from 'react-native';
+import { View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { Toaster } from '@/components/gamify/Toaster';
 import { Kancil } from '@/components/mascot/Kancil';
 import { Button, Txt } from '@/components/ui';
 import { startBackgroundServices } from '@/features/sync/services';
+import { lockPhonesToPortrait } from '@/lib/orientation';
 import { installCrashHandler, startFrameMonitor, telemetry } from '@/lib/telemetry';
 import { colors } from '@/theme';
 
 SplashScreen.preventAutoHideAsync().catch(() => undefined);
 installCrashHandler();
 
-/** Phones stay in portrait (their layouts are designed for it); tablets rotate freely. */
-function lockPhonesToPortrait() {
-  if (Platform.OS === 'web') return;
-  const { width, height } = Dimensions.get('screen');
-  if (Math.min(width, height) < 600) ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT_UP).catch(() => undefined);
-}
 lockPhonesToPortrait();
 
 export function ErrorBoundary({ error, retry }: ErrorBoundaryProps) {

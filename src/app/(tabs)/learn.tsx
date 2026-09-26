@@ -43,6 +43,7 @@ export default function Learn() {
       <Chunky style={{ marginTop: 16 }} depth={3} innerStyle={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: 14, gap: 10 }}>
         <Search size={18} color={colors.muted} strokeWidth={2.5} />
         <TextInput
+          accessibilityLabel="Search topics"
           value={query}
           onChangeText={setQuery}
           placeholder="Search topics… e.g. fractions"

@@ -14,7 +14,12 @@ export default function Health() {
   const errors = records.filter((r) => r.kind === 'error').reverse();
   const screens = useMemo(() => {
     const m = new Map<string, number[]>();
-    for (const r of records) if (r.kind === 'screen') m.set(r.name.replace(/\/[^/]*[0-9a-f-]{8,}[^/]*/g, '/:id'), [...(m.get(r.name) ?? []), Number(r.data?.loadMs ?? 0)]);
+    for (const r of records) {
+      if (r.kind !== 'screen') continue;
+      // Screens with ids in the path (e.g. /quiz/<uuid>) are grouped together.
+      const key = r.name.replace(/\/[^/]*[0-9a-f-]{8,}[^/]*/g, '/:id');
+      m.set(key, [...(m.get(key) ?? []), Number(r.data?.loadMs ?? 0)]);
+    }
     return [...m.entries()]
       .map(([label, xs]) => ({ label, value: Math.round(xs.reduce((a, b) => a + b, 0) / xs.length), hint: `(${xs.length}×)` }))
       .sort((a, b) => b.value - a.value)

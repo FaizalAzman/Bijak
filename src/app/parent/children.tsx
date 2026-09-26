@@ -36,6 +36,7 @@ export default function Children() {
               <Avatar config={p.avatar} size={56} />
               <View style={{ flex: 1 }}>
                 <Field
+                  accessibilityLabel={`${p.name}'s name`}
                   value={names[p.id] ?? p.name}
                   onChangeText={(t) => setNames((n) => ({ ...n, [p.id]: t }))}
                   onBlur={() => names[p.id]?.trim() && update(p.id, { name: names[p.id].trim() })}

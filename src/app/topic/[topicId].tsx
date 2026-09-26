@@ -4,6 +4,7 @@ import { View } from 'react-native';
 import { toSlides } from '@/components/lesson/LessonBlocks';
 import { Chunky, PressChunky, Screen, SectionLabel, Tag, TopBar, Txt } from '@/components/ui';
 import { useContentIndex } from '@/features/content/registry';
+import { REWARDS } from '@/features/gamify/xp';
 import { topicStatus } from '@/features/progress/selectors';
 import { useProgress } from '@/store/app';
 import { accent, colors } from '@/theme';
@@ -88,14 +89,14 @@ export default function TopicScreen() {
             onPress={() => router.push(`/lesson/${topic.id}`)}
             bg={st.lessonDone ? colors.paper : colors.lime}
             innerStyle={{ padding: 16, flexDirection: 'row', alignItems: 'center', gap: 12 }}
-            accessibilityLabel="Read the lesson"
+            accessibilityLabel={st.lessonDone ? 'Read the lesson again' : 'Read the lesson'}
           >
             <View style={{ width: 46, height: 46, borderRadius: 14, backgroundColor: colors.ink, alignItems: 'center', justifyContent: 'center' }}>
               <BookOpen size={22} color={colors.lime} strokeWidth={2.5} />
             </View>
             <View style={{ flex: 1 }}>
               <Txt variant="subtitle">{st.lessonDone ? 'Read again' : 'Read the lesson'}</Txt>
-              <Txt variant="small">{st.lessonDone ? 'Completed ✓' : `${toSlides(topic.lesson).length} cards · +15 XP`}</Txt>
+              <Txt variant="small">{st.lessonDone ? 'Completed ✓' : `${toSlides(topic.lesson).length} cards · +${REWARDS.lesson.xp} XP`}</Txt>
             </View>
             <ChevronRight size={22} color={colors.ink} strokeWidth={3} />
           </PressChunky>

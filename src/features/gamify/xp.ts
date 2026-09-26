@@ -5,7 +5,8 @@ export const xpForLevel = (level: number) => 50 * level * (level - 1);
 
 export function levelFromXp(xp: number): number {
   // Inverse of 50·L·(L−1) = xp  →  L = (1 + √(1 + xp/12.5)) / 2
-  return Math.max(1, Math.floor((1 + Math.sqrt(1 + xp / 12.5)) / 2));
+  const safe = Number.isFinite(xp) ? Math.max(0, xp) : 0;
+  return Math.max(1, Math.floor((1 + Math.sqrt(1 + safe / 12.5)) / 2));
 }
 
 export function levelProgress(xp: number) {
@@ -36,10 +37,16 @@ export function xpForAnswer(difficulty: number, combo: number, fast = false): nu
 }
 
 export const REWARDS = {
+  /** Completion bonus: once per quiz per day, for quizzes of at least `minBonusQuestions`. */
   quizComplete: { xp: 10, coins: 5 },
+  /** Perfect-score bonus: once per quiz per day (same size rule), even on a retry. */
   perfect: { xp: 20, coins: 10 },
+  minBonusQuestions: 3,
   coinPerCorrect: 1,
+  /** First time a lesson is finished. */
   lesson: { xp: 15, coins: 3 },
+  /** Re-reading a lesson: XP once per topic per day. */
+  lessonReread: { xp: 5, coins: 0 },
   timeAttackPerCorrect: 2,
   newBest: { xp: 15, coins: 10 },
-};
+} as const;

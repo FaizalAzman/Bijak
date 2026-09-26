@@ -14,7 +14,7 @@ export function KidHeader({ title }: { title?: string }) {
   if (!profile) return null;
   return (
     <FrameRow style={{ flexDirection: 'row', alignItems: 'center', gap: small ? 8 : 10, paddingTop: 8, paddingBottom: 6 }}>
-      <Pressable accessibilityLabel="My profile" onPress={() => router.push('/me')}>
+      <Pressable accessibilityRole="button" accessibilityLabel="My profile" onPress={() => router.push('/me')}>
         <Avatar config={profile.avatar} size={isTablet ? 52 : small ? 38 : 44} />
       </Pressable>
       <View style={{ flex: 1 }}>

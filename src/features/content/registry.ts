@@ -20,7 +20,7 @@ import { kv } from '@/lib/storage';
 import { telemetry } from '@/lib/telemetry';
 import { generate } from './generators';
 import { Manifest, Standard, type ArcadeGame, type Question, type Quiz, type Subject, type Topic } from './schema';
-import { parseStandard } from './validate';
+import { crossStandardIssues, parseStandard } from './validate';
 import { shuffle, type Rng } from '@/lib/random';
 
 const bundled: Standard[] = [std1, std2, std3, std4, std5, std6].map((raw) => Standard.parse(raw));
@@ -50,21 +50,29 @@ export const useContent = create<ContentState>()(
         const base = get().sourceUrl;
         if (!base || get().checking) return { updated: [] };
         set({ checking: true, lastError: null });
-        const updated: string[] = [];
+        // Nothing counts as updated unless the whole check succeeds (updates are all-or-nothing).
+        let updated: string[] = [];
         try {
           const res = await fetch(`${base}/manifest.json`, { cache: 'no-store' });
           if (!res.ok) throw new Error(`manifest HTTP ${res.status}`);
           const manifest = Manifest.parse(await res.json());
           const current = new Map(effectiveStandards(get().remote).map((s) => [s.id, s.version]));
           const remote = { ...get().remote };
+          const downloaded: string[] = [];
           for (const entry of manifest.standards) {
             if ((current.get(entry.id) ?? -1) >= entry.version) continue;
             const r = await fetch(`${base}/${entry.file}`, { cache: 'no-store' });
             if (!r.ok) throw new Error(`${entry.file} HTTP ${r.status}`);
-            remote[entry.id] = parseStandard(await r.json());
-            updated.push(entry.id);
+            const std = parseStandard(await r.json());
+            if (std.id !== entry.id) throw new Error(`${entry.file} contains "${std.id}", expected "${entry.id}"`);
+            remote[entry.id] = std;
+            downloaded.push(entry.id);
           }
+          // Reject the whole update if it would clash with ids in other standards.
+          const clashes = crossStandardIssues(effectiveStandards(remote));
+          if (clashes.length) throw new Error(`Content ids clash: ${clashes.slice(0, 3).join('; ')}`);
           set({ remote, lastCheckedAt: Date.now() });
+          updated = downloaded;
           telemetry.event('content_check', { updated: updated.join(',') || 'none' });
         } catch (e) {
           const msg = e instanceof Error ? e.message : String(e);
@@ -84,7 +92,7 @@ export const useContent = create<ContentState>()(
   ),
 );
 
-function effectiveStandards(remote: Record<string, Standard>): Standard[] {
+export function effectiveStandards(remote: Record<string, Standard>): Standard[] {
   const byId = new Map<string, Standard>(bundled.map((s) => [s.id, s]));
   for (const r of Object.values(remote)) {
     const b = byId.get(r.id);

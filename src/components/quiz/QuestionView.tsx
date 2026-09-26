@@ -88,6 +88,7 @@ export function QuestionView({ q, onAnswer, locked, fast }: { q: Question; onAns
           </Txt>
           {!fast && (
             <Pressable
+              accessibilityRole="button"
               accessibilityLabel="Read question aloud"
               onPress={() => {
                 fx.tap();

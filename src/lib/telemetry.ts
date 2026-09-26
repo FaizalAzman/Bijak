@@ -46,7 +46,11 @@ function record(r: TelemetryRecord) {
   buffer.push(r);
   if (buffer.length > MAX) buffer = buffer.slice(-MAX);
   sink?.(r);
-  if (!flushTimer) flushTimer = setTimeout(flush, 2000);
+  if (!flushTimer) {
+    flushTimer = setTimeout(flush, 2000);
+    // Node (tests, scripts) shouldn't stay alive just to flush; RN timers have no unref.
+    (flushTimer as { unref?: () => void }).unref?.();
+  }
 }
 
 export const telemetry = {
@@ -104,7 +108,7 @@ export function installCrashHandler() {
  * (>50ms, i.e. at least 3 dropped frames at 60fps) is recorded against the current context.
  */
 export function startFrameMonitor(): () => void {
-  let last = 0;
+  let last: number | null = null;
   let longFrames = 0;
   let worst = 0;
   let windowStart = Date.now();
@@ -112,7 +116,7 @@ export function startFrameMonitor(): () => void {
   let stopped = false;
   const tick = (t: number) => {
     if (stopped) return;
-    if (last) {
+    if (last != null) {
       const dt = t - last;
       if (dt > 50 && dt < 2000) {
         longFrames++;

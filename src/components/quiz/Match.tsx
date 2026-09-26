@@ -13,6 +13,7 @@ import { Txt } from '@/components/ui';
 import { fx, haptic } from '@/lib/feedback';
 import { shuffle } from '@/lib/random';
 import { colors } from '@/theme';
+import { ACTIVATE } from './DnD';
 import type { QuestionProps } from './types';
 import { useShake } from './useShake';
 
@@ -93,6 +94,14 @@ export function Match({ q, onAnswer, locked }: QuestionProps<'match'>) {
     }
   };
 
+  /** Tap (or screen-reader activate): select an item, or complete a pair with the current selection. */
+  const tapItem = (item: { side: Side; value: string }) => {
+    if (locked || matched.length >= q.pairs.length || isMatched(item.side, item.value)) return;
+    fx.tap();
+    if (selected && selected.side !== item.side) attempt(selected, item);
+    else setSelected(selected && selected.side === item.side && selected.value === item.value ? null : item);
+  };
+
   /* eslint-disable react-hooks/refs -- `start` is only read inside gesture callbacks, never during render */
   const pan = Gesture.Pan()
     .enabled(!locked && matched.length < q.pairs.length)
@@ -126,10 +135,7 @@ export function Match({ q, onAnswer, locked }: QuestionProps<'match'>) {
       if (to && to.side !== from.side && !isMatched(to.side, to.value)) {
         attempt(from, to);
       } else if (!moved) {
-        // Tap: select, or complete a pair with the current selection.
-        fx.tap();
-        if (selected && selected.side !== from.side) attempt(selected, from);
-        else setSelected(selected && selected.value === from.value ? null : from);
+        tapItem(from);
       }
     });
   /* eslint-enable react-hooks/refs */
@@ -156,6 +162,14 @@ export function Match({ q, onAnswer, locked }: QuestionProps<'match'>) {
       <View
         key={value}
         onLayout={onItemLayout(side, value)}
+        accessible
+        accessibilityRole="button"
+        accessibilityLabel={value}
+        accessibilityState={{ selected: isSel, disabled: done || locked }}
+        accessibilityActions={ACTIVATE}
+        onAccessibilityAction={(e) => {
+          if (e.nativeEvent.actionName === 'activate') tapItem({ side, value });
+        }}
         style={{
           minHeight: 58,
           justifyContent: 'center',
@@ -194,10 +208,10 @@ export function Match({ q, onAnswer, locked }: QuestionProps<'match'>) {
           })}
           <AnimatedLine animatedProps={liveLine} stroke={colors.grape} strokeWidth={5} strokeLinecap="round" strokeDasharray="10 8" />
         </Svg>
-        <View onLayout={onColLayout('L')} style={{ width: '40%', gap: 12 }}>
+        <View onLayout={onColLayout('L')} style={{ width: '40%', gap: 12 }} testID="match-left">
           {lefts.map((v) => renderItem('L', v))}
         </View>
-        <View onLayout={onColLayout('R')} style={{ width: '40%', gap: 12 }}>
+        <View onLayout={onColLayout('R')} style={{ width: '40%', gap: 12 }} testID="match-right">
           {rights.map((v) => renderItem('R', v))}
         </View>
       </Animated.View>

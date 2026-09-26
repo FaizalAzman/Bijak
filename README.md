@@ -20,6 +20,17 @@ npx expo start      # open in Expo Go
 See [`docs/SETUP.md`](docs/SETUP.md) for builds, env vars and cloud sync, and
 [`docs/CONTENT.md`](docs/CONTENT.md) to add lessons, questions or a new standard.
 
+## Testing
+
+```bash
+npm test          # 1,200+ unit, component, flow and meta tests
+npm run verify    # typecheck + lint + content validation + tests with coverage thresholds
+```
+
+Every business rule (rewards, streaks, shop, PIN lockout, sync) is enforced by the store and
+covered by tests, and meta tests check the whole curriculum, every screen and every link.
+See [`docs/TESTING.md`](docs/TESTING.md).
+
 ## Architecture: the 20 modules
 
 | # | Module | Where |

@@ -14,17 +14,25 @@ export interface TopicStatus {
   ratio: number;
 }
 
+/** Weight of the lesson vs. the quizzes in a topic's completion ring (when it has both). */
+const LESSON_WEIGHT = 0.2;
+
 export function topicStatus(topic: Topic, p: Progress): TopicStatus {
   const stat = p.topics[topic.id];
-  const bests = topic.quizzes.map((q) => stat?.best[q.id] ?? 0);
+  const hasLesson = topic.lesson.length > 0;
+  const bests = topic.quizzes.map((q) => Math.min(100, Math.max(0, stat?.best[q.id] ?? 0)));
   const quizzesDone = bests.filter((b) => b > 0).length;
   const score = bests.length ? Math.round(bests.reduce((a, b) => a + b, 0) / bests.length) : 0;
-  const lessonDone = !!stat?.lessonDone || topic.lesson.length === 0;
-  const mastered = bests.length > 0 && bests.every((b) => b >= 80);
-  const started = lessonDone && topic.lesson.length > 0 ? true : quizzesDone > 0;
+  const lessonRead = hasLesson && !!stat?.lessonDone;
+  // A topic without a lesson has nothing to read; one without quizzes is mastered by reading it.
+  const lessonDone = lessonRead || !hasLesson;
+  const mastered = bests.length > 0 ? bests.every((b) => b >= 80) : lessonRead;
+  const started = lessonRead || quizzesDone > 0;
   const stars = mastered ? 3 : score >= 60 ? 2 : started ? 1 : 0;
-  const ratio = (topic.lesson.length ? (stat?.lessonDone ? 0.2 : 0) : 0.2) + (bests.length ? (bests.reduce((a, b) => a + Math.min(b, 100), 0) / bests.length / 100) * 0.8 : 0.8);
-  return { lessonDone, quizzesTotal: bests.length, quizzesDone, score, stars, mastered, ratio: Math.min(1, ratio) };
+  const lessonPart = hasLesson ? (bests.length ? LESSON_WEIGHT : 1) : 0;
+  const quizPart = bests.length ? 1 - (hasLesson ? LESSON_WEIGHT : 0) : 0;
+  const ratio = (lessonRead ? lessonPart : 0) + (bests.length ? (score / 100) * quizPart : 0);
+  return { lessonDone, quizzesTotal: bests.length, quizzesDone, score, stars, mastered, ratio: Math.min(1, Math.max(0, ratio)) };
 }
 
 export function subjectProgress(subject: Subject, p: Progress): { ratio: number; mastered: number; total: number } {

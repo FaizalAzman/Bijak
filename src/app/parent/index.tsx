@@ -6,6 +6,8 @@ import { useShake } from '@/components/quiz/useShake';
 import { MascotSays } from '@/components/mascot/MascotSays';
 import { Keypad, PinDots, Screen, TopBar, Txt } from '@/components/ui';
 import { isParentUnlocked, useParentSession } from '@/features/profile/parentSession';
+import { lockRemaining, usePinGuard } from '@/features/profile/pinGuard';
+import { useNow } from '@/hooks/useNow';
 import { fx } from '@/lib/feedback';
 import { verifyParentPin } from '@/lib/secure';
 import { colors } from '@/theme';
@@ -16,7 +18,10 @@ export default function ParentGate() {
   const unlock = useParentSession((s) => s.unlock);
   const [pin, setPin] = useState('');
   const [error, setError] = useState(false);
-  const [attempts, setAttempts] = useState(0);
+  const guard = usePinGuard();
+  const now = useNow(1000);
+  const waitMs = lockRemaining(guard, now);
+  const locked = waitMs > 0;
   const { style, shake } = useShake();
 
   const go = () => (next === 'add-child' ? router.replace('/onboarding') : router.replace('/parent/dashboard'));
@@ -27,22 +32,23 @@ export default function ParentGate() {
   }, []);
 
   const onKey = async (k: string) => {
-    if (attempts >= 5) return;
+    // Checked against the clock, not just the render, so a stale screen can't skip a lock.
+    if (lockRemaining(usePinGuard.getState(), Date.now()) > 0) return;
     setError(false);
     const nextPin = k === 'del' ? pin.slice(0, -1) : (pin + k).slice(0, 4);
     setPin(nextPin);
     if (nextPin.length === 4) {
       if (await verifyParentPin(nextPin)) {
         fx.correct();
+        guard.succeed();
         unlock();
         go();
       } else {
         fx.wrong();
         shake();
         setError(true);
-        setAttempts((a) => a + 1);
+        guard.fail();
         setTimeout(() => setPin(''), 400);
-        if (attempts + 1 >= 5) setTimeout(() => setAttempts(0), 30_000);
       }
     }
   };
@@ -54,16 +60,16 @@ export default function ParentGate() {
         <Animated.View style={style}>
           <PinDots length={4} filled={pin.length} error={error} />
         </Animated.View>
-        {attempts >= 5 ? (
-          <Txt variant="small" style={{ textAlign: 'center', color: colors.berry }}>
-            Too many tries. Wait 30 seconds.
+        {locked ? (
+          <Txt variant="small" style={{ textAlign: 'center', color: colors.berry }} testID="pin-locked">
+            Too many tries. Wait {Math.ceil(waitMs / 1000)} seconds.
           </Txt>
         ) : error ? (
           <Txt variant="small" style={{ textAlign: 'center', color: colors.berry }}>
             Wrong PIN, try again.
           </Txt>
         ) : null}
-        <Keypad onKey={onKey} disabled={attempts >= 5} />
+        <Keypad onKey={onKey} disabled={locked} />
       </View>
     </Screen>
   );

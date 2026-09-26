@@ -60,7 +60,8 @@ export function timePerSubject(p: Progress, index: ContentIndex, n = 7) {
       const [stdId, subId] = key.split('/');
       const sub = index.subject(stdId, subId);
       const std = index.standard(stdId);
-      return { label: `${sub?.emoji ?? ''} ${sub?.name ?? subId}${std ? ` · ${std.title.replace('Standard ', 'Std ')}` : ''}`, value: Math.round(secs / 60) };
+      const name = [sub?.emoji, sub?.name ?? subId].filter(Boolean).join(' ');
+      return { label: `${name}${std ? ` · ${std.title.replace('Standard ', 'Std ')}` : ''}`, value: Math.round(secs / 60) };
     })
     .sort((a, b) => b.value - a.value);
 }

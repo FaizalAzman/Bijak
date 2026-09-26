@@ -40,7 +40,7 @@ export const LessonBlock = z.discriminatedUnion('type', [
     items: z.array(z.object({ word: z.string(), meaning: z.string(), emoji: z.string().optional() })).min(1),
   }),
   z.object({ type: z.literal('table'), headers: z.array(z.string()), rows: z.array(z.array(z.string())) }),
-  z.object({ type: z.literal('placeValue'), number: z.number().int().nonnegative() }),
+  z.object({ type: z.literal('placeValue'), number: z.number().int().nonnegative().max(9_999_999) }),
   z.object({
     type: z.literal('numberLine'),
     from: z.number(),
@@ -116,12 +116,13 @@ export type QuestionType = Question['type'];
 /* ------------------------------------------------------------------ Generators */
 
 export const GeneratorSpec = z.discriminatedUnion('kind', [
-  z.object({ kind: z.literal('multiplication'), tables: z.array(z.number().int()).min(1), maxFactor: z.number().int().default(10) }),
-  z.object({ kind: z.literal('division'), tables: z.array(z.number().int()).min(1), maxFactor: z.number().int().default(10) }),
-  z.object({ kind: z.literal('addition'), max: z.number().int().positive(), terms: z.number().int().min(2).max(3).default(2) }),
-  z.object({ kind: z.literal('subtraction'), max: z.number().int().positive() }),
+  z.object({ kind: z.literal('multiplication'), tables: z.array(z.number().int().positive()).min(1), maxFactor: z.number().int().positive().default(10) }),
+  z.object({ kind: z.literal('division'), tables: z.array(z.number().int().positive()).min(1), maxFactor: z.number().int().positive().default(10) }),
+  z.object({ kind: z.literal('addition'), max: z.number().int().min(2), terms: z.number().int().min(2).max(3).default(2) }),
+  z.object({ kind: z.literal('subtraction'), max: z.number().int().min(2) }),
   z.object({ kind: z.literal('compare'), max: z.number().int().positive() }),
-  z.object({ kind: z.literal('placeValue'), max: z.number().int().positive() }),
+  /** Up to 7 digits (millions), the largest numbers in KSSR primary maths. */
+  z.object({ kind: z.literal('placeValue'), max: z.number().int().min(10).max(9_999_999) }),
   z.object({ kind: z.literal('money'), maxRinggit: z.number().int().positive() }),
   z.object({
     kind: z.literal('vocab'),
