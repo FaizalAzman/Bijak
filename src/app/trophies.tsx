@@ -1,6 +1,6 @@
 import { View } from 'react-native';
 import { Chunky, Grid, ProgressBar, Screen, TopBar, Txt } from '@/components/ui';
-import { useContentIndex } from '@/features/content/registry';
+import { useChildContent } from '@/hooks/useChildContent';
 import { allBadges } from '@/features/gamify/badges';
 import { useProgress } from '@/store/app';
 import { accent, colors } from '@/theme';
@@ -8,7 +8,7 @@ import { accent, colors } from '@/theme';
 /** Module 19 — the trophy room. */
 export default function Trophies() {
   const p = useProgress();
-  const badges = allBadges(useContentIndex());
+  const badges = allBadges(useChildContent());
   const earned = badges.filter((b) => p.badges[b.id]).length;
   return (
     <Screen frame="wide" header={<TopBar title="Trophy room" />}>

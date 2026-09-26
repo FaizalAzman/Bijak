@@ -1,5 +1,5 @@
 import { router } from 'expo-router';
-import { Activity, ChevronRight, Download, Settings, Users } from 'lucide-react-native';
+import { Activity, ChevronRight, Download, School, Settings, Users } from 'lucide-react-native';
 import { useMemo, useState } from 'react';
 import { View } from 'react-native';
 import { Avatar } from '@/components/avatar/Avatar';
@@ -11,7 +11,8 @@ import { accuracyPerSubject, minutesPerDay, timePerSubject, weakTopics } from '@
 import { useRequireParent } from '@/features/profile/parentSession';
 import { dueCards } from '@/features/srs/srs';
 import { formatDuration, pct, plural } from '@/lib/format';
-import { emptyProgress, liveStreak, useApp } from '@/store/app';
+import { dayKey } from '@/lib/date';
+import { emptyProgress, liveStreak, useApp, useRestDays } from '@/store/app';
 import { colors } from '@/theme';
 
 function Tile({ label, value, sub, bg }: { label: string; value: string; sub?: string; bg: string }) {
@@ -48,9 +49,10 @@ export default function ParentDashboard() {
   const progressMap = useApp((s) => s.progress);
   const activeId = useApp((s) => s.activeProfileId);
   const parent = useApp((s) => s.parent);
-  const index = useContentIndex();
+  const restDays = useRestDays();
   const [childId, setChildId] = useState(activeId ?? profiles[0]?.id);
   const child = profiles.find((p) => p.id === childId) ?? profiles[0];
+  const index = useContentIndex(child?.medium);
   const p = (child && progressMap[child.id]) || emptyProgress();
 
   const perDay = useMemo(() => minutesPerDay(p), [p]);
@@ -93,7 +95,7 @@ export default function ParentDashboard() {
       <Grid minItemWidth={140} maxColumns={4} gap={10}>
         <Tile key="week" label="This week" value={formatDuration(weekMinutes * 60)} sub="learning time" bg={colors['grape-soft']} />
         <Tile key="accuracy" label="Accuracy" value={`${pct(p.totals.correct, p.totals.answered)}%`} sub={plural(p.totals.answered, 'answer')} bg={colors['mint-soft']} />
-        <Tile key="streak" label="Streak" value={`🔥 ${liveStreak(p)}`} sub={`best ${plural(p.streak.best, 'day')}`} bg={colors['tangerine-soft']} />
+        <Tile key="streak" label="Streak" value={`🔥 ${liveStreak(p, dayKey(), restDays)}`} sub={`best ${plural(p.streak.best, 'day')}`} bg={colors['tangerine-soft']} />
         <Tile key="review" label="To review" value={`🧠 ${tricky}`} sub="tricky questions" bg={colors['sun-soft']} />
       </Grid>
 
@@ -196,10 +198,18 @@ export default function ParentDashboard() {
 
       <SectionLabel>Manage</SectionLabel>
       <View style={{ gap: 10 }}>
-        <NavRow icon={<Users size={22} color={colors.ink} />} label="Children" sub="Add, edit standard, reset" onPress={() => router.push('/parent/children')} />
+        {child && (
+          <NavRow
+            icon={<School size={22} color={colors.ink} />}
+            label="At school now"
+            sub={`Topics ${child.name}'s class is on this week`}
+            onPress={() => router.push(`/parent/school?child=${child.id}`)}
+          />
+        )}
+        <NavRow icon={<Users size={22} color={colors.ink} />} label="Children" sub="Add, edit standard, language, reset" onPress={() => router.push('/parent/children')} />
         <NavRow icon={<Download size={22} color={colors.ink} />} label="Content & sync" sub="Syllabus updates, cloud backup" onPress={() => router.push('/parent/content')} />
         <NavRow icon={<Activity size={22} color={colors.ink} />} label="App health" sub="Crashes & performance" onPress={() => router.push('/parent/health')} />
-        <NavRow icon={<Settings size={22} color={colors.ink} />} label="Settings" sub="Change PIN" onPress={() => router.push('/parent/settings')} />
+        <NavRow icon={<Settings size={22} color={colors.ink} />} label="Settings" sub="Read-aloud voice, rest days, PIN" onPress={() => router.push('/parent/settings')} />
       </View>
     </Screen>
   );

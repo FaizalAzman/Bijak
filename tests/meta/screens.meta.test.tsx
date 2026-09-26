@@ -34,6 +34,7 @@ const SCREENS: Record<string, { params?: Record<string, string>; parent?: boolea
   'src/app/parent/dashboard.tsx': { parent: true },
   'src/app/parent/health.tsx': { parent: true },
   'src/app/parent/index.tsx': {},
+  'src/app/parent/school.tsx': { parent: true },
   'src/app/parent/settings.tsx': { parent: true },
   'src/app/profiles.tsx': {},
   'src/app/quiz/[quizId].tsx': { params: { quizId: 's3-math-numbers-q1' } },

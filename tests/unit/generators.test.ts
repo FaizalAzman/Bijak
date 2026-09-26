@@ -23,10 +23,14 @@ const SPECS: GeneratorSpec[] = [
   GeneratorSpec.parse({ kind: 'money', maxRinggit: 1 }),
 ];
 
-describe.each(SPECS.map((s) => [`${s.kind} ${JSON.stringify(s).slice(0, 60)}`, s] as const))('%s', (_, spec) => {
+// Every spec again in Bahasa Melayu (Maths for non-DLP schools): the oracle reads BM prompts too.
+const ALL = [...SPECS, ...SPECS.map((s) => ({ ...s, lang: 'ms' as const }))];
+
+describe.each(ALL.map((s) => [`${s.kind} ${JSON.stringify(s).slice(0, 80)}`, s] as const))('%s', (_, spec) => {
   it.each(['numpad', 'mcq'] as const)('every %s question is valid and its answer matches the oracle', (style) => {
     for (let seed = 0; seed < SEEDS; seed++) {
       for (const q of generate(spec, 5, seeded(seed), style)) {
+        expect(q.lang).toBe(spec.lang ?? 'en');
         expect(Question.safeParse(q).success).toBe(true);
         expect(questionIssues(q, q.id)).toEqual([]);
         const expected = oracle(q);
@@ -106,6 +110,37 @@ describe('generator details', () => {
         expect(q.prompt.startsWith('Apakah maksud')).toBe(true);
         expect(q.lang).toBe('ms');
       }
+  });
+});
+
+describe('generated questions in Bahasa Melayu', () => {
+  const ms = (raw: Record<string, unknown>) => GeneratorSpec.parse({ ...raw, lang: 'ms' });
+
+  it('use the KSSR place names and wording', () => {
+    const qs = generate(ms({ kind: 'placeValue', max: 9999 }), 40, seeded(3), 'mcq');
+    const places = new Set(['sa', 'puluh', 'ratus', 'ribu']);
+    const placeQs = qs.filter((q) => q.prompt.startsWith('Apakah nilai tempat'));
+    const valueQs = qs.filter((q) => q.prompt.startsWith('Apakah nilai digit'));
+    expect(placeQs.length).toBeGreaterThan(0);
+    expect(valueQs.length).toBeGreaterThan(0);
+    for (const q of placeQs) if (q.type === 'mcq') for (const o of q.options) expect(places.has(o.text!)).toBe(true);
+    for (const q of valueQs) expect(q.explain).toMatch(/^Digit \d berada di tempat (sa|puluh|ratus|ribu), jadi nilainya [\d ]+\.$/);
+  });
+
+  it('compare and money questions speak Bahasa Melayu', () => {
+    const [cmp] = generate(ms({ kind: 'compare', max: 99 }), 1, seeded(2), 'mcq');
+    expect(cmp.type === 'mcq' && cmp.options.map((o) => o.text)).toEqual(['<  lebih kecil', '=  sama', '>  lebih besar']);
+    expect(cmp.explain).toMatch(/(lebih kecil daripada|sama dengan|lebih besar daripada)/);
+    const change = generate(ms({ kind: 'money', maxRinggit: 50 }), 30, seeded(9)).find((q) => q.id.startsWith('money-change'));
+    expect(change?.prompt).toMatch(/^Kamu ada RM[\d .]+\. Kamu belanja RM[\d .]+\. Berapakah baki wang kamu\?$/);
+  });
+
+  it('the same seed gives the same questions and answers in either language', () => {
+    for (const raw of [{ kind: 'placeValue', max: 99999 }, { kind: 'money', maxRinggit: 100 }, { kind: 'compare', max: 999 }]) {
+      const en = generate(GeneratorSpec.parse(raw), 20, seeded(4), 'mcq');
+      const bm = generate(ms(raw), 20, seeded(4), 'mcq');
+      expect(bm.map((q) => [q.id, q.type === 'mcq' || q.type === 'numpad' ? q.answer : null])).toEqual(en.map((q) => [q.id, q.type === 'mcq' || q.type === 'numpad' ? q.answer : null]));
+    }
   });
 });
 

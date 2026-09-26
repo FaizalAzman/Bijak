@@ -177,6 +177,11 @@ describe('Results', () => {
     expect(screen.getByText('First Steps')).toBeOnTheScreen();
   });
 
+  it('announces a rest-day shield earned on a streak milestone', async () => {
+    await render(<Results data={data({ shieldEarned: true })} onDone={jest.fn()} onRetry={jest.fn()} />);
+    expect(screen.getByTestId('shield-earned')).toHaveTextContent('🛡️ You earned a rest-day shield!');
+  });
+
   it('continue and play again call back', async () => {
     const onDone = jest.fn();
     const onRetry = jest.fn();

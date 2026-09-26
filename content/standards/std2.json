@@ -3,7 +3,7 @@
   "level": 2,
   "title": "Standard 2",
   "titleAlt": "Tahun 2",
-  "version": 1,
+  "version": 2,
   "subjects": [
     {
       "id": "math",
@@ -70,5 +70,53 @@
       "subjectId": "math",
       "quiz": { "id": "s2-arcade-times-quiz", "title": "Sifir Sprint", "mode": "timeAttack", "seconds": 60, "generator": { "kind": "multiplication", "tables": [2, 3, 4, 5, 10] } }
     }
-  ]
+  ],
+  "translations": {
+    "ms": {
+      "subjects": {
+        "math": {
+          "name": "Matematik",
+          "topics": {
+            "s2-math-times": {
+              "title": "Sifir 2, 3, 4, 5, 10",
+              "objectives": [{ "code": "2.3", "text": "Mendarab menggunakan sifir 2, 3, 4, 5 dan 10" }],
+              "offlineActivity": "Nyanyikan sifir di dalam kereta. Kira kasut secara berpasangan: 2, 4, 6…",
+              "lesson": [
+                { "type": "emojiGrid", "emoji": "🧦", "rows": 4, "cols": 2, "caption": "4 pasang stoking = 4 × 2 = 8" },
+                { "type": "callout", "emoji": "🖐️", "tone": "tip", "text": "Sifir **5** sentiasa berakhir dengan **0** atau **5**." }
+              ],
+              "quizzes": { "s2-math-times-q1": { "title": "Sifir" } }
+            },
+            "s2-math-numbers": {
+              "title": "Nombor hingga 1 000",
+              "lesson": [{ "type": "placeValue", "number": 368 }],
+              "quizzes": { "s2-math-numbers-q1": { "title": "Nilai tempat" } }
+            }
+          }
+        },
+        "science": {
+          "name": "Sains",
+          "topics": {
+            "s2-sci-living": {
+              "title": "Benda Hidup dan Bukan Hidup",
+              "lesson": [{ "type": "list", "items": ["Benda hidup **bernafas**, **makan**, **membesar** dan **bergerak**.", "Benda bukan hidup tidak berbuat demikian."] }],
+              "quizzes": {
+                "s2-sci-living-q1": {
+                  "title": "Hidup atau tidak?",
+                  "questions": {
+                    "q1": {
+                      "prompt": "Benda hidup atau benda bukan hidup?",
+                      "buckets": { "l": "Benda hidup", "n": "Bukan hidup" },
+                      "items": ["🐈 kucing", "🪨 batu", "🌻 bunga", "🚗 kereta"]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "arcade": { "s2-arcade-times": "Pecut Sifir" }
+    }
+  }
 }

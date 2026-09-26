@@ -59,13 +59,16 @@ describe('onboarding', () => {
     await later(200);
     await fireEvent.changeText(screen.getByLabelText("Child's name"), 'Adam');
     await tap(/^Standard 4/);
+    // The teaching language must be chosen before continuing.
+    expect(screen.getByRole('button', { name: 'Continue' })).toBeDisabled();
+    await tap('Bahasa Melayu');
     await tap('Continue');
     await tap('Tudung');
     await fireEvent.press(screen.getByTestId('finish-onboarding'));
     await waitFor(() => expect(router.replace).toHaveBeenCalledWith('/home'));
     expect(s().parent?.name).toBe('Faizal');
     expect(s().profiles).toHaveLength(1);
-    expect(s().profiles[0]).toMatchObject({ name: 'Adam', level: 4, avatar: expect.objectContaining({ hair: 'tudung' }) });
+    expect(s().profiles[0]).toMatchObject({ name: 'Adam', level: 4, medium: 'ms', avatar: expect.objectContaining({ hair: 'tudung' }) });
     expect(s().activeProfileId).toBe(s().profiles[0].id);
     expect(await verifyParentPin('2580')).toBe(true);
   });
@@ -76,6 +79,7 @@ describe('onboarding', () => {
     expect(screen.getByText('Now tell me about our learner!')).toBeOnTheScreen();
     await fireEvent.changeText(screen.getByLabelText("Child's name"), 'Aisyah');
     await tap(/^Standard 1/);
+    await tap('English (DLP)');
     await tap('Continue');
     await fireEvent.press(screen.getByTestId('finish-onboarding'));
     await waitFor(() => expect(router.replace).toHaveBeenCalledWith('/home'));

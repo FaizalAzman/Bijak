@@ -15,7 +15,7 @@ import { Results, type ResultsData } from '@/components/quiz/Results';
 import { TimerBar } from '@/components/quiz/TimerBar';
 import { BackButton, Button, FrameRow, ProgressBar, Screen, Txt } from '@/components/ui';
 import { buildQuizQuestions, getContentIndex, questionKey } from '@/features/content/registry';
-import type { Question } from '@/features/content/schema';
+import type { Lang, Question } from '@/features/content/schema';
 import { levelFromXp, REWARDS } from '@/features/gamify/xp';
 import { dueCards, type SrsContext } from '@/features/srs/srs';
 import { fx, playSfx, speak, stopSpeaking } from '@/lib/feedback';
@@ -39,11 +39,15 @@ interface Session {
   topicId?: string;
 }
 
-function buildSession(quizId: string, fixed = false): Session | null {
+function buildSession(quizId: string, fixed = false, medium?: Lang): Session | null {
+  const index = getContentIndex(medium);
   if (quizId === REVIEW_QUIZ_ID) {
     const p = useApp.getState();
     const prog = p.activeProfileId ? p.progress[p.activeProfileId] : undefined;
-    const cards = prog ? dueCards(prog.srs, Date.now(), 10) : [];
+    // Authored questions are shown as they read today (the child's language, any fixes);
+    // generated ones keep the wording they were saved with.
+    const current = (fromQuiz: string, q: Question) => index.quiz(fromQuiz)?.quiz.questions.find((x) => x.id === q.id) ?? q;
+    const cards = (prog ? dueCards(prog.srs, Date.now(), 10) : []).map((c) => ({ ...c, q: current(c.quizId, c.q) }));
     if (!cards.length) return null;
     const first = cards[0];
     return {
@@ -56,7 +60,7 @@ function buildSession(quizId: string, fixed = false): Session | null {
       items: cards.map((c) => ({ q: c.q, ctx: { key: c.key, quizId: c.quizId, standardId: c.standardId, subjectId: c.subjectId, topicId: c.topicId, q: c.q } })),
     };
   }
-  const ref = getContentIndex().quiz(quizId);
+  const ref = index.quiz(quizId);
   if (!ref) return null;
   const qs = buildQuizQuestions(fixed ? { ...ref.quiz, shuffle: false } : ref.quiz);
   return {
@@ -134,6 +138,7 @@ function QuizRun({ session, onRetry }: { session: Session; onRetry: () => void }
       coins: finalCorrect * REWARDS.coinPerCorrect + reward.coins,
       seconds,
       streak: reward.streak,
+      shieldEarned: reward.shieldEarned,
       newBest: reward.newBest,
       badges: reward.badges,
     });
@@ -321,7 +326,8 @@ function QuizRun({ session, onRetry }: { session: Session; onRetry: () => void }
 export default function QuizScreen() {
   const { quizId, fixed } = useLocalSearchParams<{ quizId: string; fixed?: string }>();
   const [run, setRun] = useState(0);
-  const session = useMemo(() => buildSession(quizId, fixed === '1'), [quizId, fixed, run]); // eslint-disable-line react-hooks/exhaustive-deps
+  const medium = useApp((s) => s.profiles.find((p) => p.id === s.activeProfileId)?.medium);
+  const session = useMemo(() => buildSession(quizId, fixed === '1', medium), [quizId, fixed, medium, run]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (!session || session.items.length === 0) {
     return (

@@ -3,7 +3,7 @@
   "level": 5,
   "title": "Standard 5",
   "titleAlt": "Tahun 5",
-  "version": 1,
+  "version": 2,
   "subjects": [
     {
       "id": "math",
@@ -23,5 +23,21 @@
       ]
     }
   ],
-  "arcade": []
+  "arcade": [],
+  "translations": {
+    "ms": {
+      "subjects": {
+        "math": {
+          "name": "Matematik",
+          "topics": {
+            "s5-math-numbers": {
+              "title": "Nombor hingga 1 000 000",
+              "lesson": [{ "type": "placeValue", "number": 385020 }],
+              "quizzes": { "s5-math-numbers-q1": { "title": "Misi jutaan" } }
+            }
+          }
+        }
+      }
+    }
+  }
 }

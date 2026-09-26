@@ -23,9 +23,11 @@ export function Chip({ label, count, selected, onPress, color }: { label: string
         borderWidth: 2,
         borderColor: colors.ink,
         backgroundColor: selected ? colors.ink : (color ?? colors.paper),
+        maxWidth: '100%',
       }}
     >
-      <Txt variant="subtitle" style={{ fontSize: 14, color: selected ? colors.paper : colors.ink }}>
+      {/* Long labels (e.g. topic names) wrap inside the chip instead of running off a small screen. */}
+      <Txt variant="subtitle" style={{ fontSize: 14, color: selected ? colors.paper : colors.ink, flexShrink: 1 }}>
         {label}
       </Txt>
       {count != null && (

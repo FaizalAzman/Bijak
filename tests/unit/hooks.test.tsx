@@ -1,6 +1,7 @@
 import { act, renderHook } from '@testing-library/react-native';
 import { useWindowDimensions } from 'react-native';
-import { useContent, useContentIndex } from '@/features/content/registry';
+import { getContentIndex, useContent, useContentIndex } from '@/features/content/registry';
+import { useChildContent } from '@/hooks/useChildContent';
 import { useLayout } from '@/hooks/useLayout';
 import { useNow } from '@/hooks/useNow';
 import { useActiveProfile, useApp, useProgress } from '@/store/app';
@@ -56,4 +57,21 @@ it('useContentIndex updates when remote content arrives', async () => {
     useContent.setState({ remote: {} });
   });
   expect(hook.result.current).not.toBe(first);
+});
+
+it('useChildContent shows Maths & Science in the active child’s teaching language', async () => {
+  const hook = await renderHook(() => useChildContent());
+  // Nobody signed in (or an older save without a language): the original syllabus.
+  expect(hook.result.current.topic('s3-math-money')?.topic.title).toBe('Money up to RM1000');
+  let id = '';
+  await act(async () => {
+    id = setupChild();
+  });
+  await act(async () => useApp.getState().updateProfile(id, { medium: 'ms' }));
+  expect(hook.result.current.topic('s3-math-money')?.topic.title).toBe('Wang hingga RM1000');
+  // English lessons stay in English.
+  const english = getContentIndex().topic('s3-eng-animals')!.topic;
+  expect(hook.result.current.topic('s3-eng-animals')?.topic).toBe(english);
+  await act(async () => useApp.getState().updateProfile(id, { medium: 'en' }));
+  expect(hook.result.current.topic('s3-math-money')?.topic.title).toBe('Money up to RM1000');
 });

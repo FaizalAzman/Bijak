@@ -2,10 +2,12 @@ import { router } from 'expo-router';
 import { useState } from 'react';
 import { Alert, Platform, View } from 'react-native';
 import { Avatar } from '@/components/avatar/Avatar';
+import { MediumPicker } from '@/components/parent/MediumPicker';
 import { Button, Chip, Chunky, Field, Screen, SectionLabel, TopBar, Txt } from '@/components/ui';
-import { useContentIndex } from '@/features/content/registry';
+import { getContentIndex, useContentIndex } from '@/features/content/registry';
 import { useRequireParent } from '@/features/profile/parentSession';
 import { useApp } from '@/store/app';
+import type { Profile } from '@/store/types';
 
 function confirm(title: string, message: string, onYes: () => void) {
   if (Platform.OS === 'web') {
@@ -16,6 +18,14 @@ function confirm(title: string, message: string, onYes: () => void) {
     { text: 'Cancel', style: 'cancel' },
     { text: 'Yes', style: 'destructive', onPress: onYes },
   ]);
+}
+
+/** "Matematik: Pecahan · Sains: Tumbuhan" — in the child's teaching language. */
+function schoolSummary(p: Profile): string {
+  const std = getContentIndex(p.medium).standardByLevel(p.level);
+  return (std?.subjects ?? [])
+    .flatMap((s) => s.topics.filter((t) => t.id === p.schoolTopics?.[s.id]).map((t) => `${s.name}: ${t.title}`))
+    .join(' · ');
 }
 
 export default function Children() {
@@ -50,6 +60,14 @@ export default function Children() {
                   <Chip key={s.id} label={String(s.level)} selected={p.level === s.level} onPress={() => update(p.id, { level: s.level })} />
                 ))}
               </View>
+            </View>
+            <MediumPicker value={p.medium ?? 'en'} onChange={(lang) => update(p.id, { medium: lang })} />
+            <View style={{ gap: 6 }}>
+              <Txt variant="label">At school now</Txt>
+              <Txt variant="small" testID={`school-${p.id}`}>
+                {schoolSummary(p) || 'Not set yet — tell Bijak which topics the class is on.'}
+              </Txt>
+              <Button label="Set school topics" tone="paper" size="sm" onPress={() => router.push(`/parent/school?child=${p.id}`)} />
             </View>
             <View style={{ flexDirection: 'row', gap: 10 }}>
               <Button

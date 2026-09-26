@@ -3,7 +3,7 @@
  "level": 3,
  "title": "Standard 3",
  "titleAlt": "Tahun 3",
- "version": 1,
+ "version": 2,
  "subjects": [
   {
    "id": "math",
@@ -5096,5 +5096,2021 @@
     }
    }
   }
- ]
+ ],
+ "translations": {
+  "ms": {
+   "subjects": {
+    "math": {
+     "name": "Matematik",
+     "topics": {
+      "s3-math-numbers": {
+       "title": "Nombor Bulat hingga 10 000",
+       "objectives": [
+        {
+         "code": "1.1",
+         "text": "Menamakan dan menulis nombor hingga 10 000"
+        },
+        {
+         "code": "1.2",
+         "text": "Menentukan nilai tempat dan nilai digit bagi sesuatu nombor"
+        },
+        {
+         "code": "1.4",
+         "text": "Membanding dan menyusun nombor hingga 10 000"
+        }
+       ],
+       "offlineActivity": "Main 'Juruwang Bank' dengan wang kertas mainan RM1000, RM100, RM10 dan RM1. Sebut satu nombor seperti 3 406 dan minta anak membinanya dengan wang kertas itu.",
+       "lesson": [
+        {
+         "type": "heading",
+         "text": "Kenali ribu!"
+        },
+        {
+         "type": "text",
+         "text": "Setiap digit dalam nombor tinggal di sebuah **rumah**. Rumah itu memberitahu kita nilai digit tersebut. Ini dipanggil **nilai tempat**."
+        },
+        {
+         "type": "placeValue",
+         "number": 4725
+        },
+        {
+         "type": "list",
+         "items": [
+          "**4** ribu = 4 000",
+          "**7** ratus = 700",
+          "**2** puluh = 20",
+          "**5** sa = 5"
+         ]
+        },
+        {
+         "type": "math",
+         "expr": "4 000 + 700 + 20 + 5 = 4 725",
+         "caption": "Bentuk cerakinan"
+        },
+        {
+         "type": "say",
+         "text": "Empat ribu tujuh ratus dua puluh lima",
+         "lang": "ms"
+        },
+        {
+         "type": "callout",
+         "emoji": "💡",
+         "tone": "tip",
+         "text": "Sifar ialah pemegang tempat. Dalam **3 062** **tiada** ratus, jadi kita tulis 0 di rumah ratus."
+        },
+        {
+         "type": "heading",
+         "text": "Membilang pada garis nombor"
+        },
+        {
+         "type": "numberLine",
+         "from": 5000,
+         "to": 6000,
+         "step": 200,
+         "highlight": [
+          5400
+         ]
+        },
+        {
+         "type": "text",
+         "text": "Untuk membanding nombor, lihat tempat yang **paling besar** dahulu. 5 400 lebih besar daripada 5 040 kerana 4 ratus > 0 ratus."
+        }
+       ],
+       "quizzes": {
+        "s3-math-numbers-q1": {
+         "title": "Detektif nilai tempat",
+         "questions": {
+          "q1": {
+           "prompt": "Apakah nilai tempat bagi digit 7 dalam 4 725?",
+           "options": {
+            "a": "Sa",
+            "b": "Puluh",
+            "c": "Ratus",
+            "d": "Ribu"
+           },
+           "explain": "Digit 7 berada di rumah ratus, jadi nilainya 700."
+          },
+          "q2": {
+           "prompt": "Nombor manakah ialah 'enam ribu lapan'?",
+           "explain": "6 ribu, 0 ratus, 0 puluh dan 8 sa = 6 008."
+          },
+          "q3": {
+           "prompt": "3 000 + 400 + 50 + 2 = ?"
+          },
+          "q4": {
+           "prompt": "Nilai digit bagi 9 dalam 9 130 ialah 9 000."
+          },
+          "q5": {
+           "prompt": "Nombor manakah yang paling besar?"
+          },
+          "q6": {
+           "prompt": "Susun dari yang terkecil hingga yang terbesar."
+          },
+          "q7": {
+           "prompt": "Apakah nombor yang datang selepas 4 999?"
+          },
+          "q8": {
+           "prompt": "Padankan nombor dengan perkataannya.",
+           "pairs": [
+            {
+             "left": "1 204",
+             "right": "seribu dua ratus empat"
+            },
+            {
+             "left": "1 024",
+             "right": "seribu dua puluh empat"
+            },
+            {
+             "left": "1 420",
+             "right": "seribu empat ratus dua puluh"
+            }
+           ]
+          }
+         }
+        },
+        "s3-math-numbers-q2": {
+         "title": "Cabaran nombor (rawak)"
+        },
+        "s3-math-numbers-q3": {
+         "title": "Lebih besar atau lebih kecil?"
+        }
+       }
+      },
+      "s3-math-operations": {
+       "title": "Operasi Asas",
+       "objectives": [
+        {
+         "code": "2.1",
+         "text": "Menambah dan menolak nombor dalam lingkungan 10 000"
+        },
+        {
+         "code": "2.3",
+         "text": "Mendarab menggunakan sifir 6, 7, 8 dan 9"
+        },
+        {
+         "code": "2.4",
+         "text": "Membahagi menggunakan sifir 6, 7, 8 dan 9"
+        },
+        {
+         "code": "2.6",
+         "text": "Menyelesaikan masalah harian yang melibatkan empat operasi"
+        }
+       ],
+       "offlineActivity": "Memasak bersama! Tanya: 'Kita perlukan 3 biji telur untuk sebiji kek. Berapa biji telur untuk 4 biji kek?' Biar anak mengira telur yang sebenar.",
+       "lesson": [
+        {
+         "type": "heading",
+         "text": "Darab ialah tambah yang cepat"
+        },
+        {
+         "type": "emojiGrid",
+         "emoji": "🍎",
+         "rows": 3,
+         "cols": 6,
+         "caption": "3 baris dengan 6 biji epal"
+        },
+        {
+         "type": "math",
+         "expr": "6 + 6 + 6 = 3 × 6 = 18"
+        },
+        {
+         "type": "callout",
+         "emoji": "🧠",
+         "tone": "remember",
+         "text": "Susunan darab boleh ditukar: **3 × 6** sama dengan **6 × 3**. Kedua-duanya 18!"
+        },
+        {
+         "type": "heading",
+         "text": "Bahagi ialah berkongsi sama rata"
+        },
+        {
+         "type": "text",
+         "text": "18 biji gula-gula dikongsi sama rata antara 3 orang kawan. Setiap kawan mendapat **6** biji."
+        },
+        {
+         "type": "math",
+         "expr": "18 ÷ 3 = 6"
+        },
+        {
+         "type": "heading",
+         "text": "Tambah dalam bentuk lazim"
+        },
+        {
+         "type": "example",
+         "title": "2 458 + 1 375",
+         "lines": [
+          "  2 4 5 8",
+          "+ 1 3 7 5",
+          "─────────",
+          "  3 8 3 3"
+         ]
+        },
+        {
+         "type": "callout",
+         "emoji": "✨",
+         "tone": "tip",
+         "text": "Mula dari **sa**. 8 + 5 = 13, tulis 3 dan kumpul semula 1 ke puluh."
+        }
+       ],
+       "quizzes": {
+        "s3-math-operations-q1": {
+         "title": "Soalan bercerita",
+         "questions": {
+          "q1": {
+           "prompt": "Aina ada 1 250 keping pelekat. Ibunya memberinya 480 keping lagi. Berapakah jumlah pelekat Aina sekarang?"
+          },
+          "q2": {
+           "prompt": "Sebuah kedai ada 3 000 biji belon. Kedai itu menjual 1 275 biji. Berapakah baki belon?"
+          },
+          "q3": {
+           "prompt": "Ada 7 kotak. Setiap kotak ada 8 batang pensel. Berapakah jumlah pensel semuanya?",
+           "explain": "7 × 8 = 56"
+          },
+          "q4": {
+           "prompt": "45 biji durian dibahagi sama rata kepada 9 keluarga. Berapa biji durian yang diterima oleh setiap keluarga?"
+          },
+          "q5": {
+           "prompt": "6 × 9 = 56",
+           "explain": "6 × 9 = 54"
+          },
+          "q6": {
+           "prompt": "Isi nombor yang tertinggal.",
+           "text": "8 × ___ = 72 dan 72 ÷ 8 = ___"
+          }
+         }
+        },
+        "s3-math-operations-q2": {
+         "title": "Sifir 6–9"
+        },
+        "s3-math-operations-q3": {
+         "title": "Kongsi sama rata (÷)"
+        },
+        "s3-math-operations-q4": {
+         "title": "Tambah nombor besar"
+        }
+       }
+      },
+      "s3-math-fractions": {
+       "title": "Pecahan, Perpuluhan dan Peratus",
+       "objectives": [
+        {
+         "code": "3.1",
+         "text": "Menamakan dan menulis pecahan wajar dengan penyebut hingga 10"
+        },
+        {
+         "code": "3.2",
+         "text": "Menamakan dan menulis nombor perpuluhan hingga satu tempat perpuluhan"
+        },
+        {
+         "code": "3.3",
+         "text": "Menamakan dan menulis peratus"
+        }
+       ],
+       "offlineActivity": "Kongsi sebiji piza atau roti canai. Potong kepada 4 atau 8 bahagian yang sama besar dan tanya pecahan yang didapati oleh setiap orang.",
+       "lesson": [
+        {
+         "type": "heading",
+         "text": "Berkongsi piza"
+        },
+        {
+         "type": "text",
+         "text": "Sebiji piza dipotong kepada **4 bahagian yang sama besar**. Kamu makan **3** bahagian. Kamu makan **tiga per empat** daripada piza itu."
+        },
+        {
+         "type": "fraction",
+         "numerator": 3,
+         "denominator": 4,
+         "caption": "3 daripada 4 bahagian yang sama besar"
+        },
+        {
+         "type": "list",
+         "items": [
+          "Nombor **atas** (pengangka) = bahagian yang diambil",
+          "Nombor **bawah** (penyebut) = jumlah bahagian yang sama besar"
+         ]
+        },
+        {
+         "type": "heading",
+         "text": "Perpuluhan"
+        },
+        {
+         "type": "text",
+         "text": "Satu per sepuluh boleh ditulis sebagai pecahan atau perpuluhan."
+        },
+        {
+         "type": "math",
+         "expr": "1/10 = 0.1"
+        },
+        {
+         "type": "heading",
+         "text": "Peratus bermaksud 'daripada 100'"
+        },
+        {
+         "type": "emojiGrid",
+         "emoji": "🟩",
+         "rows": 5,
+         "cols": 10,
+         "caption": "50 daripada 100 petak = 50%"
+        },
+        {
+         "type": "callout",
+         "emoji": "💯",
+         "tone": "fun",
+         "text": "**100%** bermaksud keseluruhannya. Separuh ialah **50%**."
+        }
+       ],
+       "quizzes": {
+        "s3-math-fractions-q1": {
+         "title": "Seronok dengan pecahan",
+         "questions": {
+          "q1": {
+           "prompt": "Sebiji kek dipotong kepada 8 keping yang sama besar. Ali makan 3 keping. Berapakah pecahan kek yang dimakannya?"
+          },
+          "q2": {
+           "prompt": "Padankan pecahan dengan namanya.",
+           "pairs": [
+            {
+             "left": "1/2",
+             "right": "satu per dua"
+            },
+            {
+             "left": "1/4",
+             "right": "satu per empat"
+            },
+            {
+             "left": "3/4",
+             "right": "tiga per empat"
+            }
+           ]
+          },
+          "q3": {
+           "prompt": "Nombor perpuluhan manakah yang sama dengan 7/10?"
+          },
+          "q4": {
+           "prompt": "50% sama dengan satu per dua."
+          },
+          "q5": {
+           "prompt": "Pecahan manakah yang lebih besar?",
+           "explain": "Apabila nombor atas sama, nombor bawah yang lebih kecil memberi bahagian yang lebih besar."
+          },
+          "q6": {
+           "prompt": "25 daripada 100 biji guli berwarna merah. Berapa peratus guli yang berwarna merah?"
+          }
+         }
+        }
+       }
+      },
+      "s3-math-money": {
+       "title": "Wang hingga RM1000",
+       "objectives": [
+        {
+         "code": "4.1",
+         "text": "Mewakilkan nilai wang hingga RM1000"
+        },
+        {
+         "code": "4.2",
+         "text": "Menambah dan menolak wang hingga RM1000"
+        },
+        {
+         "code": "4.4",
+         "text": "Menyelesaikan masalah harian yang melibatkan wang"
+        }
+       ],
+       "offlineActivity": "Di pasar atau kedai runcit, biar anak menyerahkan wang dan menyemak sama ada baki yang diterima betul.",
+       "lesson": [
+        {
+         "type": "heading",
+         "text": "Ringgit dan sen"
+        },
+        {
+         "type": "text",
+         "text": "**RM1 = 100 sen**. Kita tulis RM5 dan 50 sen sebagai **RM5.50**."
+        },
+        {
+         "type": "table",
+         "headers": [
+          "Wang kertas",
+          "Nilai"
+         ],
+         "rows": [
+          [
+           "💵 RM1",
+           "100 sen"
+          ],
+          [
+           "💵 RM10",
+           "10 × RM1"
+          ],
+          [
+           "💵 RM50",
+           "5 × RM10"
+          ],
+          [
+           "💵 RM100",
+           "10 × RM10"
+          ]
+         ]
+        },
+        {
+         "type": "example",
+         "title": "Membeli buku",
+         "lines": [
+          "Harga: RM18.50",
+          "Kamu bayar: RM20.00",
+          "Baki: RM20.00 − RM18.50 = RM1.50"
+         ]
+        },
+        {
+         "type": "callout",
+         "emoji": "🪙",
+         "tone": "remember",
+         "text": "Susun **titik perpuluhan** secara selari apabila menambah atau menolak wang."
+        }
+       ],
+       "quizzes": {
+        "s3-math-money-q1": {
+         "title": "Kedai runcit",
+         "questions": {
+          "q1": {
+           "prompt": "Berapakah sen dalam RM3?"
+          },
+          "q2": {
+           "prompt": "Sehelai baju berharga RM35 dan sebuah topi berharga RM12. Berapakah jumlah harganya? (RM)"
+          },
+          "q3": {
+           "prompt": "Kamu bayar RM50 untuk sebuah mainan yang berharga RM37. Berapakah baki wang kamu?"
+          },
+          "q4": {
+           "prompt": "RM4.50 sama dengan 450 sen."
+          },
+          "q5": {
+           "prompt": "Bolehkah kamu membelinya dengan RM10?",
+           "buckets": {
+            "yes": "Boleh",
+            "no": "Terlalu mahal"
+           }
+          }
+         }
+        },
+        "s3-math-money-q2": {
+         "title": "Matematik wang (rawak)"
+        }
+       }
+      },
+      "s3-math-time": {
+       "title": "Masa dan Waktu",
+       "objectives": [
+        {
+         "code": "5.1",
+         "text": "Membaca dan menulis waktu dalam jam dan minit"
+        },
+        {
+         "code": "5.2",
+         "text": "Mengetahui perkaitan antara unit masa"
+        }
+       ],
+       "offlineActivity": "Beri anak sebuah jam sebenar di rumah. Minta dia beritahu apabila sudah pukul 7 setengah sebelum makan malam.",
+       "lesson": [
+        {
+         "type": "heading",
+         "text": "Unit masa"
+        },
+        {
+         "type": "table",
+         "headers": [
+          "",
+          "sama dengan"
+         ],
+         "rows": [
+          [
+           "1 minit",
+           "60 saat"
+          ],
+          [
+           "1 jam",
+           "60 minit"
+          ],
+          [
+           "1 hari",
+           "24 jam"
+          ],
+          [
+           "1 minggu",
+           "7 hari"
+          ],
+          [
+           "1 tahun",
+           "12 bulan"
+          ]
+         ]
+        },
+        {
+         "type": "callout",
+         "emoji": "🕧",
+         "tone": "tip",
+         "text": "**Setengah** bermaksud 30 minit selepas pukul itu. **Suku** bermaksud 15 minit selepas pukul itu."
+        },
+        {
+         "type": "example",
+         "title": "Berapa lama?",
+         "lines": [
+          "Mula: 8:15 pagi",
+          "Tamat: 9:00 pagi",
+          "Masa diambil: 45 minit"
+         ]
+        }
+       ],
+       "quizzes": {
+        "s3-math-time-q1": {
+         "title": "Tik tok",
+         "questions": {
+          "q1": {
+           "prompt": "Berapakah minit dalam 2 jam?"
+          },
+          "q2": {
+           "prompt": "Pukul 7 setengah ialah…"
+          },
+          "q3": {
+           "prompt": "Padankan unit masa.",
+           "pairs": [
+            {
+             "left": "1 minggu",
+             "right": "7 hari"
+            },
+            {
+             "left": "1 hari",
+             "right": "24 jam"
+            },
+            {
+             "left": "1 tahun",
+             "right": "12 bulan"
+            },
+            {
+             "left": "1 jam",
+             "right": "60 minit"
+            }
+           ]
+          },
+          "q4": {
+           "prompt": "Sekolah bermula pukul 7:30 pagi dan waktu rehat pukul 10:00 pagi. Berapa minitkah tempoh itu?"
+          },
+          "q5": {
+           "prompt": "Susun nama bulan mengikut urutan.",
+           "tokens": [
+            "Januari",
+            "Februari",
+            "Mac",
+            "April",
+            "Mei"
+           ]
+          }
+         }
+        }
+       }
+      },
+      "s3-math-measure": {
+       "title": "Ukuran dan Sukatan",
+       "objectives": [
+        {
+         "code": "6.1",
+         "text": "Mengukur panjang dalam mm, cm dan m"
+        },
+        {
+         "code": "6.2",
+         "text": "Menimbang jisim dalam g dan kg"
+        },
+        {
+         "code": "6.3",
+         "text": "Menyukat isi padu cecair dalam ml dan l"
+        }
+       ],
+       "offlineActivity": "Gunakan pita pengukur dan penimbang dapur. Anggarkan dahulu, kemudian ukur: berapa panjang sofa? Berapa berat sekampit beras?",
+       "lesson": [
+        {
+         "type": "heading",
+         "text": "Unit yang mana?"
+        },
+        {
+         "type": "table",
+         "headers": [
+          "Ukuran",
+          "Unit"
+         ],
+         "rows": [
+          [
+           "📏 Panjang",
+           "mm, cm, m"
+          ],
+          [
+           "⚖️ Jisim",
+           "g, kg"
+          ],
+          [
+           "🥛 Isi padu cecair",
+           "ml, l"
+          ]
+         ]
+        },
+        {
+         "type": "list",
+         "items": [
+          "1 m = 100 cm",
+          "1 kg = 1 000 g",
+          "1 l = 1 000 ml"
+         ]
+        },
+        {
+         "type": "callout",
+         "emoji": "🐘",
+         "tone": "fun",
+         "text": "Benda yang berat seperti tembikai ditimbang dalam **kg**. Benda yang ringan seperti pensel ditimbang dalam **g**."
+        }
+       ],
+       "quizzes": {
+        "s3-math-measure-q1": {
+         "title": "Pakar ukuran",
+         "questions": {
+          "q1": {
+           "prompt": "Kamu timbang dalam g atau kg?",
+           "buckets": {
+            "g": "gram (g)",
+            "kg": "kilogram (kg)"
+           },
+           "items": [
+            "✏️ pensel",
+            "🍉 tembikai",
+            "🔑 kunci",
+            "🧒 kanak-kanak",
+            "🍚 seguni beras"
+           ]
+          },
+          "q2": {
+           "prompt": "3 m = ___ cm"
+          },
+          "q3": {
+           "prompt": "Unit manakah yang paling sesuai untuk menyukat air dalam tab mandi?"
+          },
+          "q4": {
+           "prompt": "2 kg = ___ g"
+          },
+          "q5": {
+           "prompt": "1 l lebih banyak daripada 500 ml."
+          }
+         }
+        }
+       }
+      },
+      "s3-math-shapes": {
+       "title": "Ruang",
+       "objectives": [
+        {
+         "code": "7.1",
+         "text": "Mengenal pasti bentuk dua dimensi dan cirinya"
+        },
+        {
+         "code": "7.2",
+         "text": "Mengenal pasti bentuk tiga dimensi dan cirinya"
+        }
+       ],
+       "offlineActivity": "Pergi 'memburu bentuk' di sekeliling rumah: cari silinder, kubus, kon dan sfera.",
+       "lesson": [
+        {
+         "type": "heading",
+         "text": "Bentuk 2D adalah rata"
+        },
+        {
+         "type": "table",
+         "headers": [
+          "Bentuk",
+          "Sisi",
+          "Bucu"
+         ],
+         "rows": [
+          [
+           "🔺 Segi tiga",
+           "3",
+           "3"
+          ],
+          [
+           "🟥 Segi empat sama",
+           "4",
+           "4"
+          ],
+          [
+           "▭ Segi empat tepat",
+           "4",
+           "4"
+          ],
+          [
+           "⭕ Bulatan",
+           "0",
+           "0"
+          ]
+         ]
+        },
+        {
+         "type": "heading",
+         "text": "Bentuk 3D adalah pepejal"
+        },
+        {
+         "type": "vocab",
+         "lang": "ms",
+         "items": [
+          {
+           "word": "kubus",
+           "meaning": "cube",
+           "emoji": "🎲"
+          },
+          {
+           "word": "sfera",
+           "meaning": "sphere",
+           "emoji": "⚽"
+          },
+          {
+           "word": "silinder",
+           "meaning": "cylinder",
+           "emoji": "🥫"
+          },
+          {
+           "word": "kon",
+           "meaning": "cone",
+           "emoji": "🍦"
+          }
+         ]
+        }
+       ],
+       "quizzes": {
+        "s3-math-shapes-q1": {
+         "title": "Pengesan bentuk",
+         "questions": {
+          "q1": {
+           "prompt": "Padankan objek dengan bentuk 3D.",
+           "pairs": [
+            {
+             "left": "🎲",
+             "right": "kubus"
+            },
+            {
+             "left": "⚽",
+             "right": "sfera"
+            },
+            {
+             "left": "🥫",
+             "right": "silinder"
+            },
+            {
+             "left": "🍦",
+             "right": "kon"
+            }
+           ]
+          },
+          "q2": {
+           "prompt": "Berapakah bilangan sisi bagi segi tiga?"
+          },
+          "q3": {
+           "prompt": "Bentuk manakah yang tiada bucu?",
+           "options": {
+            "a": "Segi empat sama",
+            "b": "Bulatan",
+            "c": "Segi tiga",
+            "d": "Rombus"
+           }
+          },
+          "q4": {
+           "prompt": "Kubus mempunyai 6 permukaan rata."
+          },
+          "q5": {
+           "prompt": "Rata (2D) atau pepejal (3D)?",
+           "buckets": {
+            "2d": "2D rata",
+            "3d": "3D pepejal"
+           },
+           "items": [
+            "segi empat sama",
+            "kubus",
+            "bulatan",
+            "sfera",
+            "kon",
+            "segi tiga"
+           ]
+          }
+         }
+        }
+       }
+      },
+      "s3-math-coord": {
+       "title": "Koordinat, Nisbah dan Kadaran",
+       "objectives": [
+        {
+         "code": "8.1",
+         "text": "Menyatakan kedudukan objek menggunakan koordinat (melintang, kemudian menegak)"
+        },
+        {
+         "code": "8.2",
+         "text": "Menghuraikan nisbah satu kepada banyak"
+        },
+        {
+         "code": "8.3",
+         "text": "Menyelesaikan masalah kadaran (satu kepada banyak)"
+        }
+       ],
+       "offlineActivity": "Lukis peta harta karun pada kertas grid. Sorokkan gula-gula di (3, 2) — anak mesti bergerak 3 ke kanan, kemudian 2 ke atas untuk menemuinya.",
+       "lesson": [
+        {
+         "type": "heading",
+         "text": "Mencari tempat pada grid"
+        },
+        {
+         "type": "text",
+         "text": "Untuk membaca **koordinat**, gerak **melintang** dahulu, kemudian **ke atas** (menegak). Harta karun di **(4, 2)** berada 4 langkah melintang dan 2 langkah ke atas."
+        },
+        {
+         "type": "callout",
+         "emoji": "🚶",
+         "tone": "remember",
+         "text": "Ingat: **jalan sepanjang koridor dahulu, kemudian naik tangga!**"
+        },
+        {
+         "type": "heading",
+         "text": "Nisbah satu kepada banyak"
+        },
+        {
+         "type": "emojiGrid",
+         "emoji": "🛞",
+         "rows": 1,
+         "cols": 4,
+         "caption": "1 kereta : 4 roda"
+        },
+        {
+         "type": "table",
+         "headers": [
+          "Kereta 🚗",
+          "Roda 🛞"
+         ],
+         "rows": [
+          [
+           "1",
+           "4"
+          ],
+          [
+           "2",
+           "8"
+          ],
+          [
+           "3",
+           "12"
+          ]
+         ]
+        },
+        {
+         "type": "text",
+         "text": "Ini ialah **kadaran**: setiap kali kita tambah 1 kereta, kita tambah 4 roda."
+        }
+       ],
+       "quizzes": {
+        "s3-math-coord-q1": {
+         "title": "Pemburu harta karun",
+         "questions": {
+          "q1": {
+           "prompt": "Harta karun berada 3 langkah melintang dan 5 langkah ke atas. Apakah koordinatnya?"
+          },
+          "q2": {
+           "prompt": "Untuk koordinat (2, 6), kita bergerak 2 langkah ke atas dahulu.",
+           "explain": "Gerak 2 langkah melintang dahulu, kemudian 6 langkah ke atas."
+          },
+          "q3": {
+           "prompt": "Seekor labah-labah ada 8 kaki. Berapakah bilangan kaki bagi 3 ekor labah-labah?"
+          },
+          "q4": {
+           "prompt": "Sebuah kotak memuatkan 6 biji telur. Berapa kotak diperlukan untuk 30 biji telur?"
+          },
+          "q5": {
+           "prompt": "1 basikal : 2 roda. Berapakah bilangan roda bagi 5 buah basikal?"
+          }
+         }
+        }
+       }
+      },
+      "s3-math-data": {
+       "title": "Pengurusan Data",
+       "objectives": [
+        {
+         "code": "9.1",
+         "text": "Membaca dan mentafsir maklumat dalam piktograf dan carta palang"
+        }
+       ],
+       "offlineActivity": "Buat carta gundalan bagi warna kereta yang dilihat dalam perjalanan ke sekolah. Warna manakah yang paling banyak?",
+       "lesson": [
+        {
+         "type": "heading",
+         "text": "Membaca piktograf"
+        },
+        {
+         "type": "text",
+         "text": "Setiap 🍎 mewakili **2 biji epal**."
+        },
+        {
+         "type": "table",
+         "headers": [
+          "Murid",
+          "Epal yang dipetik"
+         ],
+         "rows": [
+          [
+           "Adam",
+           "🍎🍎🍎"
+          ],
+          [
+           "Mei Ling",
+           "🍎🍎🍎🍎🍎"
+          ],
+          [
+           "Kavin",
+           "🍎🍎"
+          ]
+         ]
+        },
+        {
+         "type": "list",
+         "items": [
+          "Adam memetik 3 × 2 = **6** biji epal",
+          "Mei Ling memetik **paling banyak**: 10 biji epal",
+          "Kavin memetik **paling sedikit**: 4 biji epal"
+         ]
+        }
+       ],
+       "quizzes": {
+        "s3-math-data-q1": {
+         "title": "Teka-teki piktograf",
+         "questions": {
+          "q1": {
+           "prompt": "Setiap 🍎 = 2 biji epal. Mei Ling ada 🍎🍎🍎🍎🍎. Berapa biji epal yang dia ada?"
+          },
+          "q2": {
+           "prompt": "Setiap ⭐ = 5 bintang. Kavin ada ⭐⭐⭐. Berapakah bilangan bintang?"
+          },
+          "q3": {
+           "prompt": "Dalam carta palang, palang yang paling tinggi menunjukkan nombor yang paling besar."
+          }
+         }
+        }
+       }
+      }
+     }
+    },
+    "science": {
+     "name": "Sains",
+     "topics": {
+      "s3-sci-skills": {
+       "title": "Kemahiran Saintifik",
+       "objectives": [
+        {
+         "code": "1.1",
+         "text": "Menggunakan kemahiran proses sains: memerhati, mengelas, mengukur dan menggunakan nombor, membuat inferens, meramal dan berkomunikasi"
+        }
+       ],
+       "offlineActivity": "Beg misteri: masukkan 5 objek ke dalam sebuah beg. Anak perlu memerhati dengan sentuhan sahaja, kemudian meramal setiap objek sebelum melihatnya.",
+       "lesson": [
+        {
+         "type": "heading",
+         "text": "Berfikir seperti saintis!"
+        },
+        {
+         "type": "text",
+         "text": "Saintis menggunakan **kemahiran proses sains** untuk mengenali dunia di sekeliling kita."
+        },
+        {
+         "type": "table",
+         "headers": [
+          "Kemahiran",
+          "Apa yang kamu lakukan"
+         ],
+         "rows": [
+          [
+           "👀 Memerhati",
+           "Menggunakan kelima-lima deria"
+          ],
+          [
+           "🗂️ Mengelas",
+           "Mengumpulkan benda yang sama ciri"
+          ],
+          [
+           "📏 Mengukur",
+           "Menggunakan alat dan nombor"
+          ],
+          [
+           "💭 Membuat inferens",
+           "Memberi sebab bagi apa yang diperhatikan"
+          ],
+          [
+           "🔮 Meramal",
+           "Meneka apa yang akan berlaku seterusnya"
+          ],
+          [
+           "🗣️ Berkomunikasi",
+           "Berkongsi keputusan dengan jadual, carta atau perkataan"
+          ]
+         ]
+        },
+        {
+         "type": "callout",
+         "emoji": "🧪",
+         "tone": "tip",
+         "text": "**Inferens** ialah sebab yang bijak. Rumput basah → mungkin **hujan** turun malam tadi."
+        }
+       ],
+       "quizzes": {
+        "s3-sci-skills-q1": {
+         "title": "Detektif kemahiran",
+         "questions": {
+          "q1": {
+           "prompt": "Padankan kemahiran dengan contohnya.",
+           "pairs": [
+            {
+             "left": "memerhati",
+             "right": "Bunga itu berwarna merah dan berbau harum"
+            },
+            {
+             "left": "meramal",
+             "right": "Ais itu akan cair di bawah cahaya matahari"
+            },
+            {
+             "left": "mengukur",
+             "right": "Panjang pensel itu ialah 15 cm"
+            },
+            {
+             "left": "mengelas",
+             "right": "Kumpulkan haiwan yang berbulu"
+            }
+           ]
+          },
+          "q2": {
+           "prompt": "Jalan raya basah. 'Hujan turun malam tadi.' Kemahiran apakah ini?",
+           "options": {
+            "a": "Membuat inferens",
+            "b": "Mengukur",
+            "c": "Mengelas"
+           }
+          },
+          "q3": {
+           "prompt": "Deria apakah yang kamu gunakan untuk mengetahui durian berbau kuat?",
+           "options": {
+            "a": "Penglihatan",
+            "b": "Bau",
+            "c": "Pendengaran",
+            "d": "Sentuhan"
+           }
+          },
+          "q4": {
+           "prompt": "Melukis carta palang bagi keputusan kamu ialah 'berkomunikasi'."
+          }
+         }
+        }
+       }
+      },
+      "s3-sci-rules": {
+       "title": "Peraturan Bilik Sains",
+       "objectives": [
+        {
+         "code": "2.1",
+         "text": "Mematuhi peraturan bilik sains"
+        }
+       ],
+       "offlineActivity": "Buat poster 'Keselamatan Diutamakan' bersama-sama untuk dapur: jangan berlari, basuh tangan dan minta izin sebelum menyentuh benda panas.",
+       "lesson": [
+        {
+         "type": "heading",
+         "text": "Selamat di dalam makmal"
+        },
+        {
+         "type": "list",
+         "items": [
+          "Masuk hanya dengan kebenaran **guru**",
+          "**Jangan** rasa atau hidu bahan kimia",
+          "Jangan berlari atau bermain",
+          "Laporkan tumpahan dan kaca pecah dengan **segera**",
+          "Basuh tangan selepas eksperimen",
+          "Pastikan bilik sentiasa bersih dan kemas"
+         ]
+        },
+        {
+         "type": "callout",
+         "emoji": "⚠️",
+         "tone": "remember",
+         "text": "Jika ada barang pecah, **beritahu guru** — jangan kutip kaca pecah sendiri!"
+        }
+       ],
+       "quizzes": {
+        "s3-sci-rules-q1": {
+         "title": "Keselamatan diutamakan",
+         "questions": {
+          "q1": {
+           "prompt": "Selamat atau tidak selamat di dalam bilik sains?",
+           "buckets": {
+            "safe": "Selamat",
+            "unsafe": "Tidak selamat"
+           },
+           "items": [
+            "membasuh tangan",
+            "berlari-lari",
+            "merasa bahan kimia",
+            "melaporkan tumpahan",
+            "makan di dalam makmal"
+           ]
+          },
+          "q2": {
+           "prompt": "Sebatang tabung uji pecah. Apakah yang patut kamu lakukan?",
+           "options": {
+            "a": "Kutip kaca itu dengan cepat",
+            "b": "Beritahu guru",
+            "c": "Sorokkan kaca itu"
+           }
+          },
+          "q3": {
+           "prompt": "Kamu boleh masuk ke bilik sains tanpa guru."
+          }
+         }
+        }
+       }
+      },
+      "s3-sci-teeth": {
+       "title": "Manusia: Gigi",
+       "objectives": [
+        {
+         "code": "3.1",
+         "text": "Mengetahui gigi susu dan gigi kekal"
+        },
+        {
+         "code": "3.2",
+         "text": "Mengenal pasti jenis gigi dan fungsinya"
+        },
+        {
+         "code": "3.3",
+         "text": "Mengetahui struktur gigi"
+        },
+        {
+         "code": "3.4",
+         "text": "Mengamalkan cara penjagaan gigi yang betul"
+        }
+       ],
+       "offlineActivity": "Gosok gigi bersama-sama di hadapan cermin. Kira gigi anak dan cari gigi kacip, gigi taring dan gigi geraham. Periksa juga gigi susu yang goyang!",
+       "lesson": [
+        {
+         "type": "heading",
+         "text": "Dua set gigi"
+        },
+        {
+         "type": "table",
+         "headers": [
+          "",
+          "Gigi susu",
+          "Gigi kekal"
+         ],
+         "rows": [
+          [
+           "Berapa batang?",
+           "20",
+           "32"
+          ],
+          [
+           "Mula tumbuh",
+           "kira-kira umur 6 bulan",
+           "kira-kira umur 6 tahun"
+          ]
+         ]
+        },
+        {
+         "type": "heading",
+         "text": "Jenis gigi"
+        },
+        {
+         "type": "table",
+         "headers": [
+          "Gigi",
+          "Fungsi"
+         ],
+         "rows": [
+          [
+           "Gigi kacip",
+           "Memotong makanan ✂️"
+          ],
+          [
+           "Gigi taring",
+           "Mengoyak makanan 🥩"
+          ],
+          [
+           "Gigi geraham kecil",
+           "Mengunyah dan mengisar"
+          ],
+          [
+           "Gigi geraham besar",
+           "Mengunyah dan mengisar 🌽"
+          ]
+         ]
+        },
+        {
+         "type": "heading",
+         "text": "Di dalam gigi"
+        },
+        {
+         "type": "list",
+         "items": [
+          "**Enamel** — lapisan luar yang paling keras",
+          "**Dentin** — di bawah enamel",
+          "**Pulpa** — mengandungi saraf dan salur darah",
+          "**Gusi** memegang gigi supaya kukuh"
+         ]
+        },
+        {
+         "type": "callout",
+         "emoji": "🪥",
+         "tone": "remember",
+         "text": "Gosok gigi **dua kali sehari**, guna flos gigi, kurangkan gula-gula dan jumpa doktor gigi setiap **6 bulan**."
+        }
+       ],
+       "quizzes": {
+        "s3-sci-teeth-q1": {
+         "title": "Ujian gigi sihat",
+         "questions": {
+          "q1": {
+           "prompt": "Padankan gigi dengan fungsinya.",
+           "pairs": [
+            {
+             "left": "gigi kacip",
+             "right": "memotong makanan"
+            },
+            {
+             "left": "gigi taring",
+             "right": "mengoyak makanan"
+            },
+            {
+             "left": "gigi geraham",
+             "right": "mengunyah dan mengisar"
+            }
+           ]
+          },
+          "q2": {
+           "prompt": "Berapakah bilangan gigi susu kanak-kanak?"
+          },
+          "q3": {
+           "prompt": "Berapakah bilangan gigi kekal orang dewasa?"
+          },
+          "q4": {
+           "prompt": "Bahagian manakah yang paling keras pada gigi?",
+           "options": {
+            "a": "Pulpa",
+            "b": "Enamel",
+            "c": "Gusi",
+            "d": "Dentin"
+           }
+          },
+          "q5": {
+           "prompt": "Baik atau buruk untuk gigi kamu?",
+           "buckets": {
+            "good": "Baik",
+            "bad": "Buruk"
+           },
+           "items": [
+            "🪥 gosok gigi dua kali sehari",
+            "🍬 banyak gula-gula",
+            "🧵 guna flos gigi",
+            "🥤 minuman bergas",
+            "👩‍⚕️ jumpa doktor gigi"
+           ]
+          },
+          "q6": {
+           "prompt": "Lengkapkan ayat.",
+           "text": "Saraf dan salur darah terdapat di dalam ___. Gigi dipegang kukuh oleh ___.",
+           "blanks": [
+            "pulpa",
+            "gusi"
+           ],
+           "bank": [
+            "pulpa",
+            "gusi",
+            "enamel",
+            "lidah"
+           ]
+          }
+         }
+        }
+       }
+      },
+      "s3-sci-animals": {
+       "title": "Haiwan",
+       "objectives": [
+        {
+         "code": "4.1",
+         "text": "Mengelaskan haiwan mengikut penutup badan dan cara pembiakan"
+        },
+        {
+         "code": "4.2",
+         "text": "Mengelaskan haiwan mengikut tabiat makan: herbivor, karnivor dan omnivor"
+        },
+        {
+         "code": "4.3",
+         "text": "Mengaitkan jenis gigi haiwan dengan makanannya"
+        }
+       ],
+       "offlineActivity": "Lawati Zoo Negara, akuarium atau ladang. Bagi setiap haiwan, tanya: Apakah penutup badannya? Adakah ia bertelur? Apakah makanannya?",
+       "lesson": [
+        {
+         "type": "heading",
+         "text": "Penutup badan"
+        },
+        {
+         "type": "table",
+         "headers": [
+          "Penutup badan",
+          "Contoh"
+         ],
+         "rows": [
+          [
+           "Bulu",
+           "🐱 kucing, 🐄 lembu"
+          ],
+          [
+           "Bulu pelepah",
+           "🐔 ayam, 🦜 burung enggang"
+          ],
+          [
+           "Sisik",
+           "🐟 ikan, 🐍 ular"
+          ],
+          [
+           "Cangkerang",
+           "🐢 penyu, 🐌 siput"
+          ]
+         ]
+        },
+        {
+         "type": "heading",
+         "text": "Bertelur atau beranak?"
+        },
+        {
+         "type": "list",
+         "items": [
+          "**Bertelur**: ayam, penyu, buaya, katak",
+          "**Beranak**: kucing, lembu, kambing, ikan paus"
+         ]
+        },
+        {
+         "type": "heading",
+         "text": "Siapa makan apa?"
+        },
+        {
+         "type": "table",
+         "headers": [
+          "Kumpulan",
+          "Makanan",
+          "Gigi"
+         ],
+         "rows": [
+          [
+           "Herbivor 🐄",
+           "Tumbuhan sahaja",
+           "Gigi geraham yang rata untuk mengisar rumput"
+          ],
+          [
+           "Karnivor 🐯",
+           "Daging sahaja",
+           "Gigi taring yang tajam untuk mengoyak"
+          ],
+          [
+           "Omnivor 🐻",
+           "Tumbuhan dan daging",
+           "Gigi tajam dan gigi rata"
+          ]
+         ]
+        }
+       ],
+       "quizzes": {
+        "s3-sci-animals-q1": {
+         "title": "Alam haiwan",
+         "questions": {
+          "q1": {
+           "prompt": "Seret setiap haiwan ke kumpulan yang betul.",
+           "buckets": {
+            "herb": "Herbivor",
+            "carn": "Karnivor"
+           },
+           "items": [
+            "🐄 lembu",
+            "🐯 harimau",
+            "🐇 arnab",
+            "🦅 helang",
+            "🐘 gajah",
+            "🐊 buaya"
+           ]
+          },
+          "q2": {
+           "prompt": "Padankan haiwan dengan penutup badannya.",
+           "pairs": [
+            {
+             "left": "🐱 kucing",
+             "right": "bulu"
+            },
+            {
+             "left": "🐔 ayam",
+             "right": "bulu pelepah"
+            },
+            {
+             "left": "🐟 ikan",
+             "right": "sisik"
+            },
+            {
+             "left": "🐢 penyu",
+             "right": "cangkerang"
+            }
+           ]
+          },
+          "q3": {
+           "prompt": "Bertelur atau beranak?",
+           "buckets": {
+            "egg": "Bertelur",
+            "birth": "Beranak"
+           },
+           "items": [
+            "🐔 ayam",
+            "🐐 kambing",
+            "🐸 katak",
+            "🐋 ikan paus",
+            "🐢 penyu"
+           ]
+          },
+          "q4": {
+           "prompt": "Harimau mempunyai gigi taring yang panjang dan tajam. Apakah makanannya?",
+           "options": {
+            "a": "Rumput",
+            "b": "Daging",
+            "c": "Buah-buahan sahaja"
+           }
+          },
+          "q5": {
+           "prompt": "Ayam makan bijirin dan cacing. Ayam ialah…",
+           "options": {
+            "a": "Herbivor",
+            "b": "Karnivor",
+            "c": "Omnivor"
+           }
+          }
+         }
+        }
+       }
+      },
+      "s3-sci-plants": {
+       "title": "Tumbuhan",
+       "objectives": [
+        {
+         "code": "5.1",
+         "text": "Mengetahui pelbagai cara tumbuhan membiak"
+        },
+        {
+         "code": "5.2",
+         "text": "Menerangkan kepentingan pembiakan tumbuhan"
+        }
+       ],
+       "offlineActivity": "Tanam kangkung daripada biji benih dan keratan batang secara bersebelahan (seperti dalam buku teks). Bandingkan yang mana tumbuh lebih cepat dalam masa dua minggu.",
+       "lesson": [
+        {
+         "type": "heading",
+         "text": "Bagaimanakah tumbuhan membiak?"
+        },
+        {
+         "type": "table",
+         "headers": [
+          "Cara",
+          "Contoh"
+         ],
+         "rows": [
+          [
+           "Biji benih",
+           "🌾 padi, 🥭 rambutan, 🌽 jagung"
+          ],
+          [
+           "Keratan batang",
+           "🍠 ubi keledek, 🌺 bunga raya"
+          ],
+          [
+           "Daun",
+           "🍃 cocor mayor (setawar)"
+          ],
+          [
+           "Anak pokok (sulur)",
+           "🍌 pisang, 🍍 nanas"
+          ],
+          [
+           "Batang bawah tanah",
+           "🫚 halia, 🥔 kentang"
+          ],
+          [
+           "Spora",
+           "🌿 paku pakis, 🍄 cendawan"
+          ]
+         ]
+        },
+        {
+         "type": "callout",
+         "emoji": "🔬",
+         "tone": "fun",
+         "text": "Saintis boleh menghasilkan banyak tumbuhan daripada secebis kecil tisu melalui **kultur tisu**."
+        },
+        {
+         "type": "text",
+         "text": "Tumbuhan membiak supaya **tidak pupus** dan supaya manusia serta haiwan sentiasa mempunyai **makanan**."
+        }
+       ],
+       "quizzes": {
+        "s3-sci-plants-q1": {
+         "title": "Tumbuhan membiak",
+         "questions": {
+          "q1": {
+           "prompt": "Padankan tumbuhan dengan cara ia membiak.",
+           "pairs": [
+            {
+             "left": "🌾 padi",
+             "right": "biji benih"
+            },
+            {
+             "left": "🍌 pisang",
+             "right": "anak pokok"
+            },
+            {
+             "left": "🌿 paku pakis",
+             "right": "spora"
+            },
+            {
+             "left": "🫚 halia",
+             "right": "batang bawah tanah"
+            }
+           ]
+          },
+          "q2": {
+           "prompt": "Bagaimanakah kita biasanya menanam ubi keledek?",
+           "options": {
+            "a": "Keratan batang",
+            "b": "Spora",
+            "c": "Anak pokok"
+           }
+          },
+          "q3": {
+           "prompt": "Cendawan membiak melalui…",
+           "options": {
+            "a": "biji benih",
+            "b": "spora",
+            "c": "daun"
+           }
+          },
+          "q4": {
+           "prompt": "Pembiakan tumbuhan membantu memastikan kita mempunyai makanan yang cukup."
+          }
+         }
+        }
+       }
+      },
+      "s3-sci-measure": {
+       "title": "Pengukuran: Luas dan Isi Padu",
+       "objectives": [
+        {
+         "code": "6.1",
+         "text": "Mengukur luas menggunakan unit segi empat sama"
+        },
+        {
+         "code": "6.2",
+         "text": "Mengukur isi padu menggunakan unit kubus"
+        }
+       ],
+       "offlineActivity": "Tutup kulit sebuah buku dengan kertas pelekat segi empat sama, kemudian kira bilangannya. Bina bentuk kotak dengan kiub Lego dan kira kiub itu untuk mencari isi padunya.",
+       "lesson": [
+        {
+         "type": "heading",
+         "text": "Luas = besarnya permukaan"
+        },
+        {
+         "type": "emojiGrid",
+         "emoji": "🟦",
+         "rows": 3,
+         "cols": 4,
+         "caption": "3 baris × 4 petak = 12 unit segi empat sama"
+        },
+        {
+         "type": "heading",
+         "text": "Isi padu = banyaknya ruang"
+        },
+        {
+         "type": "text",
+         "text": "Kita boleh mengira **kubus** untuk mencari isi padu sesuatu pepejal."
+        },
+        {
+         "type": "math",
+         "expr": "2 × 2 × 3 = 12 kubus"
+        },
+        {
+         "type": "callout",
+         "emoji": "📏",
+         "tone": "remember",
+         "text": "Unit piawai: luas dalam **cm²**, isi padu dalam **cm³**."
+        }
+       ],
+       "quizzes": {
+        "s3-sci-measure-q1": {
+         "title": "Petak dan kubus",
+         "questions": {
+          "q1": {
+           "prompt": "Satu bentuk ditutup oleh 4 baris petak. Setiap baris ada 5 petak. Berapakah luasnya?",
+           "unit": "petak"
+          },
+          "q2": {
+           "prompt": "Sebuah kotak dibina daripada 3 lapisan kubus. Setiap lapisan ada 4 kubus. Berapakah isi padunya?",
+           "unit": "kubus"
+          },
+          "q3": {
+           "prompt": "Unit manakah yang digunakan untuk mengukur luas?"
+          },
+          "q4": {
+           "prompt": "Isi padu memberitahu kita banyaknya ruang yang diambil oleh sesuatu objek."
+          }
+         }
+        }
+       }
+      },
+      "s3-sci-density": {
+       "title": "Ketumpatan",
+       "objectives": [
+        {
+         "code": "7.1",
+         "text": "Mengaitkan keadaan terapung dan tenggelam dengan ketumpatan"
+        }
+       ],
+       "offlineActivity": "Ujian waktu mandi: ramal dahulu, kemudian semak sama ada sudu, span, syiling, epal dan mainan plastik terapung atau tenggelam.",
+       "lesson": [
+        {
+         "type": "heading",
+         "text": "Terapung atau tenggelam?"
+        },
+        {
+         "type": "text",
+         "text": "Objek yang **kurang tumpat** daripada air akan **terapung**. Objek yang **lebih tumpat** daripada air akan **tenggelam**."
+        },
+        {
+         "type": "table",
+         "headers": [
+          "Terapung 🛟",
+          "Tenggelam ⚓"
+         ],
+         "rows": [
+          [
+           "🪵 kayu",
+           "🪨 batu"
+          ],
+          [
+           "🧽 span",
+           "🪙 syiling"
+          ],
+          [
+           "🏐 bola",
+           "🔩 paku besi"
+          ]
+         ]
+        },
+        {
+         "type": "callout",
+         "emoji": "🫗",
+         "tone": "fun",
+         "text": "**Minyak masak terapung di atas air** kerana minyak kurang tumpat daripada air."
+        }
+       ],
+       "quizzes": {
+        "s3-sci-density-q1": {
+         "title": "Sains waktu mandi",
+         "questions": {
+          "q1": {
+           "prompt": "Adakah ia terapung atau tenggelam di dalam air?",
+           "buckets": {
+            "float": "Terapung",
+            "sink": "Tenggelam"
+           },
+           "items": [
+            "🪵 kayu",
+            "🪨 batu",
+            "🪙 syiling",
+            "🍃 daun",
+            "🔑 kunci",
+            "🧽 span"
+           ]
+          },
+          "q2": {
+           "prompt": "Minyak dituang ke dalam air. Di manakah minyak itu berada?",
+           "options": {
+            "a": "Terapung di atas air",
+            "b": "Tenggelam ke dasar",
+            "c": "Hilang"
+           }
+          },
+          "q3": {
+           "prompt": "Objek yang lebih tumpat daripada air akan tenggelam."
+          }
+         }
+        }
+       }
+      },
+      "s3-sci-acid": {
+       "title": "Asid dan Alkali",
+       "objectives": [
+        {
+         "code": "8.1",
+         "text": "Mengenal pasti bahan berasid, beralkali dan neutral menggunakan kertas litmus"
+        }
+       ],
+       "offlineActivity": "Dengan bantuan orang dewasa, buat 'air ajaib' daripada kubis ungu, kemudian tambahkan jus limau nipis dan air sabun. Perhatikan warnanya berubah!",
+       "lesson": [
+        {
+         "type": "heading",
+         "text": "Ujian litmus"
+        },
+        {
+         "type": "table",
+         "headers": [
+          "Bahan",
+          "Litmus biru",
+          "Litmus merah"
+         ],
+         "rows": [
+          [
+           "Asid 🍋",
+           "bertukar **merah**",
+           "kekal merah"
+          ],
+          [
+           "Alkali 🧼",
+           "kekal biru",
+           "bertukar **biru**"
+          ],
+          [
+           "Neutral 💧",
+           "tiada perubahan",
+           "tiada perubahan"
+          ]
+         ]
+        },
+        {
+         "type": "list",
+         "items": [
+          "Asid: jus limau nipis, cuka, asam jawa",
+          "Alkali: sabun, ubat gigi, serbuk pencuci",
+          "Neutral: air suling, air garam"
+         ]
+        },
+        {
+         "type": "callout",
+         "emoji": "⚠️",
+         "tone": "remember",
+         "text": "Gunakan **kertas litmus** untuk menguji — jangan sekali-kali merasa!"
+        }
+       ],
+       "quizzes": {
+        "s3-sci-acid-q1": {
+         "title": "Makmal litmus",
+         "questions": {
+          "q1": {
+           "prompt": "Asid atau alkali?",
+           "buckets": {
+            "acid": "Asid",
+            "alkali": "Alkali"
+           },
+           "items": [
+            "jus limau nipis",
+            "sabun",
+            "cuka",
+            "ubat gigi",
+            "jus asam jawa"
+           ]
+          },
+          "q2": {
+           "prompt": "Kertas litmus biru bertukar menjadi merah. Bahan itu ialah…",
+           "options": {
+            "a": "asid",
+            "b": "alkali",
+            "c": "neutral"
+           }
+          },
+          "q3": {
+           "prompt": "Air suling tidak mengubah warna kedua-dua kertas litmus. Air suling bersifat…",
+           "options": {
+            "a": "berasid",
+            "b": "beralkali",
+            "c": "neutral"
+           }
+          },
+          "q4": {
+           "prompt": "Alkali menukarkan kertas litmus merah menjadi biru."
+          }
+         }
+        }
+       }
+      },
+      "s3-sci-solar": {
+       "title": "Sistem Suria",
+       "objectives": [
+        {
+         "code": "9.1",
+         "text": "Menamakan ahli Sistem Suria dan susunan planet"
+        },
+        {
+         "code": "9.2",
+         "text": "Mengetahui bahawa planet bergerak mengelilingi Matahari"
+        }
+       ],
+       "offlineActivity": "Hafal susunan planet dengan ayat lucu: 'Ular Zirafah Buaya Monyet Musang Zebra Unta Naga' (Utarid, Zuhrah, Bumi, Marikh, Musytari, Zuhal, Uranus, Neptun). Buat planet daripada doh mainan.",
+       "lesson": [
+        {
+         "type": "heading",
+         "text": "Sistem Suria kita"
+        },
+        {
+         "type": "text",
+         "text": "**Matahari** ialah sebuah bintang di tengah-tengah. **8 buah planet** bergerak mengelilinginya mengikut laluan masing-masing (orbit)."
+        },
+        {
+         "type": "list",
+         "ordered": true,
+         "items": [
+          "Utarid — paling dekat dengan Matahari",
+          "Zuhrah — paling panas",
+          "Bumi 🌍 — rumah kita",
+          "Marikh — planet merah",
+          "Musytari — paling besar",
+          "Zuhal 🪐 — gelangnya cantik",
+          "Uranus",
+          "Neptun — paling jauh dari Matahari"
+         ]
+        },
+        {
+         "type": "callout",
+         "emoji": "🌙",
+         "tone": "fun",
+         "text": "**Bulan** bergerak mengelilingi **Bumi**."
+        }
+       ],
+       "quizzes": {
+        "s3-sci-solar-q1": {
+         "title": "Penjelajah angkasa",
+         "questions": {
+          "q1": {
+           "prompt": "Susun planet ini mengikut urutan dari Matahari.",
+           "tokens": [
+            "Utarid",
+            "Zuhrah",
+            "Bumi",
+            "Marikh"
+           ]
+          },
+          "q2": {
+           "prompt": "Planet manakah yang paling besar?",
+           "options": {
+            "a": "Bumi",
+            "b": "Musytari",
+            "c": "Marikh",
+            "d": "Utarid"
+           }
+          },
+          "q3": {
+           "prompt": "Berapakah bilangan planet dalam Sistem Suria?"
+          },
+          "q4": {
+           "prompt": "Planet manakah yang paling jauh dari Matahari?",
+           "options": {
+            "a": "Neptun",
+            "b": "Zuhal",
+            "c": "Zuhrah"
+           }
+          },
+          "q5": {
+           "prompt": "Matahari bergerak mengelilingi Bumi.",
+           "explain": "Bumi yang bergerak mengelilingi Matahari."
+          }
+         }
+        }
+       }
+      },
+      "s3-sci-machines": {
+       "title": "Mesin Ringkas",
+       "objectives": [
+        {
+         "code": "10.1",
+         "text": "Mengenal pasti jenis mesin ringkas dan contohnya"
+        },
+        {
+         "code": "10.2",
+         "text": "Mengetahui bahawa mesin kompleks terdiri daripada beberapa mesin ringkas"
+        }
+       ],
+       "offlineActivity": "Memburu mesin di rumah: cari tuas (gunting), roda dan gandar (tombol pintu), skru (penutup balang), baji (pisau) dan satah condong (tanjakan).",
+       "lesson": [
+        {
+         "type": "heading",
+         "text": "Mesin memudahkan kerja"
+        },
+        {
+         "type": "table",
+         "headers": [
+          "Mesin ringkas",
+          "Contoh"
+         ],
+         "rows": [
+          [
+           "Tuas",
+           "jongkang-jongket, gunting"
+          ],
+          [
+           "Roda dan gandar",
+           "tombol pintu, stereng"
+          ],
+          [
+           "Takal",
+           "tiang bendera"
+          ],
+          [
+           "Satah condong",
+           "tanjakan, gelongsor"
+          ],
+          [
+           "Baji",
+           "pisau, kapak"
+          ],
+          [
+           "Skru",
+           "penutup balang, penutup botol"
+          ],
+          [
+           "Gear",
+           "basikal"
+          ]
+         ]
+        },
+        {
+         "type": "callout",
+         "emoji": "🚲",
+         "tone": "fun",
+         "text": "Basikal ialah **mesin kompleks** — ia mempunyai gear, roda dan gandar serta tuas (brek)!"
+        }
+       ],
+       "quizzes": {
+        "s3-sci-machines-q1": {
+         "title": "Pakar mesin",
+         "questions": {
+          "q1": {
+           "prompt": "Padankan objek dengan mesin ringkasnya.",
+           "pairs": [
+            {
+             "left": "tiang bendera",
+             "right": "takal"
+            },
+            {
+             "left": "tanjakan",
+             "right": "satah condong"
+            },
+            {
+             "left": "pisau",
+             "right": "baji"
+            },
+            {
+             "left": "jongkang-jongket",
+             "right": "tuas"
+            }
+           ]
+          },
+          "q2": {
+           "prompt": "Tombol pintu ialah contoh…",
+           "options": {
+            "a": "roda dan gandar",
+            "b": "takal",
+            "c": "baji"
+           }
+          },
+          "q3": {
+           "prompt": "Yang manakah mesin kompleks?",
+           "options": {
+            "a": "Basikal",
+            "b": "Pisau",
+            "c": "Gelongsor"
+           }
+          },
+          "q4": {
+           "prompt": "Mesin ringkas memudahkan kerja kita."
+          }
+         }
+        }
+       }
+      }
+     }
+    }
+   },
+   "arcade": {
+    "s3-arcade-times": "Kilat Sifir",
+    "s3-arcade-add": "Cabaran Tambah",
+    "s3-arcade-divide": "Pecut Bahagi"
+   }
+  }
+ }
 }

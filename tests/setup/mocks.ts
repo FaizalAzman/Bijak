@@ -47,6 +47,8 @@ jest.mock('expo-speech', () => ({
   speak: jest.fn(),
   stop: jest.fn(() => Promise.resolve()),
   isSpeakingAsync: jest.fn(() => Promise.resolve(false)),
+  // No voices by default (like a browser before it has loaded them); tests provide device lists.
+  getAvailableVoicesAsync: jest.fn(() => Promise.resolve([])),
 }));
 
 jest.mock('expo-haptics', () => ({

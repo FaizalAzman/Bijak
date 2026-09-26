@@ -2,7 +2,9 @@ import { router } from 'expo-router';
 import { useState } from 'react';
 import { View } from 'react-native';
 import { toast } from '@/components/gamify/Toaster';
-import { Button, Chunky, Keypad, PinDots, Screen, SectionLabel, TopBar, Txt } from '@/components/ui';
+import { VoicePicker } from '@/components/parent/VoicePicker';
+import { Button, Chip, Chunky, Keypad, PinDots, Screen, SectionLabel, TopBar, Txt } from '@/components/ui';
+import { REST_DAY_PRESETS, restDayPreset, type RestDayPreset } from '@/features/gamify/streak';
 import { useParentSession, useRequireParent } from '@/features/profile/parentSession';
 import { fx } from '@/lib/feedback';
 import { setParentPin } from '@/lib/secure';
@@ -11,10 +13,14 @@ import { colors } from '@/theme';
 
 type PinStep = 'idle' | 'new' | 'confirm';
 
+const REST_LABEL: Record<RestDayPreset, string> = { none: 'None', satSun: 'Sat & Sun', friSat: 'Fri & Sat' };
+
 export default function ParentSettings() {
   const ok = useRequireParent();
   const parent = useApp((s) => s.parent);
   const lock = useParentSession((s) => s.lock);
+  const restDays = useApp((s) => s.settings.restDays);
+  const updateSettings = useApp((s) => s.updateSettings);
   const [step, setStep] = useState<PinStep>('idle');
   const [first, setFirst] = useState('');
   const [pin, setPin] = useState('');
@@ -51,6 +57,21 @@ export default function ParentSettings() {
   };
   return (
     <Screen header={<TopBar title="Settings" />}>
+      <SectionLabel>Streak rest days</SectionLabel>
+      <Chunky depth={3} innerStyle={{ padding: 14, gap: 12 }}>
+        <Txt variant="small">Days that never break a streak (playing on them still counts). Pick your family’s weekend.</Txt>
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
+          {(Object.keys(REST_DAY_PRESETS) as RestDayPreset[]).map((key) => (
+            <Chip key={key} label={REST_LABEL[key]} selected={restDayPreset(restDays) === key} onPress={() => updateSettings({ restDays: [...REST_DAY_PRESETS[key]] })} />
+          ))}
+        </View>
+      </Chunky>
+
+      <SectionLabel>Read-aloud voice</SectionLabel>
+      <Chunky depth={3} innerStyle={{ padding: 14 }}>
+        <VoicePicker />
+      </Chunky>
+
       <SectionLabel>Parent PIN</SectionLabel>
       <Chunky depth={3} innerStyle={{ padding: 14, gap: 16 }}>
         {step !== 'idle' ? (

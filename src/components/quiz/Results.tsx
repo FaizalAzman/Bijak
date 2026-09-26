@@ -28,6 +28,8 @@ export interface ResultsData {
   coins: number;
   seconds: number;
   streak: number;
+  /** A rest-day shield was earned by this quiz (streak milestone). */
+  shieldEarned?: boolean;
   newBest: boolean;
   badges: BadgeDef[];
 }
@@ -84,6 +86,11 @@ export function Results({ data, onDone, onRetry }: { data: ResultsData; onDone: 
           <Txt variant="small">⏱ {formatDuration(data.seconds)}</Txt>
           <Txt variant="small">🔥 {data.streak}-day streak</Txt>
         </View>
+        {data.shieldEarned ? (
+          <Txt variant="subtitle" style={{ textAlign: 'center' }} testID="shield-earned">
+            🛡️ You earned a rest-day shield!
+          </Txt>
+        ) : null}
         {data.badges.map((b) => (
           <View key={b.id} style={{ width: '100%' }}>
             <Chunky bg={accent(b.color).soft} innerStyle={{ padding: 12, flexDirection: 'row', gap: 12, alignItems: 'center' }}>

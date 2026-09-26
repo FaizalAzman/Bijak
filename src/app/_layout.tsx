@@ -19,6 +19,7 @@ import { Toaster } from '@/components/gamify/Toaster';
 import { Kancil } from '@/components/mascot/Kancil';
 import { Button, Txt } from '@/components/ui';
 import { startBackgroundServices } from '@/features/sync/services';
+import { loadVoices } from '@/lib/feedback';
 import { lockPhonesToPortrait } from '@/lib/orientation';
 import { installCrashHandler, startFrameMonitor, telemetry } from '@/lib/telemetry';
 import { colors } from '@/theme';
@@ -81,6 +82,8 @@ export default function RootLayout() {
   useEffect(() => {
     const stopFrames = startFrameMonitor();
     const stopServices = startBackgroundServices();
+    // Find the most natural read-aloud voice now, so the first question is read without a pause.
+    void loadVoices();
     return () => {
       stopFrames();
       stopServices();

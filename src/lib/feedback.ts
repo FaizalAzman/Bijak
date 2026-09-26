@@ -9,6 +9,7 @@ import * as Speech from 'expo-speech';
 import { Platform } from 'react-native';
 import { useApp } from '@/store/app';
 import { telemetry } from './telemetry';
+import { LANG_TAG, PITCH, pickVoice, RATE, speakable, type SpeechLang, type VoiceInfo } from './voice';
 
 const SOURCES = {
   tap: require('../../assets/sfx/tap.wav'),
@@ -100,26 +101,62 @@ export const fx = {
 
 /* ---------------------------------------------------------------- speech */
 
-const LANG_TAG = { en: 'en-GB', ms: 'ms-MY' } as const;
+let voices: VoiceInfo[] | null = null;
+let loading: Promise<VoiceInfo[]> | null = null;
+/** Bumped by every speak/stop, so a slow first voice lookup never talks over newer speech. */
+let turn = 0;
 
-/** Strip lightweight markup (**bold**, ___ blanks, emoji) before speaking. */
-function speakable(text: string) {
-  return text
-    .replace(/\*\*/g, '')
-    .replace(/_{3,}/g, ' blank ')
-    .replace(/[×]/g, ' times ')
-    .replace(/[÷]/g, ' divided by ')
-    .replace(/−/g, ' minus ')
-    .replace(/\p{Extended_Pictographic}/gu, '')
-    .trim();
+/** The device's voices (cached once the engine reports any; an empty list is asked again later). */
+export function loadVoices(): Promise<VoiceInfo[]> {
+  if (voices) return Promise.resolve(voices);
+  loading ??= Speech.getAvailableVoicesAsync()
+    .then((list) => {
+      if (list.length) voices = list;
+      else loading = null;
+      return list;
+    })
+    .catch((e: unknown) => {
+      loading = null;
+      telemetry.error(e, { where: 'voices' });
+      return [];
+    });
+  return loading;
 }
 
-export function speak(text: string, lang: 'en' | 'ms' = 'en', onDone?: () => void) {
-  if (!useApp.getState().settings.voice) return;
+/** Forget the cached voice list (e.g. after the parent installs a new voice). */
+export function refreshVoices() {
+  voices = null;
+  loading = null;
+  return loadVoices();
+}
+
+function say(text: string, lang: SpeechLang, preferred: string | undefined, onDone?: () => void) {
+  const words = speakable(text, lang);
   Speech.stop().catch(() => undefined);
-  Speech.speak(speakable(text), { language: LANG_TAG[lang], rate: 0.9, pitch: 1.05, onDone });
+  const mine = ++turn;
+  if (!words) return;
+  const go = (list: readonly VoiceInfo[]) => {
+    if (mine !== turn) return;
+    const voice = pickVoice(list, lang, preferred);
+    Speech.speak(words, { language: voice?.language ?? LANG_TAG[lang], ...(voice ? { voice: voice.identifier } : {}), rate: RATE, pitch: PITCH, onDone });
+  };
+  if (voices) go(voices);
+  else loadVoices().then(go);
+}
+
+/** Read text aloud (if the voice setting is on) in the best voice for its language. */
+export function speak(text: string, lang: SpeechLang = 'en', onDone?: () => void) {
+  const { voice, voices: chosen } = useApp.getState().settings;
+  if (!voice) return;
+  say(text, lang, chosen?.[lang], onDone);
+}
+
+/** Let a parent hear a voice before choosing it (plays even when read-aloud is off). */
+export function previewVoice(lang: SpeechLang, identifier?: string) {
+  say(lang === 'ms' ? 'Hai! Mari belajar bersama-sama. Berapakah 7 × 8?' : 'Hello! Let’s learn together. What is 7 × 8?', lang, identifier);
 }
 
 export function stopSpeaking() {
+  turn++;
   Speech.stop().catch(() => undefined);
 }

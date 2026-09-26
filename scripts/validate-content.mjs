@@ -4,7 +4,8 @@ import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { Manifest } from '../src/features/content/schema.ts';
-import { crossStandardIssues, parseStandard } from '../src/features/content/validate.ts';
+import { translatedSubjects } from '../src/features/content/localize.ts';
+import { crossStandardIssues, parseStandard, translationGaps } from '../src/features/content/validate.ts';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..', 'content');
 const manifest = Manifest.parse(JSON.parse(readFileSync(join(root, 'manifest.json'), 'utf8')));
@@ -21,6 +22,10 @@ for (const entry of manifest.standards) {
     const topics = std.subjects.reduce((n, s) => n + s.topics.length, 0);
     const questions = std.subjects.flatMap((s) => s.topics.flatMap((t) => t.quizzes)).reduce((n, q) => n + q.questions.length, 0);
     console.log(`✔ ${entry.id}: ${std.subjects.length} subjects, ${topics} topics, ${questions} authored questions`);
+    for (const lang of Object.keys(std.translations ?? {})) {
+      const gaps = translationGaps(std, lang);
+      console.log(`  ↳ ${lang}: ${translatedSubjects(std, lang).join(', ')}${gaps.length ? ` (${gaps.length} untranslated: ${gaps.slice(0, 3).join('; ')}…)` : ''}`);
+    }
   } catch (e) {
     failed++;
     console.error(`✘ ${entry.id}: ${e.message}`);

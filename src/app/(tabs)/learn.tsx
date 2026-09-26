@@ -5,7 +5,7 @@ import { TextInput, View } from 'react-native';
 import { KidHeader } from '@/components/gamify/KidHeader';
 import { TAB_BAR_SPACE } from '@/components/gamify/TabBar';
 import { Chip, Chunky, Grid, HScroll, PressChunky, ProgressBar, Screen, SectionLabel, Tag, Txt } from '@/components/ui';
-import { useContentIndex } from '@/features/content/registry';
+import { useChildContent } from '@/hooks/useChildContent';
 import { subjectProgress, topicStatus } from '@/features/progress/selectors';
 import { useActiveProfile, useProgress } from '@/store/app';
 import { accent, colors, fonts } from '@/theme';
@@ -13,7 +13,7 @@ import { accent, colors, fonts } from '@/theme';
 export default function Learn() {
   const profile = useActiveProfile();
   const p = useProgress();
-  const index = useContentIndex();
+  const index = useChildContent();
   const [stdId, setStdId] = useState(() => (profile ? index.standardByLevel(profile.level)?.id : undefined) ?? index.standards[0]?.id);
   const [query, setQuery] = useState('');
   const standard = index.standard(stdId) ?? index.standards[0];

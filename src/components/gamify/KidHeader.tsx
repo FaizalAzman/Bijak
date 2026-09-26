@@ -3,13 +3,14 @@ import { Pressable, View } from 'react-native';
 import { Avatar } from '@/components/avatar/Avatar';
 import { FrameRow, Pill, Txt, useFrame } from '@/components/ui';
 import { greeting } from '@/features/progress/selectors';
-import { liveStreak, useActiveProfile, useProgress } from '@/store/app';
+import { dayKey } from '@/lib/date';
+import { liveStreak, useActiveProfile, useProgress, useRestDays } from '@/store/app';
 import { colors } from '@/theme';
 
 export function KidHeader({ title }: { title?: string }) {
   const profile = useActiveProfile();
   const p = useProgress();
-  const streak = liveStreak(p);
+  const streak = liveStreak(p, dayKey(), useRestDays());
   const { small, isTablet } = useFrame();
   if (!profile) return null;
   return (

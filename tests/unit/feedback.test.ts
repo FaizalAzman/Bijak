@@ -2,10 +2,12 @@ import { createAudioPlayer, setAudioModeAsync } from 'expo-audio';
 import * as Haptics from 'expo-haptics';
 import * as Speech from 'expo-speech';
 import { Platform } from 'react-native';
-import { fx, haptic, playSfx, speak, stopSpeaking } from '@/lib/feedback';
+import { fx, haptic, loadVoices, playSfx, previewVoice, refreshVoices, speak, stopSpeaking } from '@/lib/feedback';
 import { telemetry } from '@/lib/telemetry';
+import type { VoiceInfo } from '@/lib/voice';
 import { useApp } from '@/store/app';
 import { resetStores } from '../helpers';
+import { ANDROID, IOS } from '../voices';
 
 // Keep every player the app creates, so tests can count plays even when a player is cached.
 const players: { play: jest.Mock }[] = [];
@@ -104,23 +106,102 @@ describe('fx', () => {
 });
 
 describe('read aloud', () => {
-  it('speaks in the right voice and makes maths readable', () => {
+  const voiceList = Speech.getAvailableVoicesAsync as jest.Mock;
+  const spoken = () => (Speech.speak as jest.Mock).mock.calls.map(([text, opts]) => [text, opts.voice, opts.language]);
+  const flush = async () => {
+    for (let i = 0; i < 5; i++) await Promise.resolve();
+  };
+
+  beforeEach(async () => {
+    voiceList.mockResolvedValue(IOS);
+    await refreshVoices();
+    jest.clearAllMocks();
+  });
+
+  it('reads with the best voice on the device, at a natural pitch and an easy pace', () => {
     speak('**Ali** has 3 × 4 − 2 ÷ 1 = ___ 🍎', 'en');
     expect(Speech.stop).toHaveBeenCalled();
-    const [text, opts] = (Speech.speak as jest.Mock).mock.calls[0];
-    expect(text).toBe('Ali has 3  times  4  minus  2  divided by  1 =  blank');
-    expect(opts).toMatchObject({ language: 'en-GB' });
+    expect(Speech.speak).toHaveBeenCalledWith('Ali has 3 times 4 minus 2 divided by 1 equals blank', expect.objectContaining({ voice: 'com.apple.voice.premium.en-GB.Malcolm', language: 'en-GB', pitch: 1, rate: 0.95 }));
   });
 
-  it('uses the Malaysian voice for Bahasa Melayu', () => {
+  it('reads Bahasa Melayu with a Malay voice, or the Indonesian one where there is none', async () => {
     speak('Apakah maksud "besar"?', 'ms');
-    expect((Speech.speak as jest.Mock).mock.calls[0][1]).toMatchObject({ language: 'ms-MY' });
+    expect(spoken()).toEqual([['Apakah maksud "besar"?', 'com.apple.voice.compact.id-ID.Damayanti', 'id-ID']]);
+    voiceList.mockResolvedValue(ANDROID);
+    await refreshVoices();
+    speak('7 × 8 = ?', 'ms');
+    expect(spoken()[1]).toEqual(['7 darab 8 sama dengan berapa?', 'ms-my-x-mfm-local', 'ms-MY']);
   });
 
-  it('respects the voice setting', () => {
+  it('uses the voice a parent picked, per language', () => {
+    settings({ voices: { en: 'com.apple.voice.compact.en-US.Samantha' } });
+    speak('Hello', 'en');
+    speak('Hai', 'ms');
+    expect(spoken()).toEqual([
+      ['Hello', 'com.apple.voice.compact.en-US.Samantha', 'en-US'],
+      ['Hai', 'com.apple.voice.compact.id-ID.Damayanti', 'id-ID'],
+    ]);
+  });
+
+  it('before the voice list is ready it waits for it, and newer speech or stop wins', async () => {
+    let resolve: (v: VoiceInfo[]) => void = () => undefined;
+    voiceList.mockReturnValue(new Promise<VoiceInfo[]>((r) => (resolve = r)));
+    void refreshVoices();
+    speak('First', 'en');
+    speak('Second', 'en');
+    expect(Speech.speak).not.toHaveBeenCalled();
+    resolve(IOS);
+    await flush();
+    expect(spoken()).toEqual([['Second', 'com.apple.voice.premium.en-GB.Malcolm', 'en-GB']]);
+
+    voiceList.mockReturnValue(new Promise<VoiceInfo[]>((r) => (resolve = r)));
+    void refreshVoices();
+    speak('Never mind', 'en');
+    stopSpeaking();
+    resolve(IOS);
+    await flush();
+    expect(spoken()).toHaveLength(1);
+  });
+
+  it('with no voices reported yet, speaks with the language tag and asks again next time', async () => {
+    voiceList.mockResolvedValue([]);
+    await refreshVoices();
+    speak('Hello', 'en');
+    await flush();
+    expect(spoken()).toEqual([['Hello', undefined, 'en-GB']]);
+    voiceList.mockResolvedValue(ANDROID);
+    speak('Again', 'en');
+    await flush();
+    expect(spoken()[1]).toEqual(['Again', 'en-gb-x-gba-local', 'en-GB']);
+    expect(await loadVoices()).toBe(ANDROID);
+  });
+
+  it('a failing voice list is reported and speech still works', async () => {
+    const error = jest.spyOn(telemetry, 'error').mockImplementation(() => undefined);
+    voiceList.mockRejectedValue(new Error('engine not ready'));
+    await refreshVoices();
+    expect(error).toHaveBeenCalledWith(expect.any(Error), { where: 'voices' });
+    speak('Hello', 'ms');
+    await flush();
+    expect(spoken()).toEqual([['Hello', undefined, 'ms-MY']]);
+    error.mockRestore();
+  });
+
+  it('text with nothing to read (only emoji) stays silent', () => {
+    speak('🎲🍎', 'en');
+    expect(Speech.speak).not.toHaveBeenCalled();
+  });
+
+  it('respects the voice setting, but a parent can still preview voices', () => {
     settings({ voice: false });
     speak('Hello');
     expect(Speech.speak).not.toHaveBeenCalled();
+    previewVoice('en', 'com.apple.voice.enhanced.en-GB.Daniel');
+    previewVoice('ms');
+    expect(spoken()).toEqual([
+      ['Hello! Let’s learn together. What is 7 times 8?', 'com.apple.voice.enhanced.en-GB.Daniel', 'en-GB'],
+      ['Hai! Mari belajar bersama-sama. Berapakah 7 darab 8?', 'com.apple.voice.compact.id-ID.Damayanti', 'id-ID'],
+    ]);
   });
 
   it('stopSpeaking stops the voice', () => {
@@ -128,3 +209,4 @@ describe('read aloud', () => {
     expect(Speech.stop).toHaveBeenCalled();
   });
 });
+

@@ -3,7 +3,7 @@
   "level": 1,
   "title": "Standard 1",
   "titleAlt": "Tahun 1",
-  "version": 1,
+  "version": 2,
   "subjects": [
     {
       "id": "math",
@@ -107,5 +107,38 @@
       "subjectId": "math",
       "quiz": { "id": "s1-arcade-add-quiz", "title": "Tiny Sums", "mode": "timeAttack", "seconds": 60, "generator": { "kind": "addition", "max": 10 } }
     }
-  ]
+  ],
+  "translations": {
+    "ms": {
+      "subjects": {
+        "math": {
+          "name": "Matematik",
+          "topics": {
+            "s1-math-numbers": {
+              "title": "Nombor hingga 100",
+              "objectives": [{ "code": "1.1", "text": "Membilang dan menamakan nombor hingga 100" }],
+              "offlineActivity": "Kira anak tangga, butang atau buah anggur bersama-sama, dalam puluh.",
+              "lesson": [
+                { "type": "heading", "text": "Membilang dalam puluh" },
+                { "type": "emojiGrid", "emoji": "🟡", "rows": 3, "cols": 10, "caption": "3 puluh = 30" },
+                { "type": "numberLine", "from": 0, "to": 100, "step": 10, "highlight": [30] }
+              ],
+              "quizzes": {
+                "s1-math-numbers-q1": {
+                  "title": "Kira bersama saya",
+                  "questions": {
+                    "q1": { "prompt": "Berapakah bilangan bintang? ⭐⭐⭐⭐⭐⭐⭐" },
+                    "q2": { "prompt": "Apakah nombor selepas 19?" },
+                    "q3": { "prompt": "Susun dari yang terkecil hingga yang terbesar." }
+                  }
+                },
+                "s1-math-numbers-q2": { "title": "Tambah dalam lingkungan 20" }
+              }
+            }
+          }
+        }
+      },
+      "arcade": { "s1-arcade-add": "Tambah Mini" }
+    }
+  }
 }

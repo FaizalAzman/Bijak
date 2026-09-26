@@ -5,7 +5,7 @@
  */
 import { groupDigits } from '@/lib/format';
 import { hashString, int, pick, shuffle, type Rng } from '@/lib/random';
-import type { GeneratorSpec, Question } from './schema';
+import type { GeneratorSpec, Lang, Question } from './schema';
 
 export type GenStyle = 'numpad' | 'mcq';
 
@@ -37,40 +37,66 @@ export function numericOptions(rng: Rng, answer: number, spread: number[]): { op
   return { options, answer: options[values.indexOf(answer)].id };
 }
 
-function numeric(id: string, prompt: string, answer: number, style: GenStyle, rng: Rng, spread: number[], extra: Partial<Question> = {}): Question {
+function numeric(id: string, prompt: string, answer: number, style: GenStyle, rng: Rng, spread: number[], lang: Lang, extra: Partial<Question> = {}): Question {
   if (style === 'mcq') {
     const o = numericOptions(rng, answer, spread);
-    return { id, type: 'mcq', prompt, lang: 'en', difficulty: 1, options: o.options, answer: o.answer, ...extra } as Question;
+    return { id, type: 'mcq', prompt, lang, difficulty: 1, options: o.options, answer: o.answer, ...extra } as Question;
   }
-  return { id, type: 'numpad', prompt, lang: 'en', difficulty: 1, answer: String(answer), ...extra } as Question;
+  return { id, type: 'numpad', prompt, lang, difficulty: 1, answer: String(answer), ...extra } as Question;
 }
 
-export const PLACES = ['ones', 'tens', 'hundreds', 'thousands', 'ten thousands', 'hundred thousands', 'millions'];
+/** The words around the numbers, in English and in the KSSR Bahasa Melayu terms. */
+export const WORDS = {
+  en: {
+    places: ['ones', 'tens', 'hundreds', 'thousands', 'ten thousands', 'hundred thousands', 'millions'],
+    compare: { lt: '<  smaller', eq: '=  same', gt: '>  bigger' },
+    compared: { lt: 'smaller than', eq: 'equal to', gt: 'bigger than' },
+    compareExplain: (a: string, rel: string, b: string) => `${a} is ${rel} ${b}.`,
+    placeQuestion: (digit: string, n: string) => `What is the place value of the digit ${digit} in ${n}?`,
+    valueQuestion: (digit: string, n: string) => `What is the digit value of ${digit} in ${n}?`,
+    valueExplain: (digit: string, place: string, value: string) => `${digit} is in the ${place} place, so it is worth ${value}.`,
+    change: (have: string, spend: string) => `You have ${have}. You spend ${spend}. How much is left?`,
+  },
+  ms: {
+    places: ['sa', 'puluh', 'ratus', 'ribu', 'puluh ribu', 'ratus ribu', 'juta'],
+    compare: { lt: '<  lebih kecil', eq: '=  sama', gt: '>  lebih besar' },
+    compared: { lt: 'lebih kecil daripada', eq: 'sama dengan', gt: 'lebih besar daripada' },
+    compareExplain: (a: string, rel: string, b: string) => `${a} ${rel} ${b}.`,
+    placeQuestion: (digit: string, n: string) => `Apakah nilai tempat bagi digit ${digit} dalam ${n}?`,
+    valueQuestion: (digit: string, n: string) => `Apakah nilai digit bagi ${digit} dalam ${n}?`,
+    valueExplain: (digit: string, place: string, value: string) => `Digit ${digit} berada di tempat ${place}, jadi nilainya ${value}.`,
+    change: (have: string, spend: string) => `Kamu ada ${have}. Kamu belanja ${spend}. Berapakah baki wang kamu?`,
+  },
+} as const;
+
+export const PLACES = WORDS.en.places;
 
 function one(spec: GeneratorSpec, rng: Rng, style: GenStyle): Question {
+  const lang: Lang = spec.lang ?? 'en';
+  const W = WORDS[lang];
   switch (spec.kind) {
     case 'multiplication': {
       const a = pick(rng, spec.tables);
       const b = int(rng, 1, spec.maxFactor);
       const [x, y] = rng() < 0.5 ? [a, b] : [b, a];
-      return numeric(`mul-${x}x${y}`, `${x} × ${y} = ?`, x * y, style, rng, [a, -a, b, -b, 1, -1, 10], { difficulty: a > 5 ? 2 : 1 });
+      return numeric(`mul-${x}x${y}`, `${x} × ${y} = ?`, x * y, style, rng, [a, -a, b, -b, 1, -1, 10], lang, { difficulty: a > 5 ? 2 : 1 });
     }
     case 'division': {
       const d = pick(rng, spec.tables);
       const q = int(rng, 1, spec.maxFactor);
-      return numeric(`div-${d * q}-by-${d}`, `${d * q} ÷ ${d} = ?`, q, style, rng, [1, -1, 2, -2, 3], { difficulty: d > 5 ? 2 : 1 });
+      return numeric(`div-${d * q}-by-${d}`, `${d * q} ÷ ${d} = ?`, q, style, rng, [1, -1, 2, -2, 3], lang, { difficulty: d > 5 ? 2 : 1 });
     }
     case 'addition': {
       const terms = Array.from({ length: spec.terms }, () => int(rng, 1, Math.max(2, Math.floor(spec.max / spec.terms))));
       const sum = terms.reduce((s, v) => s + v, 0);
-      return numeric(`add-${terms.join('-')}`, `${terms.map(groupDigits).join(' + ')} = ?`, sum, style, rng, [1, -1, 10, -10, 100, -100], {
+      return numeric(`add-${terms.join('-')}`, `${terms.map(groupDigits).join(' + ')} = ?`, sum, style, rng, [1, -1, 10, -10, 100, -100], lang, {
         difficulty: spec.max > 1000 ? 2 : 1,
       });
     }
     case 'subtraction': {
       const a = int(rng, 2, spec.max);
       const b = int(rng, 1, a - 1);
-      return numeric(`sub-${a}-${b}`, `${groupDigits(a)} − ${groupDigits(b)} = ?`, a - b, style, rng, [1, -1, 10, -10, 100]);
+      return numeric(`sub-${a}-${b}`, `${groupDigits(a)} − ${groupDigits(b)} = ?`, a - b, style, rng, [1, -1, 10, -10, 100], lang);
     }
     case 'compare': {
       const a = int(rng, 0, spec.max);
@@ -81,15 +107,15 @@ function one(spec: GeneratorSpec, rng: Rng, style: GenStyle): Question {
         id: `cmp-${a}-${b}`,
         type: 'mcq',
         prompt: `${groupDigits(a)}  ?  ${groupDigits(b)}`,
-        lang: 'en',
+        lang,
         difficulty: 1,
         options: [
-          { id: 'lt', text: '<  smaller' },
-          { id: 'eq', text: '=  same' },
-          { id: 'gt', text: '>  bigger' },
+          { id: 'lt', text: W.compare.lt },
+          { id: 'eq', text: W.compare.eq },
+          { id: 'gt', text: W.compare.gt },
         ],
         answer: ans,
-        explain: `${groupDigits(a)} is ${ans === 'gt' ? 'bigger than' : ans === 'lt' ? 'smaller than' : 'equal to'} ${groupDigits(b)}.`,
+        explain: W.compareExplain(groupDigits(a), W.compared[ans], groupDigits(b)),
       };
     }
     case 'placeValue': {
@@ -108,12 +134,12 @@ function one(spec: GeneratorSpec, rng: Rng, style: GenStyle): Question {
         // Four places, in reading order: the right one plus three others (ids are place indexes).
         const pool = PLACES.map((_, i) => i).slice(0, Math.max(4, digits.length));
         const chosen = [pos, ...shuffle(pool.filter((i) => i !== pos), rng).slice(0, 3)].sort((a, b) => a - b);
-        const options = chosen.map((i) => ({ id: String(i), text: PLACES[i] }));
+        const options = chosen.map((i) => ({ id: String(i), text: W.places[i] }));
         return {
           id: `pv-place-${n}-${pos}`,
           type: 'mcq',
-          prompt: `What is the place value of the digit ${digit} in ${groupDigits(n)}?`,
-          lang: 'en',
+          prompt: W.placeQuestion(digit, groupDigits(n)),
+          lang,
           difficulty: 1,
           options,
           answer: String(pos),
@@ -122,14 +148,15 @@ function one(spec: GeneratorSpec, rng: Rng, style: GenStyle): Question {
       const value = Number(digit) * 10 ** pos;
       return numeric(
         `pv-value-${n}-${pos}`,
-        `What is the digit value of ${digit} in ${groupDigits(n)}?`,
+        W.valueQuestion(digit, groupDigits(n)),
         value,
         style,
         rng,
         [value * 9, Number(digit) - value, value / 10 - value],
+        lang,
         {
           difficulty: 2,
-          explain: `${digit} is in the ${PLACES[pos]} place, so it is worth ${groupDigits(value)}.`,
+          explain: W.valueExplain(digit, W.places[pos], groupDigits(value)),
         },
       );
     }
@@ -143,7 +170,7 @@ function one(spec: GeneratorSpec, rng: Rng, style: GenStyle): Question {
           id: `money-add-${a}-${b}`,
           type: 'numpad',
           prompt: `${fmt(a)} + ${fmt(b)} = RM ?`,
-          lang: 'en',
+          lang,
           difficulty: 2,
           unit: 'RM',
           answer: ((a + b) / 100).toFixed(2),
@@ -153,9 +180,9 @@ function one(spec: GeneratorSpec, rng: Rng, style: GenStyle): Question {
       return {
         id: `money-change-${big}-${small}`,
         type: 'numpad',
-        prompt: `You have ${fmt(big)}. You spend ${fmt(small)}. How much is left?`,
+        prompt: W.change(fmt(big), fmt(small)),
         visual: '👛',
-        lang: 'en',
+        lang,
         difficulty: 2,
         unit: 'RM',
         answer: ((big - small) / 100).toFixed(2),

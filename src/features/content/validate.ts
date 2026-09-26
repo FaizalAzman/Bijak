@@ -3,8 +3,9 @@
  * Used by `npm run validate-content` and before accepting remotely downloaded payloads.
  * Keep this file free of app imports so Node can run it directly.
  */
+import { localizeStandard } from './localize.ts';
 import { Standard } from './schema.ts';
-import type { GeneratorSpec, Question, Quiz } from './schema.ts';
+import type { GeneratorSpec, Lang, Question, QuestionText, Quiz, Translation } from './schema.ts';
 
 export const BLANK = '___';
 
@@ -138,6 +139,140 @@ export function crossStandardIssues(standards: Standard[]): string[] {
   return out;
 }
 
+const TEXT_FIELDS: Record<Question['type'], (keyof QuestionText)[]> = {
+  mcq: ['prompt', 'explain', 'options'],
+  trueFalse: ['prompt', 'explain'],
+  match: ['prompt', 'explain', 'pairs'],
+  order: ['prompt', 'explain', 'tokens', 'distractors'],
+  sort: ['prompt', 'explain', 'buckets', 'items'],
+  fillBlank: ['prompt', 'explain', 'text', 'blanks', 'bank'],
+  numpad: ['prompt', 'explain', 'unit'],
+};
+
+function questionTextIssues(q: Question, t: QuestionText, where: string): string[] {
+  const out: string[] = [];
+  for (const key of Object.keys(t) as (keyof QuestionText)[]) if (!TEXT_FIELDS[q.type].includes(key)) out.push(`${where}: "${key}" doesn't apply to a ${q.type} question`);
+  if (q.type === 'mcq') for (const id of Object.keys(t.options ?? {})) if (!q.options.some((o) => o.id === id)) out.push(`${where}: unknown option "${id}"`);
+  if (q.type === 'match' && t.pairs && t.pairs.length !== q.pairs.length) out.push(`${where}: needs ${q.pairs.length} pairs, has ${t.pairs.length}`);
+  if (q.type === 'sort') {
+    for (const id of Object.keys(t.buckets ?? {})) if (!q.buckets.some((b) => b.id === id)) out.push(`${where}: unknown bucket "${id}"`);
+    if (t.items && t.items.length !== q.items.length) out.push(`${where}: needs ${q.items.length} items, has ${t.items.length}`);
+  }
+  if (q.type === 'fillBlank' && t.blanks && t.blanks.length !== q.blanks.length) out.push(`${where}: needs ${q.blanks.length} blanks, has ${t.blanks.length}`);
+  return out;
+}
+
+/**
+ * A translation may only reword existing content: every id must exist and every field must
+ * fit the question type. The translated standard must then pass all the normal checks too.
+ */
+export function translationIssues(std: Standard): string[] {
+  const out: string[] = [];
+  for (const [lang, tr] of Object.entries(std.translations ?? {}) as [Lang, Translation][]) {
+    const base = `${std.id}/translations/${lang}`;
+    for (const [subjectId, st] of Object.entries(tr.subjects)) {
+      const subject = std.subjects.find((s) => s.id === subjectId);
+      if (!subject) {
+        out.push(`${base}: unknown subject "${subjectId}"`);
+        continue;
+      }
+      if (subject.lang === lang) out.push(`${base}/${subjectId}: the subject is already in "${lang}"`);
+      for (const [topicId, tt] of Object.entries(st.topics)) {
+        const topic = subject.topics.find((t) => t.id === topicId);
+        const where = `${base}/${subjectId}/${topicId}`;
+        if (!topic) {
+          out.push(`${where}: unknown topic`);
+          continue;
+        }
+        if (tt.lesson && topic.lesson.length === 0) out.push(`${where}: translates a lesson the topic doesn't have`);
+        for (const [quizId, qt] of Object.entries(tt.quizzes)) {
+          const quiz = topic.quizzes.find((q) => q.id === quizId);
+          if (!quiz) {
+            out.push(`${where}: unknown quiz "${quizId}"`);
+            continue;
+          }
+          for (const [questionId, t] of Object.entries(qt.questions)) {
+            const q = quiz.questions.find((x) => x.id === questionId);
+            if (!q) out.push(`${where}/${quizId}: unknown question "${questionId}"`);
+            else out.push(...questionTextIssues(q, t, `${where}/${quizId}/${questionId}`));
+          }
+        }
+      }
+    }
+    for (const gameId of Object.keys(tr.arcade)) if (!std.arcade.some((g) => g.id === gameId)) out.push(`${base}: unknown arcade game "${gameId}"`);
+    if (out.length === 0) out.push(...semanticIssues(localizeStandard(std, lang)).map((issue) => `${base}: ${issue}`));
+  }
+  return out;
+}
+
+/** Unit symbols and currency read the same in every language. */
+const NEUTRAL_WORDS = /^(rm|sen|mm|cm|m|km|g|kg|ml|l)$/i;
+
+/** Whether a text has words to translate (not just numbers, symbols, emoji or units). */
+export const hasWords = (text: string | undefined) => (text?.match(/\p{L}+/gu) ?? []).some((w) => w.length > 1 && !NEUTRAL_WORDS.test(w));
+
+/** Question fields that still show original-language words under a translation. */
+function questionGaps(q: Question, t: QuestionText | undefined): string[] {
+  const out: string[] = [];
+  const need = (field: keyof QuestionText, texts: (string | undefined)[], given: unknown) => {
+    if (given === undefined && texts.some(hasWords)) out.push(field);
+  };
+  if (!t?.prompt) out.push('prompt');
+  need('explain', [q.explain], t?.explain);
+  switch (q.type) {
+    case 'mcq':
+      for (const o of q.options) if (hasWords(o.text) && t?.options?.[o.id] === undefined) out.push(`options.${o.id}`);
+      break;
+    case 'match':
+      need('pairs', q.pairs.flatMap((p) => [p.left, p.right]), t?.pairs);
+      break;
+    case 'order':
+      need('tokens', q.tokens, t?.tokens);
+      need('distractors', q.distractors ?? [], t?.distractors);
+      break;
+    case 'sort':
+      for (const b of q.buckets) if (hasWords(b.label) && t?.buckets?.[b.id] === undefined) out.push(`buckets.${b.id}`);
+      need('items', q.items.map((it) => it.text), t?.items);
+      break;
+    case 'fillBlank':
+      need('text', [q.text], t?.text);
+      need('blanks', q.blanks, t?.blanks);
+      need('bank', q.bank, t?.bank);
+      break;
+    case 'numpad':
+      need('unit', [q.unit], t?.unit);
+      break;
+    case 'trueFalse':
+      break;
+  }
+  return out;
+}
+
+/** What a translation still leaves in the original language (for completeness checks). */
+export function translationGaps(std: Standard, lang: Lang): string[] {
+  const tr = std.translations?.[lang];
+  const gaps: string[] = [];
+  for (const [subjectId, st] of Object.entries(tr?.subjects ?? {})) {
+    const subject = std.subjects.find((s) => s.id === subjectId);
+    if (!subject) continue;
+    if (!st.name) gaps.push(`${subjectId}: name`);
+    for (const topic of subject.topics) {
+      const tt = st.topics[topic.id];
+      if (!tt?.title) gaps.push(`${topic.id}: title`);
+      if (topic.lesson.length && !tt?.lesson) gaps.push(`${topic.id}: lesson`);
+      if (topic.objectives.length && !tt?.objectives) gaps.push(`${topic.id}: objectives`);
+      if (topic.offlineActivity && !tt?.offlineActivity) gaps.push(`${topic.id}: offlineActivity`);
+      for (const quiz of topic.quizzes) {
+        const qt = tt?.quizzes[quiz.id];
+        if (!qt?.title) gaps.push(`${quiz.id}: title`);
+        for (const q of quiz.questions) for (const field of questionGaps(q, qt?.questions[q.id])) gaps.push(`${quiz.id}/${q.id}: ${field}`);
+      }
+    }
+  }
+  for (const g of std.arcade) if (tr?.subjects[g.subjectId] && !tr.arcade[g.id]) gaps.push(`arcade ${g.id}: title`);
+  return gaps;
+}
+
 /** Parse + validate an unknown payload. Throws with a readable message on failure. */
 export function parseStandard(raw: unknown): Standard {
   const res = Standard.safeParse(raw);
@@ -146,6 +281,7 @@ export function parseStandard(raw: unknown): Standard {
     throw new Error(`Invalid standard payload:\n${first.join('\n')}`);
   }
   const issues = semanticIssues(res.data);
+  if (!issues.length) issues.push(...translationIssues(res.data));
   if (issues.length) throw new Error(`Invalid standard payload:\n${issues.slice(0, 5).join('\n')}`);
   return res.data;
 }

@@ -137,7 +137,12 @@ describe('updateProfile / removeProfile / selectProfile / resetProgress', () => 
   it('settings merge', () => {
     s().updateSettings({ sound: false });
     s().updateSettings({ autoRead: true });
-    expect(s().settings).toEqual({ sound: false, haptics: true, voice: true, autoRead: true });
+    expect(s().settings).toMatchObject({ sound: false, haptics: true, voice: true, autoRead: true, restDays: [] });
+  });
+
+  it('rest days from the parent are cleaned before saving', () => {
+    s().updateSettings({ restDays: [6, 0, 6, 12, 3] });
+    expect(s().settings.restDays).toEqual([6, 0]);
   });
 });
 

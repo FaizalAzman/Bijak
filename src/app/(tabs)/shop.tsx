@@ -7,7 +7,7 @@ import { KidHeader } from '@/components/gamify/KidHeader';
 import { TAB_BAR_SPACE } from '@/components/gamify/TabBar';
 import { toast } from '@/components/gamify/Toaster';
 import { Button, Chip, Chunky, Grid, HScroll, PressChunky, Screen, Txt } from '@/components/ui';
-import { useContentIndex } from '@/features/content/registry';
+import { useChildContent } from '@/hooks/useChildContent';
 import { SHOP, SLOT_LABEL, type ShopItem, type Slot } from '@/features/gamify/shop';
 import { levelFromXp } from '@/features/gamify/xp';
 import { useLayout } from '@/hooks/useLayout';
@@ -22,7 +22,7 @@ export default function Shop() {
   const params = useLocalSearchParams<{ tab?: string }>();
   const profile = useActiveProfile();
   const p = useProgress();
-  const index = useContentIndex();
+  const index = useChildContent();
   const buy = useApp((s) => s.buy);
   const equip = useApp((s) => s.equip);
   const unlockArcade = useApp((s) => s.unlockArcade);
