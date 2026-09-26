@@ -4,6 +4,7 @@ import type { ReactNode } from 'react';
 import { View } from 'react-native';
 import { colors } from '@/theme';
 import { PressChunky } from './Chunky';
+import { FrameRow } from './Frame';
 import { Txt } from './Txt';
 
 export function IconButton({ icon, onPress, label, bg = colors.paper }: { icon: ReactNode; onPress: () => void; label: string; bg?: string }) {
@@ -27,7 +28,7 @@ export function BackButton({ close, onPress }: { close?: boolean; onPress?: () =
 
 export function TopBar({ title, right, close, onBack }: { title?: string; right?: ReactNode; close?: boolean; onBack?: () => void }) {
   return (
-    <View className="flex-row items-center px-[18px] pt-2 pb-2" style={{ gap: 12, maxWidth: 720, width: '100%', alignSelf: 'center' }}>
+    <FrameRow style={{ flexDirection: 'row', alignItems: 'center', paddingTop: 8, paddingBottom: 8, gap: 12 }}>
       <BackButton close={close} onPress={onBack} />
       <View style={{ flex: 1 }}>
         {title ? (
@@ -37,6 +38,6 @@ export function TopBar({ title, right, close, onBack }: { title?: string; right?
         ) : null}
       </View>
       {right}
-    </View>
+    </FrameRow>
   );
 }

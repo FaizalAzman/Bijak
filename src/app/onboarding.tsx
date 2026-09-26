@@ -7,9 +7,10 @@ import { Avatar } from '@/components/avatar/Avatar';
 import { AvatarBasics } from '@/components/avatar/AvatarBasics';
 import { MascotSays } from '@/components/mascot/MascotSays';
 import { Kancil } from '@/components/mascot/Kancil';
-import { Button, Chip, Chunky, Field, Keypad, PinDots, ProgressBar, Screen, Txt } from '@/components/ui';
+import { Button, Chip, Chunky, Field, FrameRow, Keypad, PinDots, ProgressBar, Screen, Txt } from '@/components/ui';
 import { useContentIndex } from '@/features/content/registry';
 import { DEFAULT_AVATAR, type AvatarConfig } from '@/features/gamify/shop';
+import { useLayout } from '@/hooks/useLayout';
 import { fx } from '@/lib/feedback';
 import { setParentPin } from '@/lib/secure';
 import { useApp } from '@/store/app';
@@ -21,6 +22,7 @@ const ORDER: Step[] = ['welcome', 'parent', 'pin', 'confirm', 'child', 'avatar']
 
 export default function Onboarding() {
   const index = useContentIndex();
+  const layout = useLayout();
   const hasParent = useApp((s) => !!s.parent);
   const [step, setStep] = useState<Step>(hasParent ? 'child' : 'welcome');
   const [parentName, setParentName] = useState('');
@@ -81,16 +83,16 @@ export default function Onboarding() {
       <Screen
         header={
           step !== 'welcome' ? (
-            <View style={{ paddingHorizontal: 18, paddingTop: 10, maxWidth: 720, width: '100%', alignSelf: 'center' }}>
+            <FrameRow style={{ paddingTop: 10 }}>
               <ProgressBar value={progress} height={12} />
-            </View>
+            </FrameRow>
           ) : null
         }
       >
         {step === 'welcome' ? (
           <View style={{ alignItems: 'center', paddingTop: 40, gap: 18 }}>
             <View>
-              <Kancil mood="wave" size={190} />
+              <Kancil mood="wave" size={layout.isTablet ? 220 : layout.small ? 140 : 190} />
             </View>
             <View style={{ alignItems: 'center', gap: 8 }}>
               <View style={{ flexDirection: 'row', alignItems: 'baseline' }}>

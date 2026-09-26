@@ -3,6 +3,7 @@ import { BookOpen, Home, ShoppingBag, Target, UserRound } from 'lucide-react-nat
 import { Pressable, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Txt } from '@/components/ui';
+import { useLayout } from '@/hooks/useLayout';
 import { fx } from '@/lib/feedback';
 import { useProgress } from '@/store/app';
 import { colors } from '@/theme';
@@ -10,7 +11,7 @@ import { colors } from '@/theme';
 const ICONS = { home: Home, learn: BookOpen, quests: Target, shop: ShoppingBag, me: UserRound } as const;
 const LABELS = { home: 'Home', learn: 'Learn', quests: 'Quests', shop: 'Shop', me: 'Me' } as const;
 
-function Tab({ name, focused, onPress, badge }: { name: keyof typeof ICONS; focused: boolean; onPress: () => void; badge?: number }) {
+function Tab({ name, focused, onPress, badge, small }: { name: keyof typeof ICONS; focused: boolean; onPress: () => void; badge?: number; small: boolean }) {
   const Icon = ICONS[name];
   return (
     <Pressable
@@ -28,15 +29,15 @@ function Tab({ name, focused, onPress, badge }: { name: keyof typeof ICONS; focu
           alignItems: 'center',
           gap: 2,
           paddingVertical: 6,
-          paddingHorizontal: 12,
+          paddingHorizontal: small ? 6 : 12,
           borderRadius: 16,
           backgroundColor: focused ? colors.lime : 'transparent',
           borderWidth: 2,
           borderColor: focused ? colors.ink : 'transparent',
         }}
       >
-        <Icon size={22} color={colors.ink} strokeWidth={focused ? 2.75 : 2.25} />
-        <Txt variant="small" style={{ fontSize: 11, color: colors.ink, fontFamily: focused ? 'PlusJakartaSans_800ExtraBold' : 'PlusJakartaSans_600SemiBold' }}>
+        <Icon size={small ? 20 : 22} color={colors.ink} strokeWidth={focused ? 2.75 : 2.25} />
+        <Txt variant="small" style={{ fontSize: small ? 10 : 11, color: colors.ink, fontFamily: focused ? 'PlusJakartaSans_800ExtraBold' : 'PlusJakartaSans_600SemiBold' }}>
           {LABELS[name]}
         </Txt>
       </View>
@@ -69,6 +70,7 @@ export const TAB_BAR_SPACE = 96;
 /** Floating chunky tab bar. */
 export function TabBar({ state, navigation }: BottomTabBarProps) {
   const insets = useSafeAreaInsets();
+  const { small } = useLayout();
   const progress = useProgress();
   const claimable = progress.quests.list.filter((q) => q.progress >= q.target && !q.claimed).length;
   return (
@@ -93,6 +95,7 @@ export function TabBar({ state, navigation }: BottomTabBarProps) {
                   const event = navigation.emit({ type: 'tabPress', target: route.key, canPreventDefault: true });
                   if (!focused && !event.defaultPrevented) navigation.navigate(route.name);
                 }}
+                small={small}
               />
             );
           })}

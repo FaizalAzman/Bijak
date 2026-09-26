@@ -1,15 +1,16 @@
 import { useLocalSearchParams } from 'expo-router';
 import { Lock } from 'lucide-react-native';
 import { useMemo, useState } from 'react';
-import { ScrollView, View } from 'react-native';
+import { View } from 'react-native';
 import { Avatar } from '@/components/avatar/Avatar';
 import { KidHeader } from '@/components/gamify/KidHeader';
 import { TAB_BAR_SPACE } from '@/components/gamify/TabBar';
 import { toast } from '@/components/gamify/Toaster';
-import { Button, Chip, Chunky, PressChunky, Screen, Txt } from '@/components/ui';
+import { Button, Chip, Chunky, Grid, HScroll, PressChunky, Screen, Txt } from '@/components/ui';
 import { useContentIndex } from '@/features/content/registry';
 import { SHOP, SLOT_LABEL, type ShopItem, type Slot } from '@/features/gamify/shop';
 import { levelFromXp } from '@/features/gamify/xp';
+import { useLayout } from '@/hooks/useLayout';
 import { fx } from '@/lib/feedback';
 import { useActiveProfile, useApp, useProgress } from '@/store/app';
 import { accent, colors } from '@/theme';
@@ -28,6 +29,7 @@ export default function Shop() {
   const [tab, setTab] = useState<Tab>((TABS as string[]).includes(params.tab ?? '') ? (params.tab as Tab) : 'outfit');
   const [preview, setPreview] = useState<ShopItem | null>(null);
   const level = levelFromXp(p.xp);
+  const layout = useLayout('wide');
   const games = useMemo(() => index.standards.flatMap((s) => s.arcade.filter((g) => g.price > 0).map((g) => ({ g, std: s }))), [index]);
 
   if (!profile) return null;
@@ -56,10 +58,10 @@ export default function Shop() {
   };
 
   return (
-    <Screen header={<KidHeader title="Shop" />} bottomInset={TAB_BAR_SPACE}>
+    <Screen frame="wide" header={<KidHeader title="Shop" />} bottomInset={TAB_BAR_SPACE}>
       <Chunky bg={colors['grape-soft']} innerStyle={{ padding: 16, flexDirection: 'row', alignItems: 'center', gap: 16 }}>
         <View>
-          <Avatar config={previewConfig} size={110} mood={preview ? 'excited' : 'happy'} />
+          <Avatar config={previewConfig} size={layout.isTablet ? 140 : layout.small ? 88 : 110} mood={preview ? 'excited' : 'happy'} />
         </View>
         <View style={{ flex: 1, gap: 8 }}>
           {preview ? (
@@ -89,19 +91,14 @@ export default function Shop() {
         </View>
       </Chunky>
 
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        style={{ marginHorizontal: -18 }}
-        contentContainerStyle={{ gap: 8, paddingVertical: 16, paddingHorizontal: 18 }}
-      >
+      <HScroll paddingVertical={16}>
         {TABS.map((t) => (
           <Chip key={t} label={t === 'games' ? 'Games' : SLOT_LABEL[t]} selected={tab === t} onPress={() => (setTab(t), setPreview(null))} />
         ))}
-      </ScrollView>
+      </HScroll>
 
       {tab === 'games' ? (
-        <View style={{ gap: 12 }}>
+        <Grid minItemWidth={300} maxColumns={2}>
           {games.length === 0 && <Txt variant="small">No games to unlock yet.</Txt>}
           {games.map(({ g, std }) => {
             const owned = p.inventory.includes(`arcade:${g.id}`);
@@ -149,15 +146,15 @@ export default function Shop() {
               </Chunky>
             );
           })}
-        </View>
+        </Grid>
       ) : (
-        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 12 }}>
-          {SHOP.filter((i) => i.slot === tab).map((item, k) => {
+        <Grid minItemWidth={140} maxColumns={5}>
+          {SHOP.filter((i) => i.slot === tab).map((item) => {
             const owned = p.inventory.includes(item.id);
             const equipped = profile.avatar[item.slot] === item.id;
             const locked = !owned && !!item.minLevel && level < item.minLevel;
             return (
-              <View key={item.id} style={{ width: '47%', flexGrow: 1 }}>
+              <View key={item.id}>
                 <PressChunky
                   onPress={() => onItem(item)}
                   bg={equipped ? colors.lime : preview?.id === item.id ? colors['sun-soft'] : colors.paper}
@@ -202,7 +199,7 @@ export default function Shop() {
               </View>
             );
           })}
-        </View>
+        </Grid>
       )}
     </Screen>
   );

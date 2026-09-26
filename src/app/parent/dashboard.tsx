@@ -1,10 +1,10 @@
 import { router } from 'expo-router';
 import { Activity, ChevronRight, Download, Settings, Users } from 'lucide-react-native';
 import { useMemo, useState } from 'react';
-import { ScrollView, View } from 'react-native';
+import { View } from 'react-native';
 import { Avatar } from '@/components/avatar/Avatar';
 import { BarList, ColumnChart } from '@/components/parent/Charts';
-import { Chip, Chunky, PressChunky, Screen, SectionLabel, Tag, TopBar, Txt } from '@/components/ui';
+import { Chip, Chunky, Grid, HScroll, PressChunky, Screen, SectionLabel, Tag, TopBar, Txt } from '@/components/ui';
 import { useContentIndex } from '@/features/content/registry';
 import { levelFromXp } from '@/features/gamify/xp';
 import { accuracyPerSubject, minutesPerDay, timePerSubject, weakTopics } from '@/features/insights/insights';
@@ -62,13 +62,15 @@ export default function ParentDashboard() {
 
   if (!ok) return null;
   return (
-    <Screen header={<TopBar title={`Hi, ${parent?.name ?? 'Parent'}`} close onBack={() => router.replace('/')} />}>
+    <Screen frame="wide" header={<TopBar title={`Hi, ${parent?.name ?? 'Parent'}`} close onBack={() => router.replace('/')} />}>
       {profiles.length > 1 && (
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8, paddingBottom: 14 }}>
-          {profiles.map((c) => (
-            <Chip key={c.id} label={c.name} selected={c.id === child?.id} onPress={() => setChildId(c.id)} />
-          ))}
-        </ScrollView>
+        <View style={{ paddingBottom: 14 }}>
+          <HScroll>
+            {profiles.map((c) => (
+              <Chip key={c.id} label={c.name} selected={c.id === child?.id} onPress={() => setChildId(c.id)} />
+            ))}
+          </HScroll>
+        </View>
       )}
 
       {child && (
@@ -87,32 +89,39 @@ export default function ParentDashboard() {
         </View>
       )}
 
-      <View style={{ flexDirection: 'row', gap: 10, marginTop: 16 }}>
-        <Tile label="This week" value={formatDuration(weekMinutes * 60)} sub="learning time" bg={colors['grape-soft']} />
-        <Tile label="Accuracy" value={`${pct(p.totals.correct, p.totals.answered)}%`} sub={plural(p.totals.answered, 'answer')} bg={colors['mint-soft']} />
-      </View>
-      <View style={{ flexDirection: 'row', gap: 10, marginTop: 10 }}>
-        <Tile label="Streak" value={`🔥 ${liveStreak(p)}`} sub={`best ${plural(p.streak.best, 'day')}`} bg={colors['tangerine-soft']} />
-        <Tile label="To review" value={`🧠 ${tricky}`} sub="tricky questions" bg={colors['sun-soft']} />
-      </View>
+      <View style={{ height: 16 }} />
+      <Grid minItemWidth={140} maxColumns={4} gap={10}>
+        <Tile key="week" label="This week" value={formatDuration(weekMinutes * 60)} sub="learning time" bg={colors['grape-soft']} />
+        <Tile key="accuracy" label="Accuracy" value={`${pct(p.totals.correct, p.totals.answered)}%`} sub={plural(p.totals.answered, 'answer')} bg={colors['mint-soft']} />
+        <Tile key="streak" label="Streak" value={`🔥 ${liveStreak(p)}`} sub={`best ${plural(p.streak.best, 'day')}`} bg={colors['tangerine-soft']} />
+        <Tile key="review" label="To review" value={`🧠 ${tricky}`} sub="tricky questions" bg={colors['sun-soft']} />
+      </Grid>
 
-      <SectionLabel>Minutes learning · last 7 days</SectionLabel>
-      <Chunky depth={3} innerStyle={{ padding: 14 }}>
-        <ColumnChart data={perDay} unit="m" />
-        <Txt variant="small" style={{ marginTop: 8 }}>
-          Tap a bar to see minutes.
-        </Txt>
-      </Chunky>
+      <Grid minItemWidth={420} maxColumns={2} gap={16}>
+        <View key="minutes">
+          <SectionLabel>Minutes learning · last 7 days</SectionLabel>
+          <Chunky depth={3} innerStyle={{ padding: 14 }}>
+            <ColumnChart data={perDay} unit="m" />
+            <Txt variant="small" style={{ marginTop: 8 }}>
+              Tap a bar to see minutes.
+            </Txt>
+          </Chunky>
+        </View>
 
-      <SectionLabel>Time per subject · this week</SectionLabel>
-      <Chunky depth={3} innerStyle={{ padding: 14 }}>
-        {perSubject.length ? <BarList rows={perSubject} format={(v) => `${v} min`} /> : <Txt variant="small">No learning time recorded this week yet.</Txt>}
-      </Chunky>
+        <View key="time">
+          <SectionLabel>Time per subject · this week</SectionLabel>
+          <Chunky depth={3} innerStyle={{ padding: 14 }}>
+            {perSubject.length ? <BarList rows={perSubject} format={(v) => `${v} min`} /> : <Txt variant="small">No learning time recorded this week yet.</Txt>}
+          </Chunky>
+        </View>
 
-      <SectionLabel>Accuracy by subject</SectionLabel>
-      <Chunky depth={3} innerStyle={{ padding: 14 }}>
-        {accuracy.length ? <BarList rows={accuracy} max={100} format={(v) => `${v}%`} /> : <Txt variant="small">No answers yet.</Txt>}
-      </Chunky>
+        <View key="accuracy">
+          <SectionLabel>Accuracy by subject</SectionLabel>
+          <Chunky depth={3} innerStyle={{ padding: 14 }}>
+            {accuracy.length ? <BarList rows={accuracy} max={100} format={(v) => `${v}%`} /> : <Txt variant="small">No answers yet.</Txt>}
+          </Chunky>
+        </View>
+      </Grid>
 
       <SectionLabel>Needs attention · KSSR topics</SectionLabel>
       {weak.length === 0 ? (

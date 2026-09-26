@@ -10,3 +10,6 @@ export * from './Txt';
 export * from './Keypad';
 export * from './Field';
 export * from './Toggle';
+export * from './Frame';
+export * from './Grid';
+export * from './HScroll';

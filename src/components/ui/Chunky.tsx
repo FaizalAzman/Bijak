@@ -34,7 +34,7 @@ export function Chunky({
       {depth > 0 && (
         <View pointerEvents="none" style={{ position: 'absolute', left: depth, top: depth, right: 0, bottom: 0, borderRadius: radius, backgroundColor: shadowColor }} />
       )}
-      <View style={[{ backgroundColor: bg, borderRadius: radius, borderWidth: 2, borderColor }, innerStyle]}>{children}</View>
+      <View style={[{ flexGrow: 1, backgroundColor: bg, borderRadius: radius, borderWidth: 2, borderColor }, innerStyle]}>{children}</View>
     </View>
   );
 }
@@ -93,7 +93,7 @@ export function PressChunky({
       {depth > 0 && (
         <View pointerEvents="none" style={{ position: 'absolute', left: depth, top: depth, right: 0, bottom: 0, borderRadius: radius, backgroundColor: shadowColor }} />
       )}
-      <Animated.View style={[{ backgroundColor: bg, borderRadius: radius, borderWidth: 2, borderColor }, innerStyle, face]}>{children}</Animated.View>
+      <Animated.View style={[{ flexGrow: 1, backgroundColor: bg, borderRadius: radius, borderWidth: 2, borderColor }, innerStyle, face]}>{children}</Animated.View>
     </Pressable>
   );
 }

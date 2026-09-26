@@ -6,6 +6,7 @@ import { Kancil } from '@/components/mascot/Kancil';
 import { Chunky, PressChunky, ProgressBar, Screen, TopBar, Txt } from '@/components/ui';
 import { useContentIndex } from '@/features/content/registry';
 import { subjectProgress, topicStatus } from '@/features/progress/selectors';
+import { useLayout } from '@/hooks/useLayout';
 import { useProgress } from '@/store/app';
 import { accent, colors } from '@/theme';
 
@@ -36,6 +37,9 @@ function Ring({ ratio, color, size }: { ratio: number; color: string; size: numb
 export default function SubjectPath() {
   const { standardId, subjectId } = useLocalSearchParams<{ standardId: string; subjectId: string }>();
   const index = useContentIndex();
+  // Keep the winding path inside the screen: 180px-wide nodes swing at most to the edges.
+  const { innerWidth } = useLayout();
+  const swing = Math.max(0, Math.min(90, (innerWidth - 180) / 2));
   const p = useProgress();
   const standard = index.standard(standardId);
   const subject = index.subject(standardId, subjectId);
@@ -72,7 +76,7 @@ export default function SubjectPath() {
       <View style={{ paddingVertical: 26, alignItems: 'center' }}>
         {subject.topics.map((t, i) => {
           const st = statuses[i];
-          const offset = Math.sin(i * 1.15) * 80;
+          const offset = Math.sin(i * 1.15) * swing;
           const isCurrent = i === current;
           const size = 92;
           return (

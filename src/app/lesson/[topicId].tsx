@@ -5,7 +5,7 @@ import Animated from 'react-native-reanimated';
 import { toast } from '@/components/gamify/Toaster';
 import { LessonBlockView, toSlides } from '@/components/lesson/LessonBlocks';
 import { MascotSays } from '@/components/mascot/MascotSays';
-import { BackButton, Button, ProgressBar, Screen, Txt } from '@/components/ui';
+import { BackButton, Button, FrameRow, ProgressBar, Screen, Txt } from '@/components/ui';
 import { useContentIndex } from '@/features/content/registry';
 import { fx, stopSpeaking } from '@/lib/feedback';
 import { useApp } from '@/store/app';
@@ -53,7 +53,7 @@ export default function LessonScreen() {
     <Screen
       scroll={false}
       header={
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 18, paddingVertical: 8, maxWidth: 720, width: '100%', alignSelf: 'center' }}>
+        <FrameRow style={{ flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 8 }}>
           <BackButton close />
           <View style={{ flex: 1 }}>
             <ProgressBar value={done ? 1 : (i + 1) / Math.max(1, slides.length)} color={a.strong} />
@@ -61,10 +61,10 @@ export default function LessonScreen() {
           <Txt variant="mono">
             {Math.min(i + 1, slides.length)}/{slides.length}
           </Txt>
-        </View>
+        </FrameRow>
       }
       footer={
-        <View style={{ paddingHorizontal: 18, paddingTop: 10, paddingBottom: 12, gap: 10 }}>
+        <FrameRow style={{ paddingTop: 10, paddingBottom: 12, gap: 10 }}>
           {done ? (
             <>
               {topic.quizzes[0] && <Button label="Take the quiz!" tone="lime" size="lg" full onPress={() => router.replace(`/quiz/${topic.quizzes[0].id}`)} />}
@@ -78,7 +78,7 @@ export default function LessonScreen() {
               </View>
             </View>
           )}
-        </View>
+        </FrameRow>
       }
     >
       <ScrollView ref={scroll} showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingVertical: 12, gap: 16 }}>

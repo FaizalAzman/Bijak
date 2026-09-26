@@ -1,7 +1,7 @@
 import { View } from 'react-native';
 import { Confetti } from '@/components/gamify/Confetti';
 import { Kancil } from '@/components/mascot/Kancil';
-import { Button, Chunky, Txt } from '@/components/ui';
+import { Button, Chunky, Txt, useFrame } from '@/components/ui';
 import type { BadgeDef } from '@/features/gamify/badges';
 import { formatDuration } from '@/lib/format';
 import { accent, colors } from '@/theme';
@@ -33,6 +33,7 @@ export interface ResultsData {
 }
 
 export function Results({ data, onDone, onRetry }: { data: ResultsData; onDone: () => void; onRetry: () => void }) {
+  const { small } = useFrame();
   const ratio = data.total ? data.correct / data.total : 0;
   const stars = data.timeAttack ? (data.correct >= 30 ? 3 : data.correct >= 18 ? 2 : data.correct > 0 ? 1 : 0) : ratio === 1 ? 3 : ratio >= 0.7 ? 2 : ratio > 0 ? 1 : 0;
   const mood = stars >= 2 ? 'cheer' : stars === 1 ? 'happy' : 'think';
@@ -53,7 +54,7 @@ export function Results({ data, onDone, onRetry }: { data: ResultsData; onDone: 
     <View style={{ flex: 1 }}>
       {celebrate && <Confetti count={24} />}
       <View style={{ flex: 1, alignItems: 'center', gap: 14, paddingTop: 20 }}>
-        <Kancil mood={mood} size={150} />
+        <Kancil mood={mood} size={small ? 110 : 150} />
         <Txt variant="hero" style={{ textAlign: 'center' }}>
           {headline}
         </Txt>
