@@ -3,7 +3,13 @@ import { StyleSheet, Text, View, type StyleProp, type ViewStyle } from 'react-na
 import { QuestRow } from '@/components/gamify/QuestRow';
 import { Results, type ResultsData } from '@/components/quiz/Results';
 import { Button, Chip, FrameContext, Grid, Keypad, Toggle, Txt } from '@/components/ui';
+import { Question } from '@/features/content/schema';
 import { computeLayout } from '@/hooks/useLayout';
+import * as feedback from '@/lib/feedback';
+import { useApp } from '@/store/app';
+import { resetStores } from '../helpers';
+
+beforeEach(() => resetStores());
 
 const flat = (el: { props: { style?: unknown } }) => (StyleSheet.flatten(el.props.style as StyleProp<ViewStyle>) ?? {}) as Record<string, unknown>;
 
@@ -138,7 +144,7 @@ describe('QuestRow', () => {
 });
 
 describe('Results', () => {
-  const data = (over: Partial<ResultsData>): ResultsData => ({ title: 'Quiz', timeAttack: false, correct: 8, total: 8, xp: 110, coins: 23, seconds: 75, streak: 2, newBest: false, badges: [], ...over });
+  const data = (over: Partial<ResultsData>): ResultsData => ({ title: 'Quiz', timeAttack: false, correct: 8, total: 8, xp: 110, coins: 23, seconds: 75, streak: 2, newBest: false, badges: [], mistakes: [], ...over });
   const shows = async (d: ResultsData) => {
     await render(<Results data={d} onDone={jest.fn()} onRetry={jest.fn()} />);
     return { headline: screen.getByText(/score!|done!|effort!|practising!|up!/).props.children, stars: screen.getByTestId('stars').props.accessibilityLabel };
@@ -180,6 +186,81 @@ describe('Results', () => {
   it('announces a rest-day shield earned on a streak milestone', async () => {
     await render(<Results data={data({ shieldEarned: true })} onDone={jest.fn()} onRetry={jest.fn()} />);
     expect(screen.getByTestId('shield-earned')).toHaveTextContent('🛡️ You earned a rest-day shield!');
+  });
+
+  describe('looking back at mistakes', () => {
+    const q = (over: object) => Question.parse({ id: 'm', prompt: 'How many legs does a spider have?', explain: 'Spiders have 8 legs; insects have 6.', ...over });
+    const mcq = q({ type: 'mcq', visual: '🕷️', options: [{ id: 'a', text: '6' }, { id: 'b', text: '8' }], answer: 'b' });
+    const sort = q({
+      id: 's',
+      type: 'sort',
+      prompt: 'Living or non-living?',
+      explain: undefined,
+      buckets: [
+        { id: 'l', label: 'Living', emoji: '🌱' },
+        { id: 'n', label: 'Non-living' },
+      ],
+      items: [
+        { text: 'Cat', bucket: 'l' },
+        { text: 'Rock', bucket: 'n' },
+        { text: 'Tree', bucket: 'l' },
+      ],
+    });
+
+    it('a perfect quiz has nothing to look back at', async () => {
+      await render(<Results data={data({})} onDone={jest.fn()} onRetry={jest.fn()} />);
+      expect(screen.queryByTestId('see-mistakes')).toBeNull();
+    });
+
+    it('lists each missed question with its right answer and why, then goes back', async () => {
+      await render(<Results data={data({ correct: 6, mistakes: [mcq, sort] })} onDone={jest.fn()} onRetry={jest.fn()} />);
+      await fireEvent.press(screen.getByRole('button', { name: 'Mistakes (2)' }));
+      expect(screen.getByText('Let’s fix these')).toBeOnTheScreen();
+      expect(screen.getByText('How many legs does a spider have?')).toBeOnTheScreen();
+      expect(screen.getByText('8')).toBeOnTheScreen();
+      expect(screen.getByText('💡 Spiders have 8 legs; insects have 6.')).toBeOnTheScreen();
+      expect(screen.getByText('🌱 Living: Cat, Tree')).toBeOnTheScreen();
+      expect(screen.getByText('Non-living: Rock')).toBeOnTheScreen();
+      expect(screen.getAllByText('Right answer')).toHaveLength(2);
+      await fireEvent.press(screen.getByRole('button', { name: 'Back to results' }));
+      expect(screen.getByTestId('stars')).toBeOnTheScreen();
+    });
+
+    it('reads a mistake aloud, question and answer, in its own language', async () => {
+      const speak = jest.spyOn(feedback, 'speak').mockImplementation(() => undefined);
+      await render(<Results data={data({ correct: 7, mistakes: [q({ type: 'trueFalse', lang: 'ms', prompt: 'Labah-labah ada 6 kaki.', answer: false })] })} onDone={jest.fn()} onRetry={jest.fn()} />);
+      await fireEvent.press(screen.getByTestId('see-mistakes'));
+      expect(screen.getByText('Jawapan betul')).toBeOnTheScreen();
+      await fireEvent.press(screen.getByRole('button', { name: 'Baca soalan dengan kuat' }));
+      expect(speak).toHaveBeenCalledWith('Labah-labah ada 6 kaki. Jawapan betul: Salah.', 'ms');
+      speak.mockRestore();
+    });
+
+    it('“Mistakes” and “Play again” sit side by side where they fit, and stack on the smallest phones', async () => {
+      const row = async (width: number, height: number) => {
+        const view = await render(
+          <FrameContext.Provider value={computeLayout(width, height, 'reading')}>
+            <Results data={data({ correct: 7, mistakes: [mcq] })} onDone={jest.fn()} onRetry={jest.fn()} />
+          </FrameContext.Provider>,
+        );
+        let node = screen.getByTestId('see-mistakes').parent;
+        while (node && flat(node).flexDirection === undefined) node = node.parent;
+        const direction = node && flat(node).flexDirection;
+        await view.unmount();
+        return direction;
+      };
+      expect(await row(320, 568)).toBe('column');
+      expect(await row(360, 740)).toBe('row');
+      expect(await row(1180, 820)).toBe('row');
+    });
+
+    it('the screen words follow the app language', async () => {
+      useApp.getState().updateSettings({ uiLang: 'ms' });
+      await render(<Results data={data({ correct: 7, mistakes: [mcq] })} onDone={jest.fn()} onRetry={jest.fn()} />);
+      await fireEvent.press(screen.getByRole('button', { name: 'Kesilapan (1)' }));
+      expect(screen.getByText('Jom betulkan')).toBeOnTheScreen();
+      expect(screen.getByRole('button', { name: 'Kembali ke keputusan' })).toBeOnTheScreen();
+    });
   });
 
   it('continue and play again call back', async () => {

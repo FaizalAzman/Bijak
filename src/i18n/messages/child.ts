@@ -357,6 +357,16 @@ export const child = {
   'results.shield': s('🛡️ You earned a rest-day shield!', '🛡️ Kamu dapat perisai hari rehat!'),
   'results.newBadge': s('New badge!', 'Lencana baharu!'),
   'results.playAgain': s('Play again', 'Main lagi'),
+  'results.mistakes': f(
+    (n: number) => `Mistakes (${n})`,
+    (n: number) => `Kesilapan (${n})`,
+  ),
+  'mistakes.title': s('Let’s fix these', 'Jom betulkan'),
+  'mistakes.intro': s(
+    'Here are the questions you missed, with the right answers. They’ll come back in Tricky questions so you can try again.',
+    'Ini soalan yang kamu salah, bersama jawapan yang betul. Soalan ini akan muncul semula dalam Soalan mencabar supaya kamu boleh cuba lagi.',
+  ),
+  'mistakes.back': s('Back to results', 'Kembali ke keputusan'),
   'feedback.answer': s('Answer:', 'Jawapan:'),
   'feedback.inARow': f(
     (n: number) => `🔥 ${n} in a row`,

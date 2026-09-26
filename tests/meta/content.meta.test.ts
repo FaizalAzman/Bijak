@@ -7,6 +7,7 @@
 import { readFileSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import { toSlides } from '@/components/lesson/LessonBlocks';
+import { answerLines } from '@/components/quiz/types';
 import { translatedSubjects } from '@/features/content/localize';
 import { buildQuizQuestions, getContentIndex, questionKey } from '@/features/content/registry';
 import { Question, type Quiz, type Standard, type Subject } from '@/features/content/schema';
@@ -167,6 +168,8 @@ describe.each(quizzes.map((x) => [x.where, x] as const))('%s', (_, { quiz }) => 
         if (!parsed.success) throw new Error(`${q.id}: ${parsed.error.message}`);
         expect(questionIssues(q, q.id)).toEqual([]);
         if (quiz.mode === 'timeAttack') expect(q.type).toBe('mcq');
+        // A missed question can always be looked back at, with its whole right answer.
+        expect(answerLines(q).filter((line) => line.trim() && !/undefined|NaN/.test(line)).length).toBeGreaterThan(0);
         if (quiz.generator && quiz.generator.kind !== 'vocab') expect(answerOf(q)).toEqual(oracle(q));
       }
     }

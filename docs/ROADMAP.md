@@ -9,7 +9,7 @@ What to improve next, most valuable first. Items move to "Done" as they land on 
       quizzes keep following each child's school language.
 - [x] **Automatic checks on GitHub** — every pull request runs `npm run verify` (typecheck, lint,
       content validation, the full test suite with coverage), so a broken change can't reach `main`.
-- [ ] **Review my mistakes** — after a quiz, the questions answered wrongly with the right answer
+- [x] **Review my mistakes** — after a quiz, the questions answered wrongly with the right answer
       and the explanation, right on the results screen.
 - [ ] **Printable practice sheets** — from the parent zone, a PDF of questions for any topic (or
       the report's weak spots) with an answer key, for practice away from the screen.

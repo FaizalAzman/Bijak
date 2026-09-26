@@ -13,6 +13,7 @@ time-attack games. A PIN-protected Parent Zone shows where they need help.
 - Streaks that forgive real life: family rest days and rest-day shields
 - Gentle, parent-controlled reminders and a **weekly report** to share on WhatsApp
 - Read-aloud in the most natural voice on the device, reading maths the way a teacher would
+- After each quiz, a look back at every mistake with the right answer and why (read aloud too)
 - Endless generated practice (times tables, place value, money, vocabulary…)
 - Works fully offline, with optional cloud backup and over-the-air content updates
 

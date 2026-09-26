@@ -1,11 +1,14 @@
-import { View } from 'react-native';
+import { useState } from 'react';
+import { ScrollView, View } from 'react-native';
 import { Confetti } from '@/components/gamify/Confetti';
 import { Kancil } from '@/components/mascot/Kancil';
 import { Button, Chunky, Txt, useFrame } from '@/components/ui';
+import type { Question } from '@/features/content/schema';
 import { badgeTitle, type BadgeDef } from '@/features/gamify/badges';
 import { useT } from '@/i18n';
 import { formatDuration } from '@/lib/format';
 import { accent, colors } from '@/theme';
+import { Mistakes } from './Mistakes';
 
 function Tile({ label, children, bg }: { label: string; children: React.ReactNode; bg: string }) {
   return (
@@ -33,11 +36,14 @@ export interface ResultsData {
   shieldEarned?: boolean;
   newBest: boolean;
   badges: BadgeDef[];
+  /** Questions answered wrongly, to look back at (practice and review; not time attacks). */
+  mistakes: Question[];
 }
 
 export function Results({ data, onDone, onRetry }: { data: ResultsData; onDone: () => void; onRetry: () => void }) {
-  const { small } = useFrame();
+  const { small, innerWidth } = useFrame();
   const t = useT();
+  const [reviewing, setReviewing] = useState(false);
   const ratio = data.total ? data.correct / data.total : 0;
   const stars = data.timeAttack ? (data.correct >= 30 ? 3 : data.correct >= 18 ? 2 : data.correct > 0 ? 1 : 0) : ratio === 1 ? 3 : ratio >= 0.7 ? 2 : ratio > 0 ? 1 : 0;
   const mood = stars >= 2 ? 'cheer' : stars === 1 ? 'happy' : 'think';
@@ -56,11 +62,12 @@ export function Results({ data, onDone, onRetry }: { data: ResultsData; onDone: 
   );
   // Confetti is saved for real milestones so it still feels special.
   const celebrate = data.timeAttack ? data.newBest : data.total > 0 && ratio === 1;
+  if (reviewing) return <Mistakes questions={data.mistakes} onBack={() => setReviewing(false)} />;
   return (
     <View style={{ flex: 1 }}>
       {celebrate && <Confetti count={24} />}
-      <View style={{ flex: 1, alignItems: 'center', gap: 14, paddingTop: 20 }}>
-        <Kancil mood={mood} size={small ? 110 : 150} />
+      <ScrollView style={{ flex: 1 }} contentContainerStyle={{ alignItems: 'center', gap: 14, paddingTop: 20, paddingBottom: 8 }} showsVerticalScrollIndicator={false}>
+        <Kancil mood={mood} size={small ? 90 : 150} />
         <Txt variant="hero" style={{ textAlign: 'center' }}>
           {headline}
         </Txt>
@@ -70,7 +77,7 @@ export function Results({ data, onDone, onRetry }: { data: ResultsData; onDone: 
         {/* Read as one phrase ("2 of 3 stars") instead of three separate emoji. */}
         <View style={{ flexDirection: 'row', gap: 10 }} accessible accessibilityLabel={t('results.stars', stars)} testID="stars">
           {[0, 1, 2].map((i) => (
-            <Txt key={i} style={{ fontSize: 46, opacity: i < stars ? 1 : 0.2 }}>
+            <Txt key={i} style={{ fontSize: small ? 38 : 46, opacity: i < stars ? 1 : 0.2 }}>
               ⭐
             </Txt>
           ))}
@@ -108,10 +115,20 @@ export function Results({ data, onDone, onRetry }: { data: ResultsData; onDone: 
             </Chunky>
           </View>
         ))}
-      </View>
+      </ScrollView>
       <View style={{ gap: 10, paddingVertical: 12 }}>
         <Button label={t('common.continue')} tone="lime" size="lg" full onPress={onDone} testID="results-continue" />
-        <Button label={t('results.playAgain')} tone="paper" full onPress={onRetry} />
+        {/* Side by side where both labels fit (from ~360px phones), else stacked. */}
+        <View style={{ flexDirection: innerWidth >= 320 ? 'row' : 'column', gap: 10 }}>
+          {data.mistakes.length > 0 && (
+            <View style={{ flex: innerWidth >= 320 ? 1 : undefined }}>
+              <Button label={t('results.mistakes', data.mistakes.length)} tone="paper" full onPress={() => setReviewing(true)} testID="see-mistakes" />
+            </View>
+          )}
+          <View style={{ flex: innerWidth >= 320 ? 1 : undefined }}>
+            <Button label={t('results.playAgain')} tone="paper" full onPress={onRetry} />
+          </View>
+        </View>
       </View>
     </View>
   );

@@ -11,8 +11,28 @@ export interface QuestionProps<T extends Question['type'] = Question['type']> {
 }
 
 export const LABELS = {
-  en: { check: 'Check', true: 'True', false: 'False', tapOrDrag: 'Tap or drag the words', readAloud: 'Read question aloud', bucket: 'Bucket', remove: 'Remove', blank: 'Blank' },
-  ms: { check: 'Semak', true: 'Betul', false: 'Salah', tapOrDrag: 'Ketik atau seret perkataan', readAloud: 'Baca soalan dengan kuat', bucket: 'Kumpulan', remove: 'Buang', blank: 'Tempat kosong' },
+  en: {
+    check: 'Check',
+    true: 'True',
+    false: 'False',
+    tapOrDrag: 'Tap or drag the words',
+    readAloud: 'Read question aloud',
+    bucket: 'Bucket',
+    remove: 'Remove',
+    blank: 'Blank',
+    rightAnswer: 'Right answer',
+  },
+  ms: {
+    check: 'Semak',
+    true: 'Betul',
+    false: 'Salah',
+    tapOrDrag: 'Ketik atau seret perkataan',
+    readAloud: 'Baca soalan dengan kuat',
+    bucket: 'Kumpulan',
+    remove: 'Buang',
+    blank: 'Tempat kosong',
+    rightAnswer: 'Jawapan betul',
+  },
 } as const;
 
 /** What to do, above each question (in the question's language, like the labels above). */
@@ -56,6 +76,23 @@ export function correctAnswerText(q: Question): string | null {
       return q.tokens.join(' ');
     default:
       return null;
+  }
+}
+
+/** The whole right answer, line by line, for looking back at a mistake (every question type). */
+export function answerLines(q: Question): string[] {
+  switch (q.type) {
+    case 'match':
+      return q.pairs.map((p) => `${p.left} → ${p.right}`);
+    case 'sort':
+      return q.buckets.flatMap((b) => {
+        const items = q.items.filter((i) => i.bucket === b.id).map((i) => i.text);
+        return items.length ? [`${[b.emoji, b.label].filter(Boolean).join(' ')}: ${items.join(', ')}`] : [];
+      });
+    default: {
+      const text = correctAnswerText(q);
+      return text ? [text] : [];
+    }
   }
 }
 

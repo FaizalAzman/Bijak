@@ -93,6 +93,7 @@ function QuizRun({ session, onRetry }: { session: Session; onRetry: () => void }
   const [levelUp, setLevelUp] = useState<number | null>(null);
   const [secondsLeft, setSecondsLeft] = useState(session.seconds);
   const sessionXp = useRef(0);
+  const mistakes = useRef<Question[]>([]);
   const startXp = useRef(0);
   const started = useRef(0);
   const autoRead = useApp((s) => s.settings.autoRead);
@@ -144,6 +145,7 @@ function QuizRun({ session, onRetry }: { session: Session; onRetry: () => void }
       shieldEarned: reward.shieldEarned,
       newBest: reward.newBest,
       badges: reward.badges,
+      mistakes: mistakes.current,
     });
     setPhase('done');
     if (lvlAfter > lvlBefore) {
@@ -185,6 +187,8 @@ function QuizRun({ session, onRetry }: { session: Session; onRetry: () => void }
     setAnswered((n) => n + 1);
     if (correct) setCorrectCount((n) => n + 1);
     setLast({ correct, xp });
+    // Time attacks are for speed; the others end with a look at what went wrong.
+    if (!correct && !timeAttack) mistakes.current.push(item.q);
     if (timeAttack) {
       setFlash(correct);
       setTimeout(
