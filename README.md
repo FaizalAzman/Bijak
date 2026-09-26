@@ -12,6 +12,7 @@ time-attack games. A PIN-protected Parent Zone shows where they need help.
 - Parents pin the topic each class is on this week; Bijak practises it first and sets quests for it
 - Streaks that forgive real life: family rest days and rest-day shields
 - Gentle, parent-controlled reminders and a **weekly report** to share on WhatsApp
+- **Printable practice sheets** (PDF) for any topic or the child's weak spots, with an answer key
 - Read-aloud in the most natural voice on the device, reading maths the way a teacher would
 - A hint button that nudges without giving the answer away (a hinted answer is worth half a point)
 - After each quiz, a look back at every mistake with the right answer and why (read aloud too)
@@ -66,6 +67,7 @@ See [`docs/TESTING.md`](docs/TESTING.md).
 | 21 | Gentle reminders: local notifications planned on the device, parent-controlled | `src/features/reminders/` |
 | 22 | Teaching language: Bahasa Melayu overlays for Maths & Science, same ids and answers | `src/features/content/localize.ts`, `content/standards/*.json` |
 | 23 | Bilingual UI: every message in English and Bahasa Melayu side by side, a family language setting | `src/i18n/` |
+| 24 | Practice sheets: A4 worksheets with an answer key, printed or shared as a PDF (`expo-print`) | `src/features/worksheet/`, `src/lib/print.ts` |
 
 What's next: [`docs/ROADMAP.md`](docs/ROADMAP.md).
 

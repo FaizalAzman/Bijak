@@ -55,6 +55,8 @@ export const parent = {
     (name: string) => `Topics ${name}'s class is on this week`,
     (name: string) => `Topik kelas ${name} minggu ini`,
   ),
+  'dash.sheets': s('Practice sheets', 'Lembaran latihan'),
+  'dash.sheets.sub': s('Print questions to practise on paper', 'Cetak soalan untuk berlatih di atas kertas'),
   'dash.children': s('Children', 'Anak-anak'),
   'dash.children.sub': s('Add, edit standard, language, reset', 'Tambah, tukar tahun, bahasa, set semula'),
   'dash.content': s('Content & sync', 'Kandungan & segerak'),
@@ -227,9 +229,35 @@ export const parent = {
     (activity: string) => `Try at home: ${activity}`,
     (activity: string) => `Cuba di rumah: ${activity}`,
   ),
+  'report.printSheet': s('Print a practice sheet', 'Cetak lembaran latihan'),
   'report.share': s('Share', 'Kongsi'),
   'report.whatsapp': s('Share on WhatsApp', 'Kongsi di WhatsApp'),
   'report.shareOther': s('Share…', 'Kongsi…'),
+
+  // Practice sheets
+  'sheet.title': s('Practice sheet', 'Lembaran latihan'),
+  'sheet.intro': s(
+    'Print questions from any topic to practise away from the screen. The sheet is in the child’s school language, with the answers on the last page.',
+    'Cetak soalan daripada mana-mana topik untuk berlatih tanpa skrin. Lembaran ini dalam bahasa sekolah anak, dengan jawapan di halaman terakhir.',
+  ),
+  'sheet.topic': s('Topic', 'Topik'),
+  'sheet.practiseNext': s('Practise next (weak spots)', 'Latih seterusnya (titik lemah)'),
+  'sheet.count': s('Questions', 'Bilangan soalan'),
+  'sheet.all': f(
+    (n: number) => `All ${n}`,
+    (n: number) => `Semua ${n}`,
+  ),
+  'sheet.answers': s('Answer key on the last page', 'Skema jawapan di halaman terakhir'),
+  'sheet.preview': s('Preview', 'Pratonton'),
+  'sheet.more': f(
+    (n: number) => `…and ${n} more`,
+    (n: number) => `…dan ${n} lagi`,
+  ),
+  'sheet.shuffle': s('New questions', 'Soalan baharu'),
+  'sheet.print': s('Print', 'Cetak'),
+  'sheet.share': s('Share PDF', 'Kongsi PDF'),
+  'sheet.empty': s('This topic has no questions yet.', 'Topik ini belum ada soalan.'),
+  'sheet.failed': s('Couldn’t make the sheet. Please try again.', 'Tidak dapat menyediakan lembaran. Sila cuba lagi.'),
 
   // Content & sync
   'content.installed': s('Installed syllabus', 'Sukatan yang dipasang'),

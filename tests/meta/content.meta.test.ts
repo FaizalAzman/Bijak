@@ -13,6 +13,7 @@ import { translatedSubjects } from '@/features/content/localize';
 import { buildQuizQuestions, getContentIndex, questionKey } from '@/features/content/registry';
 import { Question, type Quiz, type Standard, type Subject } from '@/features/content/schema';
 import { crossStandardIssues, questionIssues, semanticIssues, translationGaps } from '@/features/content/validate';
+import { buildWorksheet, worksheetHtml } from '@/features/worksheet/sheet';
 import { seeded } from '@/lib/random';
 import manifest from '../../content/manifest.json';
 import { answerOf, oracle } from '../oracle';
@@ -95,6 +96,28 @@ describe('syllabus', () => {
     // (The Bahasa Melayu build shares its keys with the original on purpose.)
     const keys = quizzes.filter((x) => !x.where.startsWith('ms:')).flatMap(({ quiz }) => quiz.questions.map((q) => questionKey(quiz.id, q)));
     expect(new Set(keys).size).toBe(keys.length);
+  });
+});
+
+describe('practice sheets', () => {
+  it.each(['en', 'ms'] as const)('every topic with quizzes prints a clean sheet with an answer key (%s build)', (medium) => {
+    const idx = getContentIndex(medium);
+    let sheets = 0;
+    for (const std of idx.standards) {
+      for (const subject of std.subjects) {
+        for (const topic of subject.topics) {
+          if (!topic.quizzes.some((q) => q.mode !== 'timeAttack')) continue;
+          const sheet = buildWorksheet(idx, { child: 'Adam', topicIds: [topic.id], count: 20, answers: true, seed: 3, day: '2026-03-02' });
+          if (!sheet) throw new Error(`${topic.id}: no sheet`);
+          const html = worksheetHtml(sheet);
+          expect(html).not.toMatch(/undefined|NaN|\[object/);
+          expect(html).toContain(sheet.lang === 'ms' ? 'Skema jawapan' : 'Answer key');
+          expect(sheet.questions.every((q) => q.lang === sheet.lang)).toBe(true);
+          sheets++;
+        }
+      }
+    }
+    expect(sheets).toBeGreaterThan(40);
   });
 });
 

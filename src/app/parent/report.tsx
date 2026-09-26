@@ -133,6 +133,7 @@ export default function WeeklyReportScreen() {
             <Chunky key={w.topicId} depth={3} innerStyle={{ padding: 14, gap: 6 }}>
               <Txt variant="subtitle">{`${w.subjectEmoji} ${w.title} · ${t('report.pctCorrect', w.accuracy)}`}</Txt>
               {w.activity ? <Txt variant="small">{t('report.tryAtHome', w.activity)}</Txt> : null}
+              <Button label={t('report.printSheet')} tone="paper" size="sm" onPress={() => router.push(`/parent/worksheet?child=${child.id}&topic=${w.topicId}`)} />
             </Chunky>
           ))
         )}

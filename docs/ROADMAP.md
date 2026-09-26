@@ -11,7 +11,7 @@ What to improve next, most valuable first. Items move to "Done" as they land on 
       content validation, the full test suite with coverage), so a broken change can't reach `main`.
 - [x] **Review my mistakes** — after a quiz, the questions answered wrongly with the right answer
       and the explanation, right on the results screen.
-- [ ] **Printable practice sheets** — from the parent zone, a PDF of questions for any topic (or
+- [x] **Printable practice sheets** — from the parent zone, a PDF of questions for any topic (or
       the report's weak spots) with an answer key, for practice away from the screen.
 - [x] **Hints** — a hint button that nudges without giving the answer away (two wrong options
       disappear, the first digit or word shows, one pair is matched). A hinted answer is worth

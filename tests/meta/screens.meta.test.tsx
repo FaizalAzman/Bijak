@@ -20,11 +20,14 @@ import { rel, screens } from './files';
 type Json = ReactTestRendererJSON | ReactTestRendererJSON[] | string | null;
 const texts = (node: Json): string[] =>
   node == null ? [] : typeof node === 'string' ? [node] : Array.isArray(node) ? node.flatMap(texts) : (node.children ?? []).flatMap((c) => texts(c as Json));
+/** Elements that show questions made on the fly (generated practice): syllabus, not UI. */
+const GENERATED_CONTENT = /^sheet-q-/;
 /** Everything a person can read or hear: text, plus screen-reader labels and placeholders. */
 const readable = (node: Json): string[] => {
   if (node == null) return [];
   if (typeof node === 'string') return [node];
   if (Array.isArray(node)) return node.flatMap(readable);
+  if (typeof node.props.testID === 'string' && GENERATED_CONTENT.test(node.props.testID)) return [];
   const own = [node.props.accessibilityLabel, node.props.placeholder].filter((x): x is string => typeof x === 'string');
   return [...own, ...(node.children ?? []).flatMap((c) => readable(c as Json))];
 };
@@ -94,6 +97,7 @@ const SCREENS: Record<string, { params?: Record<string, string>; parent?: boolea
   'src/app/parent/index.tsx': {},
   'src/app/parent/school.tsx': { parent: true },
   'src/app/parent/settings.tsx': { parent: true },
+  'src/app/parent/worksheet.tsx': { parent: true },
   'src/app/profiles.tsx': {},
   'src/app/quiz/[quizId].tsx': { params: { quizId: 's3-math-numbers-q1' } },
   'src/app/subject/[standardId]/[subjectId].tsx': { params: { standardId: 'std3', subjectId: 'science' } },

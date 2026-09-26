@@ -48,6 +48,18 @@ jest.mock('expo-localization', () => ({
   getLocales: jest.fn(() => [{ languageCode: 'en', languageTag: 'en-MY', regionCode: 'MY' }]),
 }));
 
+jest.mock('expo-print', () => ({
+  __esModule: true,
+  printAsync: jest.fn(() => Promise.resolve()),
+  printToFileAsync: jest.fn(() => Promise.resolve({ uri: 'file:///cache/sheet.pdf', numberOfPages: 2 })),
+}));
+
+jest.mock('expo-sharing', () => ({
+  __esModule: true,
+  isAvailableAsync: jest.fn(() => Promise.resolve(true)),
+  shareAsync: jest.fn(() => Promise.resolve()),
+}));
+
 jest.mock('expo-speech', () => ({
   __esModule: true,
   speak: jest.fn(),

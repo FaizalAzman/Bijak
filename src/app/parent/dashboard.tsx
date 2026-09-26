@@ -1,5 +1,5 @@
 import { router } from 'expo-router';
-import { Activity, BarChart3, ChevronRight, Download, School, Settings, Users } from 'lucide-react-native';
+import { Activity, BarChart3, ChevronRight, Download, Printer, School, Settings, Users } from 'lucide-react-native';
 import { useMemo, useState } from 'react';
 import { View } from 'react-native';
 import { Avatar } from '@/components/avatar/Avatar';
@@ -213,6 +213,14 @@ export default function ParentDashboard() {
             label={t('dash.school')}
             sub={t('dash.school.sub', child.name)}
             onPress={() => router.push(`/parent/school?child=${child.id}`)}
+          />
+        )}
+        {child && (
+          <NavRow
+            icon={<Printer size={22} color={colors.ink} />}
+            label={t('dash.sheets')}
+            sub={t('dash.sheets.sub')}
+            onPress={() => router.push(`/parent/worksheet?child=${child.id}`)}
           />
         )}
         <NavRow icon={<Users size={22} color={colors.ink} />} label={t('dash.children')} sub={t('dash.children.sub')} onPress={() => router.push('/parent/children')} />
