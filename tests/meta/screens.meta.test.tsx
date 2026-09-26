@@ -111,6 +111,12 @@ function seedFamily() {
   useApp.getState().addProfile({ name: 'Aisyah', level: 1 });
 }
 
+// The first require of a screen compiles most of the app, which is slow on a cold cache (CI).
+// Do it once up front, so each test below times the render and not the compiler.
+beforeAll(() => {
+  for (const file of Object.keys(SCREENS)) require(`../../${file}`);
+}, 120_000);
+
 beforeEach(() => {
   setNow('2026-03-04T17:00:00');
   seedFamily();
