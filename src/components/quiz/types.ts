@@ -11,9 +11,31 @@ export interface QuestionProps<T extends Question['type'] = Question['type']> {
 }
 
 export const LABELS = {
-  en: { check: 'Check', true: 'True', false: 'False', tapOrDrag: 'Tap or drag the words' },
-  ms: { check: 'Semak', true: 'Betul', false: 'Salah', tapOrDrag: 'Ketik atau seret perkataan' },
+  en: { check: 'Check', true: 'True', false: 'False', tapOrDrag: 'Tap or drag the words', readAloud: 'Read question aloud', bucket: 'Bucket', remove: 'Remove', blank: 'Blank' },
+  ms: { check: 'Semak', true: 'Betul', false: 'Salah', tapOrDrag: 'Ketik atau seret perkataan', readAloud: 'Baca soalan dengan kuat', bucket: 'Kumpulan', remove: 'Buang', blank: 'Tempat kosong' },
 } as const;
+
+/** What to do, above each question (in the question's language, like the labels above). */
+export const INSTRUCTION = {
+  en: {
+    mcq: 'Choose the answer',
+    trueFalse: 'True or false?',
+    match: 'Draw lines to match',
+    order: 'Put in order',
+    sort: 'Drag into groups',
+    fillBlank: 'Fill in the blanks',
+    numpad: 'Type the answer',
+  },
+  ms: {
+    mcq: 'Pilih jawapan',
+    trueFalse: 'Betul atau salah?',
+    match: 'Lukis garisan untuk padankan',
+    order: 'Susun mengikut urutan',
+    sort: 'Seret ke kumpulan',
+    fillBlank: 'Isi tempat kosong',
+    numpad: 'Taip jawapan',
+  },
+} as const satisfies Record<'en' | 'ms', Record<Question['type'], string>>;
 
 /** Human-readable correct answer for the feedback sheet. */
 export function correctAnswerText(q: Question): string | null {

@@ -16,8 +16,10 @@ import { TimerBar } from '@/components/quiz/TimerBar';
 import { BackButton, Button, FrameRow, ProgressBar, Screen, Txt } from '@/components/ui';
 import { buildQuizQuestions, getContentIndex, questionKey } from '@/features/content/registry';
 import type { Lang, Question } from '@/features/content/schema';
+import { questText } from '@/features/gamify/quests';
 import { levelFromXp, REWARDS } from '@/features/gamify/xp';
 import { dueCards, type SrsContext } from '@/features/srs/srs';
+import { currentT, useT } from '@/i18n';
 import { fx, playSfx, speak, stopSpeaking } from '@/lib/feedback';
 import { telemetry } from '@/lib/telemetry';
 import { REVIEW_QUIZ_ID, useApp } from '@/store/app';
@@ -51,7 +53,7 @@ function buildSession(quizId: string, fixed = false, medium?: Lang): Session | n
     if (!cards.length) return null;
     const first = cards[0];
     return {
-      title: 'Tricky questions',
+      title: currentT()('quiz.tricky'),
       mode: 'review',
       seconds: 0,
       quizId: REVIEW_QUIZ_ID,
@@ -94,6 +96,7 @@ function QuizRun({ session, onRetry }: { session: Session; onRetry: () => void }
   const startXp = useRef(0);
   const started = useRef(0);
   const autoRead = useApp((s) => s.settings.autoRead);
+  const t = useT();
 
   const item = session.items[Math.min(i, session.items.length - 1)];
 
@@ -128,7 +131,7 @@ function QuizRun({ session, onRetry }: { session: Session; onRetry: () => void }
     const xpNow = after.activeProfileId ? (after.progress[after.activeProfileId]?.xp ?? 0) : 0;
     const lvlBefore = levelFromXp(startXp.current);
     const lvlAfter = levelFromXp(xpNow);
-    reward.questsDone.forEach((q) => toast({ emoji: q.emoji, title: 'Quest complete!', subtitle: `${q.title} · claim ${q.reward} 🪙`, bg: colors.sun }));
+    reward.questsDone.forEach((q) => toast({ emoji: q.emoji, title: t('quest.complete'), subtitle: t('quest.claim', questText(q, t.lang), q.reward), bg: colors.sun }));
     setResults({
       title: session.title,
       timeAttack,
@@ -225,16 +228,16 @@ function QuizRun({ session, onRetry }: { session: Session; onRetry: () => void }
       >
         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', gap: 16 }}>
           <Kancil mood="wow" size={160} />
-          <Txt variant="label">Time attack</Txt>
+          <Txt variant="label">{t('quiz.timeAttack')}</Txt>
           <Txt variant="hero" style={{ textAlign: 'center' }}>
             {session.title}
           </Txt>
           <Txt variant="subtitle" style={{ color: colors.muted, textAlign: 'center' }}>
-            Answer as many as you can in {session.seconds} seconds!
+            {t('quiz.answerMany', session.seconds)}
           </Txt>
           <View style={{ width: '100%', marginTop: 12 }}>
             <Button
-              label="Start!"
+              label={t('quiz.start')}
               tone="lime"
               size="lg"
               full
@@ -328,6 +331,7 @@ export default function QuizScreen() {
   const [run, setRun] = useState(0);
   const medium = useApp((s) => s.profiles.find((p) => p.id === s.activeProfileId)?.medium);
   const session = useMemo(() => buildSession(quizId, fixed === '1', medium), [quizId, fixed, medium, run]); // eslint-disable-line react-hooks/exhaustive-deps
+  const t = useT();
 
   if (!session || session.items.length === 0) {
     return (
@@ -342,12 +346,12 @@ export default function QuizScreen() {
         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', gap: 14 }}>
           <Kancil mood={quizId === 'review' ? 'cheer' : 'think'} size={150} />
           <Txt variant="display" style={{ textAlign: 'center' }}>
-            {quizId === 'review' ? 'Nothing to review!' : 'Quiz not found'}
+            {quizId === 'review' ? t('quiz.nothingToReview') : t('quiz.notFound')}
           </Txt>
           <Txt variant="body" style={{ textAlign: 'center', color: colors.muted }}>
-            {quizId === 'review' ? 'You’ve fixed all your tricky questions. Hebat!' : 'This quiz may have been updated.'}
+            {quizId === 'review' ? t('quiz.allFixed') : t('quiz.maybeUpdated')}
           </Txt>
-          <Button label="Back" tone="lime" onPress={() => router.back()} />
+          <Button label={t('common.back')} tone="lime" onPress={() => router.back()} />
         </View>
       </Screen>
     );

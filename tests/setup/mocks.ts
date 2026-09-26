@@ -42,6 +42,12 @@ jest.mock('expo-audio', () => ({
   setAudioModeAsync: jest.fn(() => Promise.resolve()),
 }));
 
+// The phone's language: English unless a test says otherwise.
+jest.mock('expo-localization', () => ({
+  __esModule: true,
+  getLocales: jest.fn(() => [{ languageCode: 'en', languageTag: 'en-MY', regionCode: 'MY' }]),
+}));
+
 jest.mock('expo-speech', () => ({
   __esModule: true,
   speak: jest.fn(),

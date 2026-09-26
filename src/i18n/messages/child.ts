@@ -1,0 +1,392 @@
+/** Everything a child sees: home, learning, quests, shop, profile, lessons and quizzes. */
+import { f, s } from '../define';
+
+export const child = {
+  // Home
+  'home.mascot.allDone': s('All quests done today! Hebat! 🎉', 'Semua misi hari ini selesai! Hebat! 🎉'),
+  'home.mascot.review': f(
+    (n: number) => `I saved ${n} tricky question${n > 1 ? 's' : ''} for you. Let's beat ${n > 1 ? 'them' : 'it'}!`,
+    (n: number) => `Saya simpan ${n} soalan mencabar untuk kamu. Jom kita tewaskan!`,
+  ),
+  'home.mascot.atRisk': f(
+    (n: number) => `Your ${n}-day streak needs you! One quiz keeps it alive 🔥`,
+    (n: number) => `Rentetan ${n} hari kamu perlukan kamu! Satu kuiz pun cukup untuk menyelamatkannya 🔥`,
+  ),
+  'home.mascot.rest': s('Rest day! Your streak is safe. Fancy a quick game anyway?', 'Hari rehat! Rentetan kamu selamat. Nak main sekejap juga?'),
+  'home.mascot.protected': f(
+    (n: number) => `Your shield is guarding your ${n}-day streak. A quiz today saves the shield! 🛡️`,
+    (n: number) => `Perisai kamu sedang menjaga rentetan ${n} hari. Buat satu kuiz hari ini untuk simpan perisai itu! 🛡️`,
+  ),
+  'home.mascot.studied': s('Great work today! Want to try another challenge?', 'Syabas hari ini! Nak cuba cabaran lain?'),
+  /** By the hour: morning, midday, afternoon, night. */
+  'home.greeting': f(
+    (h: number) => (h < 12 ? 'Good morning' : h < 18 ? 'Good afternoon' : 'Good evening'),
+    (h: number) => (h < 12 ? 'Selamat pagi' : h < 15 ? 'Selamat tengah hari' : h < 19 ? 'Selamat petang' : 'Selamat malam'),
+  ),
+  'home.profileA11y': s('My profile', 'Profil saya'),
+  'home.mascot.hello': s('Ready for today’s adventure? Let’s learn something new!', 'Sedia untuk pengembaraan hari ini? Jom belajar sesuatu yang baharu!'),
+  'home.review.a11y': s('Review tricky questions', 'Ulang kaji soalan mencabar'),
+  'home.review.title': s('Fix tricky questions', 'Betulkan soalan mencabar'),
+  'home.review.sub': f(
+    (n: number) => `${n} ready for review · extra XP`,
+    (n: number) => `${n} sedia untuk diulang kaji · XP tambahan`,
+  ),
+  'home.continue': s('Continue learning', 'Sambung belajar'),
+  'home.continue.a11y': f(
+    (title: string) => `Continue ${title}`,
+    (title: string) => `Sambung ${title}`,
+  ),
+  'home.atSchoolSubject': f(
+    (subject: string) => `🏫 At school this week · ${subject}`,
+    (subject: string) => `🏫 Di sekolah minggu ini · ${subject}`,
+  ),
+  'home.atSchool': s('At school this week', 'Di sekolah minggu ini'),
+  'home.alsoAtSchool': s('Also at school this week', 'Juga di sekolah minggu ini'),
+  'home.atSchool.a11y': f(
+    (title: string) => `At school: ${title}`,
+    (title: string) => `Di sekolah: ${title}`,
+  ),
+  'home.seeAll': s('See all', 'Lihat semua'),
+  'home.dailyQuests': s('Daily quests', 'Misi harian'),
+  'home.subjects': s('Subjects', 'Subjek'),
+  'home.arcade': s('⚡ Arcade · time attack', '⚡ Arked · lawan masa'),
+  'home.comingSoon': f(
+    (std: string) => `Content for ${std} is coming soon.`,
+    (std: string) => `Kandungan untuk ${std} akan datang.`,
+  ),
+
+  // Learn
+  'learn.intro': s('Every KSSR topic, lesson and quiz, by standard.', 'Semua topik, pelajaran dan kuiz KSSR, mengikut tahun.'),
+  'learn.search': s('Search topics', 'Cari topik'),
+  'learn.searchPlaceholder': s('Search topics… e.g. fractions', 'Cari topik… cth. pecahan'),
+  'learn.results': f(
+    (n: number) => `${n} result${n === 1 ? '' : 's'}`,
+    (n: number) => `${n} hasil`,
+  ),
+  'learn.newSoon': f(
+    (std: string) => `New lessons for ${std} will download automatically.`,
+    (std: string) => `Pelajaran baharu untuk ${std} akan dimuat turun secara automatik.`,
+  ),
+
+  // Quests & streaks
+  'streak.done': s('Streak safe today! 🎉', 'Rentetan selamat hari ini! 🎉'),
+  'streak.rest': s('Rest day — your streak is safe 💤', 'Hari rehat — rentetan kamu selamat 💤'),
+  'streak.protected': s('Your shield saves the streak if you miss today 🛡️', 'Perisai kamu akan menyelamatkan rentetan jika kamu terlepas hari ini 🛡️'),
+  'streak.atRisk': s('Finish a quiz today to keep it!', 'Siapkan satu kuiz hari ini untuk mengekalkannya!'),
+  'streak.none': s('Finish a quiz to start a streak', 'Siapkan satu kuiz untuk memulakan rentetan'),
+  'streak.day.on': s('streak day', 'hari rentetan'),
+  'streak.day.shield': s('saved by a shield', 'diselamatkan oleh perisai'),
+  'streak.day.rest': s('rest day', 'hari rehat'),
+  'streak.day.today': s('today, not done yet', 'hari ini, belum selesai'),
+  'streak.day.off': s('no streak', 'tiada rentetan'),
+  'quests.shields': f(
+    (n: number, max: number) => `Rest-day shields · ${n}/${max}`,
+    (n: number, max: number) => `Perisai hari rehat · ${n}/${max}`,
+  ),
+  'quests.shieldsHint': f(
+    (every: number) => `Saves your streak on a day you can't play. You earn one every ${every} days.`,
+    (every: number) => `Menyelamatkan rentetan pada hari kamu tidak dapat bermain. Kamu dapat satu setiap ${every} hari.`,
+  ),
+  'quests.shieldReady': s('Shield ready!', 'Perisai sedia!'),
+  'quests.shieldSaves': s('It saves your streak if you miss a day.', 'Ia menyelamatkan rentetan jika kamu terlepas sehari.'),
+  'quests.best': f(
+    (n: number) => `Best streak: ${n} day${n === 1 ? '' : 's'}`,
+    (n: number) => `Rentetan terbaik: ${n} hari`,
+  ),
+  'quests.today': f(
+    (done: number, total: number) => `Today's quests · ${done}/${total}`,
+    (done: number, total: number) => `Misi hari ini · ${done}/${total}`,
+  ),
+  'quests.resets': f(
+    (time: string) => `Resets in ${time}`,
+    (time: string) => `Bermula semula dalam ${time}`,
+  ),
+  'quests.mascot.allDone': s('Every quest done! New ones arrive at midnight.', 'Semua misi selesai! Misi baharu tiba tengah malam.'),
+  'quests.mascot': s('Finish quests to earn coins for cool stuff in the shop!', 'Selesaikan misi untuk dapat syiling bagi barang hebat di kedai!'),
+  'quests.trophies': s('🏆 Trophies', '🏆 Trofi'),
+  'quests.shop': s('🛍️ Shop', '🛍️ Kedai'),
+  'quest.quizzesInSubject': f(
+    (n: number, subject: string) => `Complete ${n} ${subject} quiz${n > 1 ? 'zes' : ''}`,
+    (n: number, subject: string) => `Siapkan ${n} kuiz ${subject}`,
+  ),
+  'quest.correct': f(
+    (n: number) => `Get ${n} answers right`,
+    (n: number) => `Jawab ${n} soalan dengan betul`,
+  ),
+  'quest.combo': f(
+    (n: number) => `Get ${n} right in a row`,
+    (n: number) => `Betul ${n} kali berturut-turut`,
+  ),
+  'quest.lesson': s('Read a lesson', 'Baca satu pelajaran'),
+  'quest.timeAttack': s('Play a time-attack game', 'Main satu permainan lawan masa'),
+  'quest.perfect': s('Finish a quiz with no mistakes', 'Siapkan satu kuiz tanpa salah'),
+  'quest.xp': f(
+    (n: number) => `Earn ${n} XP`,
+    (n: number) => `Kumpul ${n} XP`,
+  ),
+  'quest.review': f(
+    (n: number) => `Fix ${n} tricky questions`,
+    (n: number) => `Betulkan ${n} soalan mencabar`,
+  ),
+  'quest.complete': s('Quest complete!', 'Misi selesai!'),
+  'quest.claim': f(
+    (title: string, reward: number) => `${title} · claim ${reward} 🪙`,
+    (title: string, reward: number) => `${title} · tuntut ${reward} 🪙`,
+  ),
+
+  // Shop & avatar
+  'shop.unlocked': f(
+    (name: string) => `${name} unlocked!`,
+    (name: string) => `${name} dibuka!`,
+  ),
+  'shop.equippedOnAvatar': s('Equipped on your avatar', 'Dipakai pada avatar kamu'),
+  'shop.levelNeeded': f(
+    (n: number) => `Level ${n} needed`,
+    (n: number) => `Perlu tahap ${n}`,
+  ),
+  'shop.tryingOn': s('Trying on', 'Sedang mencuba'),
+  'shop.unlocksAt': f(
+    (n: number) => `🔒 Unlocks at level ${n}`,
+    (n: number) => `🔒 Dibuka pada tahap ${n}`,
+  ),
+  'shop.price': f(
+    (n: number) => `🪙 ${n} coins`,
+    (n: number) => `🪙 ${n} syiling`,
+  ),
+  'shop.needMore': f(
+    (n: number) => `Need ${n} more coins`,
+    (n: number) => `Perlu ${n} syiling lagi`,
+  ),
+  'shop.yourCoins': s('Your coins', 'Syiling kamu'),
+  'shop.tapToTry': s('Tap an item to try it on!', 'Ketik barang untuk mencubanya!'),
+  'shop.games': s('Games', 'Permainan'),
+  'shop.noGames': s('No games to unlock yet.', 'Belum ada permainan untuk dibuka.'),
+  'shop.gameSub': f(
+    (std: string, seconds: number) => `${std} · ${seconds}s time attack`,
+    (std: string, seconds: number) => `${std} · lawan masa ${seconds} saat`,
+  ),
+  'shop.gameUnlocked': s('Unlocked ✓', 'Dibuka ✓'),
+  'shop.gameWhere': s('Find it in the Arcade on Home', 'Cari di Arked pada halaman Utama'),
+  'shop.equipped': s('Equipped ✓', 'Dipakai ✓'),
+  'shop.tapToWear': s('Tap to wear', 'Ketik untuk pakai'),
+  'slot.outfit': s('Outfits', 'Pakaian'),
+  'slot.hat': s('Hats', 'Topi'),
+  'slot.glasses': s('Glasses', 'Cermin mata'),
+  'slot.bg': s('Backgrounds', 'Latar'),
+  'slot.pet': s('Pets', 'Haiwan peliharaan'),
+  'avatar.title': s('My avatar', 'Avatar saya'),
+  'avatar.noItem': f(
+    (slot: string) => `No ${slot}`,
+    (slot: string) => `Tanpa ${slot.toLowerCase()}`,
+  ),
+  'avatar.buyIn': f(
+    (slot: string) => `Buy ${slot.toLowerCase()} in the shop!`,
+    (slot: string) => `Beli ${slot.toLowerCase()} di kedai!`,
+  ),
+  'avatar.visitShop': s('Visit the shop 🛍️', 'Pergi ke kedai 🛍️'),
+  'avatar.skin': s('Skin', 'Kulit'),
+  'avatar.skinTone': f(
+    (n: number) => `Skin tone ${n}`,
+    (n: number) => `Warna kulit ${n}`,
+  ),
+  'avatar.hair': s('Hair', 'Rambut'),
+  'avatar.hairColour': f(
+    (colour: string) => `${colour} hair`,
+    (colour: string) => `Rambut ${colour.toLowerCase()}`,
+  ),
+  'avatar.colour': f(
+    (n: number) => `Colour ${n}`,
+    (n: number) => `Warna ${n}`,
+  ),
+  'avatar.eyes': s('Eyes', 'Mata'),
+  'hair.short': s('Short', 'Pendek'),
+  'hair.spiky': s('Spiky', 'Pacak'),
+  'hair.curly': s('Curly', 'Kerinting'),
+  'hair.long': s('Long', 'Panjang'),
+  'hair.bun': s('Bun', 'Sanggul'),
+  'hair.tudung': s('Tudung', 'Tudung'),
+  'hairColour.0': s('Black', 'Hitam'),
+  'hairColour.1': s('Dark brown', 'Coklat gelap'),
+  'hairColour.2': s('Brown', 'Coklat'),
+  'hairColour.3': s('Golden', 'Keemasan'),
+  'hairColour.4': s('Purple', 'Ungu'),
+  'eyes.round': s('Bright', 'Cerah'),
+  'eyes.happy': s('Smiley', 'Senyum'),
+  'eyes.wink': s('Wink', 'Kenyit'),
+
+  // Me, trophies, profiles
+  'me.levelTier': f(
+    (level: number, tier: string) => `Level ${level} ${tier}`,
+    (level: number, tier: string) => `Tahap ${level} ${tier}`,
+  ),
+  'me.correct': s('Correct answers', 'Jawapan betul'),
+  'me.accuracy': s('Accuracy', 'Ketepatan'),
+  'me.streak': s('Day streak', 'Rentetan hari'),
+  'me.badges': s('Badges', 'Lencana'),
+  'me.all': s('All', 'Semua'),
+  'me.latestBadges': s('Latest badges', 'Lencana terbaharu'),
+  'me.myStuff': s('My stuff', 'Barang saya'),
+  'me.customise': s('Customise my avatar', 'Ubah suai avatar saya'),
+  'me.trophyRoom': s('Trophy room', 'Bilik trofi'),
+  'me.settings': s('Settings', 'Tetapan'),
+  'me.sound': s('Sound effects', 'Kesan bunyi'),
+  'me.vibration': s('Vibration', 'Getaran'),
+  'me.voice': s('Voice (read aloud)', 'Suara (baca kuat)'),
+  'me.autoRead': s('Auto-read questions', 'Baca soalan secara automatik'),
+  'me.autoReadHint': s('Great for younger readers', 'Sesuai untuk pembaca kecil'),
+  'me.grownUps': s('Grown-ups', 'Orang dewasa'),
+  'me.switch': s('Switch learner', 'Tukar pelajar'),
+  'me.parentZone': s('Parent zone', 'Zon ibu bapa'),
+  'trophies.collected': s('Collected', 'Dikumpul'),
+  'profiles.who': s("Who's learning today?", 'Siapa yang belajar hari ini?'),
+  'profiles.meta': f(
+    (level: number, lv: number) => `Standard ${level} · Lv ${lv}`,
+    (level: number, lv: number) => `Tahun ${level} · Tahap ${lv}`,
+  ),
+  'profiles.add': s('Add learner', 'Tambah pelajar'),
+  'profiles.parentZone': s('Parent zone 🔒', 'Zon ibu bapa 🔒'),
+
+  // Onboarding
+  'onboarding.mascot.welcome': s("Hai! I'm Sang Kancil. Let's make learning your superpower!", 'Hai! Saya Sang Kancil. Jom jadikan belajar kuasa hebat kamu!'),
+  'onboarding.mascot.parent': s('First, a grown-up please! What should I call you?', 'Mula-mula, orang dewasa dulu ya! Saya patut panggil apa?'),
+  'onboarding.mascot.pin': s('Create a 4-digit parent PIN. It protects the Parent Zone.', 'Cipta PIN ibu bapa 4 digit. Ia melindungi Zon Ibu Bapa.'),
+  'onboarding.mascot.confirm': s('Type the PIN one more time.', 'Taip PIN sekali lagi.'),
+  'onboarding.mascot.child': s('Now tell me about our learner!', 'Sekarang, ceritakan tentang pelajar kita!'),
+  'onboarding.mascot.avatar': f(
+    (name: string) => `Looking great${name ? `, ${name}` : ''}! Style your character.`,
+    (name: string) => `Nampak hebat${name ? `, ${name}` : ''}! Gayakan watak kamu.`,
+  ),
+  'onboarding.tagline': s(
+    'Fun KSSR learning for Standard 1–6. Maths, Science, English & Bahasa Melayu.',
+    'Belajar KSSR yang seronok untuk Tahun 1–6. Matematik, Sains, Bahasa Inggeris & Bahasa Melayu.',
+  ),
+  'onboarding.feature.games': s('Quizzes that feel like games', 'Kuiz yang terasa seperti permainan'),
+  'onboarding.feature.review': s('Smart review of tricky questions', 'Ulang kaji pintar untuk soalan mencabar'),
+  'onboarding.feature.reports': s('Progress reports for parents', 'Laporan kemajuan untuk ibu bapa'),
+  'onboarding.start': s("Let's go!", 'Jom mula!'),
+  'onboarding.parentName': s("Parent's name", 'Nama ibu/bapa'),
+  'onboarding.parentPlaceholder': s('e.g. Faizal', 'cth. Faizal'),
+  'onboarding.defaultParent': s('Parent', 'Ibu Bapa'),
+  'onboarding.pinMismatch': s('PINs don’t match. Try again.', 'PIN tidak sepadan. Cuba lagi.'),
+  'onboarding.startOver': s('Start over', 'Mula semula'),
+  'onboarding.childName': s("Child's name", 'Nama anak'),
+  'onboarding.childPlaceholder': s('e.g. Adam', 'cth. Adam'),
+  'onboarding.whichStandard': s('Which standard?', 'Tahun berapa?'),
+  'onboarding.finish': s('Start learning!', 'Mula belajar!'),
+
+  // Topics, lessons
+  'topic.notAvailable': s('This topic is not available.', 'Topik ini tiada.'),
+  'topic.accuracy': f(
+    (n: number) => `${n}% accuracy`,
+    (n: number) => `${n}% ketepatan`,
+  ),
+  'topic.atSchool': s('🏫 At school this week', '🏫 Di sekolah minggu ini'),
+  'topic.youWillLearn': s('You will learn', 'Kamu akan belajar'),
+  'topic.lesson': s('Lesson', 'Pelajaran'),
+  'topic.read': s('Read the lesson', 'Baca pelajaran'),
+  'topic.readAgain': s('Read again', 'Baca lagi'),
+  'topic.readAgain.a11y': s('Read the lesson again', 'Baca pelajaran sekali lagi'),
+  'topic.completed': s('Completed ✓', 'Selesai ✓'),
+  'topic.cards': f(
+    (n: number, xp: number) => `${n} cards · +${xp} XP`,
+    (n: number, xp: number) => `${n} kad · +${xp} XP`,
+  ),
+  'topic.quizzes': s('Quizzes', 'Kuiz'),
+  'topic.generated': f(
+    (n: number) => `${n} questions · new every time`,
+    (n: number) => `${n} soalan · baharu setiap kali`,
+  ),
+  'subject.notAvailable': s('This subject is not available.', 'Subjek ini tiada.'),
+  'subject.progress': f(
+    (mastered: number, total: number) => `${mastered} of ${total} topics mastered`,
+    (mastered: number, total: number) => `${mastered} daripada ${total} topik dikuasai`,
+  ),
+  'subject.continue': s('CONTINUE', 'SAMBUNG'),
+  'subject.start': s('START', 'MULA'),
+  'subject.complete': f(
+    (name: string) => `${name} complete! 🏆`,
+    (name: string) => `${name} selesai! 🏆`,
+  ),
+  'subject.masterAll': f(
+    (name: string) => `Master every topic to earn the ${name} badge`,
+    (name: string) => `Kuasai setiap topik untuk dapat lencana ${name}`,
+  ),
+  'lesson.badge': f(
+    (title: string) => `Badge unlocked: ${title}`,
+    (title: string) => `Lencana dibuka: ${title}`,
+  ),
+  'lesson.shieldEarned': s('Rest-day shield earned!', 'Perisai hari rehat diperoleh!'),
+  'lesson.takeQuiz': s('Take the quiz!', 'Jawab kuiz!'),
+  'lesson.backToTopic': s('Back to topic', 'Kembali ke topik'),
+  'lesson.finish': s('Finish lesson', 'Tamatkan pelajaran'),
+  'lesson.next': s('Next', 'Seterusnya'),
+  'lesson.done': f(
+    (title: string) => `Lesson complete! You're ready for the ${title} quiz.`,
+    (title: string) => `Pelajaran selesai! Kamu sudah sedia untuk kuiz ${title}.`,
+  ),
+
+  // Quizzes
+  'quiz.tricky': s('Tricky questions', 'Soalan mencabar'),
+  'quiz.timeAttack': s('Time attack', 'Lawan masa'),
+  'quiz.answerMany': f(
+    (seconds: number) => `Answer as many as you can in ${seconds} seconds!`,
+    (seconds: number) => `Jawab sebanyak yang boleh dalam ${seconds} saat!`,
+  ),
+  'quiz.start': s('Start!', 'Mula!'),
+  'quiz.nothingToReview': s('Nothing to review!', 'Tiada apa untuk diulang kaji!'),
+  'quiz.notFound': s('Quiz not found', 'Kuiz tidak dijumpai'),
+  'quiz.allFixed': s('You’ve fixed all your tricky questions. Hebat!', 'Kamu sudah betulkan semua soalan mencabar. Hebat!'),
+  'quiz.maybeUpdated': s('This quiz may have been updated.', 'Kuiz ini mungkin telah dikemas kini.'),
+  'results.newBest': s('New best score!', 'Skor terbaik baharu!'),
+  'results.timesUp': s('Time’s up!', 'Masa tamat!'),
+  'results.perfect': s('Perfect score!', 'Markah penuh!'),
+  'results.wellDone': s('Well done!', 'Syabas!'),
+  'results.goodEffort': s('Good effort!', 'Usaha yang baik!'),
+  'results.keepPractising': s('Keep practising!', 'Teruskan berlatih!'),
+  'results.stars': f(
+    (n: number) => `${n} of 3 stars`,
+    (n: number) => `${n} daripada 3 bintang`,
+  ),
+  'results.score': s('Score', 'Skor'),
+  'results.correct': s('Correct', 'Betul'),
+  'results.coins': s('Coins', 'Syiling'),
+  'results.streak': f(
+    (n: number) => `🔥 ${n}-day streak`,
+    (n: number) => `🔥 Rentetan ${n} hari`,
+  ),
+  'results.shield': s('🛡️ You earned a rest-day shield!', '🛡️ Kamu dapat perisai hari rehat!'),
+  'results.newBadge': s('New badge!', 'Lencana baharu!'),
+  'results.playAgain': s('Play again', 'Main lagi'),
+  'feedback.answer': s('Answer:', 'Jawapan:'),
+  'feedback.inARow': f(
+    (n: number) => `🔥 ${n} in a row`,
+    (n: number) => `🔥 ${n} berturut-turut`,
+  ),
+  'feedback.later': s('We’ll practise this one again soon.', 'Kita akan ulang soalan ini nanti.'),
+
+  // Levels & cards
+  'levelUp.title': s('Level up!', 'Naik tahap!'),
+  'levelUp.rank': f(
+    (emoji: string, tier: string) => `${emoji} ${tier} rank`,
+    (emoji: string, tier: string) => `${emoji} Pangkat ${tier}`,
+  ),
+  'levelUp.body': s('New items unlocked in the shop. Keep going!', 'Barang baharu dibuka di kedai. Teruskan!'),
+  'levelUp.ok': s('Awesome!', 'Hebat!'),
+  'levelCard.toNext': f(
+    (xp: number, next: number) => `${xp} XP to level ${next}`,
+    (xp: number, next: number) => `${xp} XP lagi ke tahap ${next}`,
+  ),
+  'cards.topics': f(
+    (topics: number, stars: number) => `${topics} topics · ${stars} ⭐`,
+    (topics: number, stars: number) => `${topics} topik · ${stars} ⭐`,
+  ),
+  'cards.unlockInShop': s('Unlock in shop', 'Buka di kedai'),
+  'cards.best': f(
+    (n: number) => `Best: ${n}`,
+    (n: number) => `Terbaik: ${n}`,
+  ),
+  'cards.challenge': f(
+    (seconds: number) => `${seconds}s challenge`,
+    (seconds: number) => `Cabaran ${seconds} saat`,
+  ),
+};

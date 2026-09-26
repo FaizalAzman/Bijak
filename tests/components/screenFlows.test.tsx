@@ -90,6 +90,21 @@ describe('onboarding', () => {
     expect(s().parent?.name).toBe('Parent');
   });
 
+  it('the welcome screen switches the whole app to Bahasa Melayu, and back', async () => {
+    await render(<Onboarding />);
+    expect(screen.getByTestId('language-picker')).toBeOnTheScreen();
+    expect(screen.getByRole('button', { name: 'English' })).toBeSelected();
+    await tap('Bahasa Melayu');
+    expect(s().settings.uiLang).toBe('ms');
+    expect(screen.getByRole('button', { name: 'Bahasa Melayu' })).toBeSelected();
+    await fireEvent.press(screen.getByTestId('start'));
+    expect(screen.getByText('Mula-mula, orang dewasa dulu ya! Saya patut panggil apa?')).toBeOnTheScreen();
+    expect(screen.getByLabelText('Nama ibu/bapa')).toBeOnTheScreen();
+    expect(screen.getByRole('button', { name: 'Teruskan' })).toBeDisabled();
+    await act(async () => s().updateSettings({ uiLang: 'en' }));
+    expect(screen.getByLabelText("Parent's name")).toBeOnTheScreen();
+  });
+
   it('“Start over” clears a half-typed PIN', async () => {
     await render(<Onboarding />);
     await fireEvent.press(screen.getByTestId('start'));
@@ -167,6 +182,19 @@ describe('me', () => {
       await tap(label);
       expect(router.push).toHaveBeenLastCalledWith(path);
     }
+  });
+
+  it('the language switch turns the child’s screens to Bahasa Melayu at once', async () => {
+    setupChild();
+    await render(<Me />);
+    await tap('Bahasa Melayu');
+    expect(s().settings.uiLang).toBe('ms');
+    expect(screen.getByText('Tetapan')).toBeOnTheScreen();
+    expect(screen.getByRole('switch', { name: 'Kesan bunyi' })).toBeOnTheScreen();
+    expect(screen.getByRole('button', { name: 'Zon ibu bapa' })).toBeOnTheScreen();
+    expect(screen.queryByText('Settings')).toBeNull();
+    await tap('English');
+    expect(screen.getByRole('switch', { name: 'Sound effects' })).toBeOnTheScreen();
   });
 
   it('shows level, tier and latest badges', async () => {

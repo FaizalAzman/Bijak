@@ -113,6 +113,23 @@ describe('sharing', () => {
     expect(lines.at(-1)).toBe('_Sent from Bijak_');
   });
 
+  it('reads in Bahasa Melayu when the app is in Malay (subjects and badges too)', () => {
+    const id = aWeekOfLearning();
+    const report = weeklyReport(profile(), progressOf(id), getContentIndex(), undefined, [], 'ms');
+    const text = shareText(report, 'ms');
+    const lines = text.split('\n');
+    expect(lines[0]).toBe('📊 *Minggu Adam di Bijak* (2 Mac – 8 Mac)');
+    expect(lines[1]).toBe('⏱️ 25 min dalam 4 hari (minggu lepas: 9 min)');
+    expect(lines[2]).toBe('✅ 3 kuiz · 56% betul (minggu lepas: 83%)');
+    expect(lines[3]).toBe('🔥 Rentetan: 1 hari (terbaik 2)');
+    expect(lines[4]).toBe('🏆 Dikuasai: Fractions, Decimals & Percent');
+    expect(text).toContain('🏫 Di sekolah: Matematik – Time ★☆☆');
+    expect(text).toMatch(/💡 Latih seterusnya: Time \(Matematik, 40% betul\)\n {3}Cuba di rumah: Give him a real clock/);
+    expect(lines.at(-1)).toBe('_Dihantar dari Bijak_');
+    expect(report.badges.every((b) => allBadges(getContentIndex()).some((d) => d.ms?.title === b.title))).toBe(true);
+    expect(report.subjects.map((x) => x.subject)).toContain('Matematik');
+  });
+
   it('a quiet week gets an encouraging line instead of zeros', () => {
     setNow('2026-03-08T20:00:00');
     const id = setupChild({ name: 'Aina' });
@@ -133,8 +150,11 @@ describe('sharing', () => {
     expect(text).toContain('🎖️ New badges: ');
   });
 
-  it('labels read naturally', () => {
-    expect([0, 9, 60, 85, 125].map(minutesLabel)).toEqual(['0 min', '9 min', '1 h 0 min', '1 h 25 min', '2 h 5 min']);
+  it('labels read naturally in both languages', () => {
+    expect([0, 9, 60, 85, 125].map((m) => minutesLabel(m))).toEqual(['0 min', '9 min', '1 h 0 min', '1 h 25 min', '2 h 5 min']);
+    expect([9, 85].map((m) => minutesLabel(m, 'ms'))).toEqual(['9 min', '1 j 25 min']);
     expect(rangeLabel('2026-02-23', '2026-03-01')).toBe('23 Feb – 1 Mar');
+    expect(rangeLabel('2026-02-23', '2026-03-01', 'ms')).toBe('23 Feb – 1 Mac');
+    expect(rangeLabel('2026-08-01', '2026-12-31', 'ms')).toBe('1 Ogo – 31 Dis');
   });
 });

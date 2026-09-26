@@ -81,14 +81,14 @@ export async function answerThroughUi(q: Question, correct: boolean): Promise<bo
         const first = q.items[0];
         const wrongBucket = q.buckets.find((b) => b.id !== first.bucket)!;
         await activate(firstEnabled(first.text));
-        await press(`Bucket ${wrongBucket.label}`);
+        await press(`${L.bucket} ${wrongBucket.label}`);
         // A wrong drop keeps the item selected, so the right bucket can be tapped straight away.
-        await press(`Bucket ${labelOf(first.bucket)}`);
+        await press(`${L.bucket} ${labelOf(first.bucket)}`);
         items = q.items.slice(1);
       }
       for (const it of items) {
         await activate(firstEnabled(it.text));
-        await press(`Bucket ${labelOf(it.bucket)}`);
+        await press(`${L.bucket} ${labelOf(it.bucket)}`);
       }
       await flushTimers();
       return true;

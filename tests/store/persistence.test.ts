@@ -50,6 +50,20 @@ it('older saves without new optional fields still work', async () => {
   expect(useApp.getState().progress[id].quizBonusDay).toBeDefined();
 });
 
+it('a save from before the language setting keeps the default language; a broken one is replaced', async () => {
+  setupChild();
+  useApp.getState().updateSettings({ uiLang: 'ms' });
+  const raw = JSON.parse(kv.getItem('bijak-app')!);
+  await coldStart(JSON.stringify(raw));
+  expect(useApp.getState().settings.uiLang).toBe('ms');
+  delete raw.state.settings.uiLang;
+  await coldStart(JSON.stringify(raw));
+  expect(useApp.getState().settings.uiLang).toBe('en');
+  raw.state.settings.uiLang = 'klingon';
+  await coldStart(JSON.stringify(raw));
+  expect(useApp.getState().settings.uiLang).toBe('en');
+});
+
 it('markSynced records the backup and never moves the synced revision backwards', () => {
   setupChild();
   const s = useApp.getState();

@@ -5,6 +5,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Kancil } from '@/components/mascot/Kancil';
 import { Button, Txt } from '@/components/ui';
 import type { Question } from '@/features/content/schema';
+import { useT } from '@/i18n';
 import { hashString } from '@/lib/random';
 import { colors } from '@/theme';
 import { DURATION } from '@/theme/motion';
@@ -15,6 +16,7 @@ const NUDGE = { en: ['Not quite…', 'Nice try!', 'Almost!'], ms: ['Hampir!', 'C
 
 export function FeedbackSheet({ q, correct, xp, combo, onContinue }: { q: Question; correct: boolean; xp: number; combo: number; onContinue: () => void }) {
   const insets = useSafeAreaInsets();
+  const t = useT();
   const title = useMemo(() => {
     const list = (correct ? PRAISE : NUDGE)[q.lang];
     return list[hashString(q.id + q.prompt) % list.length];
@@ -54,17 +56,17 @@ export function FeedbackSheet({ q, correct, xp, combo, onContinue }: { q: Questi
                 </View>
                 {combo >= 3 && (
                   <View style={{ backgroundColor: colors.tangerine, borderWidth: 2, borderColor: colors.ink, borderRadius: 999, paddingHorizontal: 10, paddingVertical: 2 }}>
-                    <Txt style={{ fontFamily: 'PlusJakartaSans_800ExtraBold', fontSize: 13, color: colors.paper }}>🔥 {combo} in a row</Txt>
+                    <Txt style={{ fontFamily: 'PlusJakartaSans_800ExtraBold', fontSize: 13, color: colors.paper }}>{t('feedback.inARow', combo)}</Txt>
                   </View>
                 )}
               </View>
             ) : answer ? (
               <Txt variant="subtitle" style={{ color: colors.ink }}>
-                Answer: <Txt style={{ fontFamily: 'PlusJakartaSans_800ExtraBold', color: fg }}>{answer}</Txt>
+                {t('feedback.answer')} <Txt style={{ fontFamily: 'PlusJakartaSans_800ExtraBold', color: fg }}>{answer}</Txt>
               </Txt>
             ) : (
               <Txt variant="small" style={{ color: colors.ink }}>
-                We’ll practise this one again soon.
+                {t('feedback.later')}
               </Txt>
             )}
           </View>
@@ -74,7 +76,7 @@ export function FeedbackSheet({ q, correct, xp, combo, onContinue }: { q: Questi
             💡 {q.explain}
           </Txt>
         ) : null}
-        <Button label="Continue" tone={correct ? 'mint' : 'berry'} size="lg" full onPress={onContinue} testID="continue" />
+        <Button label={t('common.continue')} tone={correct ? 'mint' : 'berry'} size="lg" full onPress={onContinue} testID="continue" />
       </View>
     </Animated.View>
   );

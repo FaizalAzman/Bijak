@@ -125,6 +125,18 @@ describe('change PIN', () => {
     expect(screen.getByTestId('change-pin')).toBeOnTheScreen();
   });
 
+  it('the app language can be changed here too, for the whole family', async () => {
+    const { useApp } = require('@/store/app');
+    await render(<ParentSettings />);
+    expect(screen.getByText('App language')).toBeOnTheScreen();
+    expect(screen.getByText(/Lessons follow each child’s school language/)).toBeOnTheScreen();
+    await fireEvent.press(screen.getByRole('button', { name: 'Bahasa Melayu' }));
+    expect(useApp.getState().settings.uiLang).toBe('ms');
+    expect(screen.getByText('Bahasa aplikasi')).toBeOnTheScreen();
+    expect(screen.getByRole('button', { name: 'Kunci zon ibu bapa' })).toBeOnTheScreen();
+    expect(screen.getByRole('button', { name: 'Sabtu & Ahad' })).toBeOnTheScreen();
+  });
+
   it('rest days are chosen from the weekend presets', async () => {
     const { useApp } = require('@/store/app');
     await render(<ParentSettings />);

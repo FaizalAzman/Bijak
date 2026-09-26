@@ -17,6 +17,7 @@ import { useLayout } from '@/hooks/useLayout';
 import { useNow } from '@/hooks/useNow';
 import { dayKey } from '@/lib/date';
 import { streakStatus } from '@/features/gamify/streak';
+import { standardName, useT } from '@/i18n';
 import { liveStreak, useActiveProfile, useProgress, useRestDays } from '@/store/app';
 import { accent, colors } from '@/theme';
 
@@ -36,20 +37,21 @@ export default function Home() {
   const streak = liveStreak(p, today, restDays);
   const status = streakStatus(p.streak, today, restDays);
   const allQuestsDone = p.quests.list.length > 0 && p.quests.list.every((q) => q.claimed);
+  const t = useT();
 
   const mascot: { text: string; mood: KancilMood } = allQuestsDone
-    ? { text: 'All quests done today! Hebat! 🎉', mood: 'cheer' }
+    ? { text: t('home.mascot.allDone'), mood: 'cheer' }
     : due > 0
-      ? { text: `I saved ${due} tricky question${due > 1 ? 's' : ''} for you. Let's beat ${due > 1 ? 'them' : 'it'}!`, mood: 'think' }
+      ? { text: t('home.mascot.review', due), mood: 'think' }
       : status === 'atRisk'
-        ? { text: `Your ${streak}-day streak needs you! One quiz keeps it alive 🔥`, mood: 'wow' }
+        ? { text: t('home.mascot.atRisk', streak), mood: 'wow' }
         : status === 'rest'
-          ? { text: 'Rest day! Your streak is safe. Fancy a quick game anyway?', mood: 'happy' }
+          ? { text: t('home.mascot.rest'), mood: 'happy' }
           : status === 'protected'
-            ? { text: `Your shield is guarding your ${streak}-day streak. A quiz today saves the shield! 🛡️`, mood: 'think' }
+            ? { text: t('home.mascot.protected', streak), mood: 'think' }
             : studiedToday
-              ? { text: 'Great work today! Want to try another challenge?', mood: 'happy' }
-              : { text: 'Ready for today’s adventure? Let’s learn something new!', mood: 'wave' };
+              ? { text: t('home.mascot.studied'), mood: 'happy' }
+              : { text: t('home.mascot.hello'), mood: 'wave' };
 
   if (!profile || !standard) return null;
   const twoColumns = layout.innerWidth >= 720;
@@ -74,7 +76,7 @@ export default function Home() {
             onPress={() => router.push('/quiz/review')}
             bg={colors['grape-soft']}
             innerStyle={{ padding: 16, flexDirection: 'row', alignItems: 'center', gap: 12 }}
-            accessibilityLabel="Review tricky questions"
+            accessibilityLabel={t('home.review.a11y')}
           >
             <View
               style={{
@@ -91,8 +93,8 @@ export default function Home() {
               <Brain size={26} color={colors.paper} strokeWidth={2.5} />
             </View>
             <View style={{ flex: 1 }}>
-              <Txt variant="subtitle">Fix tricky questions</Txt>
-              <Txt variant="small">{due} ready for review · extra XP</Txt>
+              <Txt variant="subtitle">{t('home.review.title')}</Txt>
+              <Txt variant="small">{t('home.review.sub', due)}</Txt>
             </View>
             <ArrowRight size={22} color={colors.ink} strokeWidth={3} />
           </PressChunky>
@@ -104,12 +106,12 @@ export default function Home() {
     <>
       {next && (
         <View>
-          <SectionLabel>Continue learning</SectionLabel>
+          <SectionLabel>{t('home.continue')}</SectionLabel>
           <PressChunky
             onPress={() => router.push(`/topic/${next.topic.id}`)}
             bg={accent(next.subject.color).strong}
             innerStyle={{ padding: 16, flexDirection: 'row', alignItems: 'center', gap: 14 }}
-            accessibilityLabel={`Continue ${next.topic.title}`}
+            accessibilityLabel={t('home.continue.a11y', next.topic.title)}
           >
             <View
               style={{
@@ -127,7 +129,7 @@ export default function Home() {
             </View>
             <View style={{ flex: 1 }}>
               <Txt variant="label" style={{ color: colors.ink, opacity: 0.7 }}>
-                {nextIsSchool ? `🏫 At school this week · ${next.subject.name}` : next.subject.name}
+                {nextIsSchool ? t('home.atSchoolSubject', next.subject.name) : next.subject.name}
               </Txt>
               <Txt variant="title" numberOfLines={2}>
                 {next.topic.title}
@@ -141,7 +143,7 @@ export default function Home() {
       )}
       {alsoAtSchool.length > 0 && (
         <View>
-          <SectionLabel>{nextIsSchool ? 'Also at school this week' : 'At school this week'}</SectionLabel>
+          <SectionLabel>{nextIsSchool ? t('home.alsoAtSchool') : t('home.atSchool')}</SectionLabel>
           <View style={{ gap: 10 }}>
             {alsoAtSchool.map(({ subject, topic }) => {
               const st = topicStatus(topic, p);
@@ -152,7 +154,7 @@ export default function Home() {
                   onPress={() => router.push(`/topic/${topic.id}`)}
                   bg={accent(subject.color).soft}
                   innerStyle={{ padding: 12, flexDirection: 'row', alignItems: 'center', gap: 12 }}
-                  accessibilityLabel={`At school: ${topic.title}`}
+                  accessibilityLabel={t('home.atSchool.a11y', topic.title)}
                 >
                   <Txt style={{ fontSize: 26 }}>{topic.emoji}</Txt>
                   <View style={{ flex: 1 }}>
@@ -160,7 +162,7 @@ export default function Home() {
                       {topic.title}
                     </Txt>
                     <Txt variant="small">
-                      🏫 {subject.name} · {st.mastered ? 'Mastered ✓' : `${'★'.repeat(st.stars)}${'☆'.repeat(3 - st.stars)}`}
+                      🏫 {subject.name} · {st.mastered ? t('common.masteredTick') : `${'★'.repeat(st.stars)}${'☆'.repeat(3 - st.stars)}`}
                     </Txt>
                   </View>
                   <ArrowRight size={20} color={colors.ink} strokeWidth={3} />
@@ -177,11 +179,11 @@ export default function Home() {
       <SectionLabel
         right={
           <Txt variant="small" onPress={() => router.push('/quests')} style={{ color: colors.grape }}>
-            See all
+            {t('home.seeAll')}
           </Txt>
         }
       >
-        Daily quests
+        {t('home.dailyQuests')}
       </SectionLabel>
       <View style={{ gap: 10 }}>
         {p.quests.list.map((q) => (
@@ -212,7 +214,7 @@ export default function Home() {
       )}
 
       <View>
-        <SectionLabel right={<Txt variant="small">{standard.title}</Txt>}>Subjects</SectionLabel>
+        <SectionLabel right={<Txt variant="small">{standardName(standard, t.lang)}</Txt>}>{t('home.subjects')}</SectionLabel>
         <Grid minItemWidth={150} maxColumns={4}>
           {standard.subjects.map((s) => {
             const sp = subjectProgress(s, p);
@@ -223,7 +225,7 @@ export default function Home() {
 
       {standard.arcade.length > 0 && (
         <View>
-          <SectionLabel>⚡ Arcade · time attack</SectionLabel>
+          <SectionLabel>{t('home.arcade')}</SectionLabel>
           <HScroll gap={12} paddingVertical={4}>
             {standard.arcade.map((g) => {
               const locked = g.price > 0 && !p.inventory.includes(`arcade:${g.id}`);
@@ -237,7 +239,7 @@ export default function Home() {
 
       {standard.subjects.length === 0 && (
         <Chunky innerStyle={{ padding: 16 }}>
-          <Txt>Content for {standard.title} is coming soon.</Txt>
+          <Txt>{t('home.comingSoon', standardName(standard, t.lang))}</Txt>
         </Chunky>
       )}
     </Screen>

@@ -5,9 +5,11 @@
  * Derived from local progress only.
  */
 import type { ContentIndex } from '@/features/content/registry';
-import { allBadges } from '@/features/gamify/badges';
+import { allBadges, badgeTitle } from '@/features/gamify/badges';
 import { liveStreak } from '@/features/gamify/streak';
 import { topicStatus } from '@/features/progress/selectors';
+import { shortDate, translate, type UiLang } from '@/i18n/core';
+import { subjectName } from '@/i18n/names';
 import { addDays, dayKey, lastNDays } from '@/lib/date';
 import type { Profile, Progress } from '@/store/types';
 import { weakTopics, type WeakTopic } from './insights';
@@ -59,8 +61,11 @@ function weekStats(p: Progress, days: string[]): WeekStats {
   return { minutes: Math.round(seconds / 60), activeDays, quizzes, answered, accuracy: answered ? Math.round((correct / answered) * 100) : null };
 }
 
-/** The report for one child, for the 7 days ending `today`. Use the child's own content index (their teaching language). */
-export function weeklyReport(profile: Profile, p: Progress, index: ContentIndex, today = dayKey(), restDays: readonly number[] = []): WeeklyReport {
+/**
+ * The report for one child, for the 7 days ending `today`. Use the child's own content index
+ * (their teaching language); badge and subject names follow the app language `lang`.
+ */
+export function weeklyReport(profile: Profile, p: Progress, index: ContentIndex, today = dayKey(), restDays: readonly number[] = [], lang: UiLang = 'en'): WeeklyReport {
   const days = lastNDays(7, today);
   const from = days[0];
   const start = startOf(from);
@@ -72,20 +77,20 @@ export function weeklyReport(profile: Profile, p: Progress, index: ContentIndex,
     .sort(([, a], [, b]) => (a.masteredAt ?? 0) - (b.masteredAt ?? 0))
     .flatMap(([id]) => {
       const ref = index.topic(id);
-      return ref ? [{ topicId: id, title: ref.topic.title, subject: ref.subject.name, emoji: ref.topic.emoji }] : [];
+      return ref ? [{ topicId: id, title: ref.topic.title, subject: subjectName(ref.subject, lang), emoji: ref.topic.emoji }] : [];
     });
 
   const badges = allBadges(index)
     .filter((b) => within(p.badges[b.id]))
     .sort((a, b) => p.badges[a.id] - p.badges[b.id])
-    .map((b) => ({ id: b.id, title: b.title, emoji: b.emoji }));
+    .map((b) => ({ id: b.id, title: badgeTitle(b, lang), emoji: b.emoji }));
 
   const perSubject = new Map<string, { subject: string; emoji: string; seconds: number }>();
   for (const d of days) {
     for (const [key, secs] of Object.entries(p.days[d]?.seconds ?? {})) {
       const [stdId, subjectId] = key.split('/');
       const subject = index.subject(stdId, subjectId);
-      const name = subject?.name ?? subjectId;
+      const name = subject ? subjectName(subject, lang) : subjectId;
       const row = perSubject.get(name) ?? { subject: name, emoji: subject?.emoji ?? '📘', seconds: 0 };
       row.seconds += secs;
       perSubject.set(name, row);
@@ -102,7 +107,7 @@ export function weeklyReport(profile: Profile, p: Progress, index: ContentIndex,
       .filter((t) => t.id === profile.schoolTopics?.[subject.id])
       .map((t) => {
         const st = topicStatus(t, p);
-        return { subject: subject.name, title: t.title, stars: st.stars, mastered: st.mastered };
+        return { subject: subjectName(subject, lang), title: t.title, stars: st.stars, mastered: st.mastered };
       }),
   );
 
@@ -118,42 +123,42 @@ export function weeklyReport(profile: Profile, p: Progress, index: ContentIndex,
     badges,
     subjects,
     atSchool,
-    practise: weakTopics(p, index, 2),
+    practise: weakTopics(p, index, 2, lang),
   };
 }
 
-/** "1 h 25 min", "50 min". */
-export function minutesLabel(minutes: number): string {
-  const h = Math.floor(minutes / 60);
-  return h ? `${h} h ${minutes % 60} min` : `${minutes} min`;
+/** "1 h 25 min", "50 min" ("1 j 25 min" in Bahasa Melayu). */
+export function minutesLabel(minutes: number, lang: UiLang = 'en'): string {
+  return translate(lang, 'time.duration', minutes);
 }
 
-const DAY = new Intl.DateTimeFormat('en-MY', { day: 'numeric', month: 'short' });
-
-/** "2 Mar – 8 Mar". */
-export function rangeLabel(from: string, to: string): string {
-  return `${DAY.format(new Date(`${from}T12:00:00`))} – ${DAY.format(new Date(`${to}T12:00:00`))}`;
+/** "2 Mar – 8 Mar" ("2 Mac – 8 Mac"). */
+export function rangeLabel(from: string, to: string, lang: UiLang = 'en'): string {
+  return `${shortDate(from, lang)} – ${shortDate(to, lang)}`;
 }
 
-const stars = (n: number) => `${'★'.repeat(n)}${'☆'.repeat(3 - n)}`;
+export const stars = (n: number) => `${'★'.repeat(n)}${'☆'.repeat(3 - n)}`;
 
 /** The report as a WhatsApp message (*bold* works there; kept short enough to read on a phone). */
-export function shareText(r: WeeklyReport): string {
+export function shareText(r: WeeklyReport, lang: UiLang = 'en'): string {
   const t = r.thisWeek;
   const l = r.lastWeek;
-  const lines = [`📊 *${r.name}’s week on Bijak* (${rangeLabel(r.from, r.to)})`];
+  const lines = [translate(lang, 'share.heading', r.name, rangeLabel(r.from, r.to, lang))];
   if (t.activeDays === 0) {
-    lines.push('No learning yet this week. A few minutes a day is all it takes!');
+    lines.push(translate(lang, 'share.quiet'));
   } else {
-    lines.push(`⏱️ ${minutesLabel(t.minutes)} over ${t.activeDays} day${t.activeDays === 1 ? '' : 's'} (last week: ${minutesLabel(l.minutes)})`);
-    lines.push(`✅ ${t.quizzes} quiz${t.quizzes === 1 ? '' : 'zes'}${t.accuracy !== null ? ` · ${t.accuracy}% correct` : ''}${l.accuracy !== null ? ` (last week: ${l.accuracy}%)` : ''}`);
+    lines.push(translate(lang, 'share.time', minutesLabel(t.minutes, lang), t.activeDays, minutesLabel(l.minutes, lang)));
+    lines.push(translate(lang, 'share.quizzes', t.quizzes, t.accuracy, l.accuracy));
   }
-  if (r.streak > 0) lines.push(`🔥 Streak: ${r.streak} day${r.streak === 1 ? '' : 's'} (best ${r.bestStreak})`);
-  if (r.mastered.length) lines.push(`🏆 Mastered: ${r.mastered.map((m) => m.title).join('; ')}`);
-  if (r.badges.length) lines.push(`🎖️ New badges: ${r.badges.map((b) => `${b.emoji} ${b.title}`).join(', ')}`);
-  for (const s of r.atSchool) lines.push(`🏫 At school: ${s.subject} – ${s.title} ${s.mastered ? '(mastered ✓)' : stars(s.stars)}`);
+  if (r.streak > 0) lines.push(translate(lang, 'share.streak', r.streak, r.bestStreak));
+  if (r.mastered.length) lines.push(translate(lang, 'share.mastered', r.mastered.map((m) => m.title).join('; ')));
+  if (r.badges.length) lines.push(translate(lang, 'share.badges', r.badges.map((b) => `${b.emoji} ${b.title}`).join(', ')));
+  for (const s of r.atSchool) lines.push(translate(lang, 'share.atSchool', s.subject, s.title, s.mastered ? translate(lang, 'share.masteredTick') : stars(s.stars)));
   const [focus] = r.practise;
-  if (focus) lines.push(`💡 Practise next: ${focus.title} (${focus.subject}, ${focus.accuracy}% correct)${focus.activity ? `\n   Try at home: ${focus.activity}` : ''}`);
-  lines.push('_Sent from Bijak_');
+  if (focus) {
+    lines.push(translate(lang, 'share.practise', focus.title, focus.subject, focus.accuracy));
+    if (focus.activity) lines.push(translate(lang, 'share.tryAtHome', focus.activity));
+  }
+  lines.push(translate(lang, 'share.footer'));
   return lines.join('\n');
 }

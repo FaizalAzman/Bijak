@@ -2,10 +2,12 @@ import { Lock } from 'lucide-react-native';
 import { View } from 'react-native';
 import { PressChunky, ProgressBar, Txt } from '@/components/ui';
 import type { ArcadeGame, Subject } from '@/features/content/schema';
+import { useT } from '@/i18n';
 import { accent, colors } from '@/theme';
 
 export function SubjectCard({ subject, ratio, mastered, onPress }: { subject: Subject; ratio: number; mastered: number; onPress: () => void }) {
   const a = accent(subject.color);
+  const t = useT();
   return (
     <PressChunky onPress={onPress} bg={a.soft} style={{ flex: 1 }} innerStyle={{ padding: 14, gap: 10, minHeight: 150 }} accessibilityLabel={subject.name}>
       <View style={{ width: 50, height: 50, borderRadius: 16, backgroundColor: a.strong, borderWidth: 2, borderColor: colors.ink, alignItems: 'center', justifyContent: 'center' }}>
@@ -16,7 +18,7 @@ export function SubjectCard({ subject, ratio, mastered, onPress }: { subject: Su
           {subject.name}
         </Txt>
         <Txt variant="small" numberOfLines={1}>
-          {subject.topics.length} topics · {mastered} ⭐
+          {t('cards.topics', subject.topics.length, mastered)}
         </Txt>
       </View>
       <ProgressBar value={ratio} color={a.strong} height={10} />
@@ -26,6 +28,7 @@ export function SubjectCard({ subject, ratio, mastered, onPress }: { subject: Su
 
 export function ArcadeCard({ game, locked, best, onPress }: { game: ArcadeGame; locked: boolean; best?: number; onPress: () => void }) {
   const a = accent(game.color);
+  const t = useT();
   return (
     <PressChunky
       onPress={onPress}
@@ -48,7 +51,7 @@ export function ArcadeCard({ game, locked, best, onPress }: { game: ArcadeGame; 
           {game.title}
         </Txt>
         <Txt variant="small" style={{ color: colors.ink, opacity: 0.75 }}>
-          {locked ? 'Unlock in shop' : best ? `Best: ${best}` : `${game.quiz.seconds}s challenge`}
+          {locked ? t('cards.unlockInShop') : best ? t('cards.best', best) : t('cards.challenge', game.quiz.seconds)}
         </Txt>
       </View>
     </PressChunky>

@@ -1,4 +1,5 @@
 import { levelFromXp, levelProgress, REWARDS, TIERS, tierFor, xpForAnswer, xpForLevel } from '@/features/gamify/xp';
+import { translate } from '@/i18n';
 
 describe('levels', () => {
   it('follows 50·L·(L−1): 0, 100, 300, 600, 1000…', () => {
@@ -56,6 +57,13 @@ describe('levels', () => {
   it('tiers are sorted and start at level 1', () => {
     expect(TIERS[0].from).toBe(1);
     TIERS.forEach((t, i) => i && expect(t.from).toBeGreaterThan(TIERS[i - 1].from));
+  });
+});
+
+describe('tier names', () => {
+  it('every tier is named in both languages', () => {
+    expect(TIERS.map((t) => translate('en', t.key))).toEqual(TIERS.map((t) => t.name));
+    expect(TIERS.map((t) => translate('ms', t.key))).toEqual(['Pemula', 'Penjelajah', 'Cendekia', 'Juara', 'Lagenda']);
   });
 });
 

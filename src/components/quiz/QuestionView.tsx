@@ -13,25 +13,7 @@ import { Numpad } from './Numpad';
 import { Order } from './Order';
 import { Sort } from './Sort';
 import { TrueFalse } from './TrueFalse';
-
-const KIND_LABEL: Record<Question['type'], string> = {
-  mcq: 'Choose the answer',
-  trueFalse: 'True or false?',
-  match: 'Draw lines to match',
-  order: 'Put in order',
-  sort: 'Drag into groups',
-  fillBlank: 'Fill in the blanks',
-  numpad: 'Type the answer',
-};
-const KIND_LABEL_MS: Record<Question['type'], string> = {
-  mcq: 'Pilih jawapan',
-  trueFalse: 'Betul atau salah?',
-  match: 'Lukis garisan untuk padankan',
-  order: 'Susun mengikut urutan',
-  sort: 'Seret ke kumpulan',
-  fillBlank: 'Isi tempat kosong',
-  numpad: 'Taip jawapan',
-};
+import { INSTRUCTION, LABELS } from './types';
 
 export function QuestionView({ q, onAnswer, locked, fast }: { q: Question; onAnswer: (ok: boolean) => void; locked: boolean; fast?: boolean }) {
   const body = (() => {
@@ -57,7 +39,7 @@ export function QuestionView({ q, onAnswer, locked, fast }: { q: Question; onAns
     // A quick fade marks the new question; time-attack skips it so answers stay instant.
     <Animated.View entering={fast ? undefined : swapIn} style={{ gap: 18 }}>
       <View style={{ gap: 10 }}>
-        {!fast && <Txt variant="label">{(q.lang === 'ms' ? KIND_LABEL_MS : KIND_LABEL)[q.type]}</Txt>}
+        {!fast && <Txt variant="label">{INSTRUCTION[q.lang][q.type]}</Txt>}
         <View style={{ flexDirection: 'row', alignItems: 'flex-start', gap: 12 }}>
           {q.visual ? (
             <View
@@ -89,7 +71,7 @@ export function QuestionView({ q, onAnswer, locked, fast }: { q: Question; onAns
           {!fast && (
             <Pressable
               accessibilityRole="button"
-              accessibilityLabel="Read question aloud"
+              accessibilityLabel={LABELS[q.lang].readAloud}
               onPress={() => {
                 fx.tap();
                 speak(q.prompt, q.lang);

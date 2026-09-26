@@ -27,9 +27,10 @@ daily-quest tests are deterministic.
 - **Curriculum**: every quiz in every standard is built with 20 seeds — in English and again in the Bahasa Melayu build of Maths & Science; every question must pass the schema and semantic checks, generated answers must match the oracle, ids must be unique across standards, and questions must use their subject's language. The BM build must have nothing left in English and keep every id and answer of the original.
 - **Answerable**: every question a child can meet (in both teaching languages) is rendered in its real engine and answered through the accessible UI — the right answer must be accepted and a wrong one rejected, exactly once.
 - **Renderers**: every lesson-block and question type in the schema has a renderer; every lesson in the syllabus renders; every shop item visibly changes the avatar; every badge appears in the trophy room.
-- **Screens**: every file in `src/app` renders on a phone and a tablet with no crash, no `undefined`/`NaN` on screen, and a name on every button.
+- **Screens**: every file in `src/app` renders on a phone and a tablet with no crash, no `undefined`/`NaN` on screen, and a name on every button — and renders again in the English and in the Malay app with none of the other language's words (syllabus text aside) in its text, labels or placeholders.
+- **Messages** (`tests/unit/i18n.test.ts`): every message exists in both languages with the same arguments, no key is defined twice, and the Malay differs from the English except for a short list of shared words and names.
 - **Routes**: every `router.push`/`replace`/`href` points at a real screen, and no screen is orphaned.
-- **Policy**: the AGENTS.md rules — calm motion, `Grid` instead of `%` widths, `Screen` on every screen, roles on every `Pressable`, network access only in the registry and sync service, no direct store writes from UI.
+- **Policy**: the AGENTS.md rules — calm motion, `Grid` instead of `%` widths, `Screen` on every screen, roles on every `Pressable`, network access only in the registry and sync service, no direct store writes from UI, and no hard-coded words in screens or components (all UI text goes through `t()`).
 - **Suite**: every source file is loaded by some test, no `.only`/`.skip`, every test file asserts, no unseeded randomness, and every store action, reward rule and badge is exercised.
 
 ## Business rules the store enforces
@@ -41,6 +42,7 @@ The UI is never trusted: the store checks everything itself.
 - Completion and perfect bonuses need at least `REWARDS.minBonusQuestions` questions and pay once per quiz per day (a retry that turns perfect still earns the perfect bonus). Time attacks pay per correct answer plus a bonus for a new best.
 - First lesson read pays the lesson reward; re-reads earn a little XP once per topic per day.
 - Streaks count calendar days with a finished quiz or lesson; parent-chosen rest days never break them, and a shield (earned every 7 days or bought, at most 2) covers a missed school day. Quests roll over at local midnight and follow the topics a parent says the class is on.
+- The app language is English or Bahasa Melayu only; anything else (including a broken save) keeps the current one.
 - A child's teaching language and school topics are validated: only known languages, and only topics from the child's own standard (moving up a standard clears them). Topics get a mastery date the first time they are mastered.
 - Reminders are off until a parent turns them on (permission is asked only then), skip rest days and days everyone has played, and are never shown while the app is open.
 - Spaced repetition never promotes a card before it's due (no cramming).

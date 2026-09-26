@@ -1,4 +1,4 @@
-import { applyQuestEvent, generateDailyQuests, type Quest, type QuestEvent } from '@/features/gamify/quests';
+import { applyQuestEvent, generateDailyQuests, questText, type Quest, type QuestEvent } from '@/features/gamify/quests';
 
 const SUBJECTS = [
   { id: 'math', name: 'Mathematics', emoji: '🔢' },
@@ -59,6 +59,39 @@ describe('generateDailyQuests', () => {
   it('falls back to maths when a standard has no quiz subjects yet', () => {
     for (let d = 0; d < 100; d++) {
       for (const q of generateDailyQuests(`k${d}`, '2026-05-05', [], 0)) if (q.kind === 'quizzesInSubject') expect(q.subjectId).toBe('math');
+    }
+  });
+});
+
+describe('questText', () => {
+  const quest = (over: Partial<Quest>): Quest => ({ id: 'd-0', kind: 'lesson', title: 'Saved title', emoji: '📖', target: 1, reward: 20, progress: 0, claimed: false, ...over });
+
+  it.each<[Partial<Quest>, string, string]>([
+    [{ kind: 'quizzesInSubject', target: 2, subjectName: 'Mathematics' }, 'Complete 2 Mathematics quizzes', 'Siapkan 2 kuiz Mathematics'],
+    [{ kind: 'quizzesInSubject', target: 1, subjectName: 'Mathematics', subjectNameAlt: 'Matematik', subjectLang: 'en' }, 'Complete 1 Mathematics quiz', 'Siapkan 1 kuiz Matematik'],
+    [{ kind: 'quizzesInSubject', target: 2, subjectName: 'Matematik', subjectNameAlt: 'Mathematics', subjectLang: 'ms' }, 'Complete 2 Matematik quizzes', 'Siapkan 2 kuiz Matematik'],
+    [{ kind: 'correct', target: 15 }, 'Get 15 answers right', 'Jawab 15 soalan dengan betul'],
+    [{ kind: 'combo', target: 5 }, 'Get 5 right in a row', 'Betul 5 kali berturut-turut'],
+    [{ kind: 'lesson' }, 'Read a lesson', 'Baca satu pelajaran'],
+    [{ kind: 'timeAttack' }, 'Play a time-attack game', 'Main satu permainan lawan masa'],
+    [{ kind: 'perfect' }, 'Finish a quiz with no mistakes', 'Siapkan satu kuiz tanpa salah'],
+    [{ kind: 'xp', target: 150 }, 'Earn 150 XP', 'Kumpul 150 XP'],
+    [{ kind: 'review', target: 3 }, 'Fix 3 tricky questions', 'Betulkan 3 soalan mencabar'],
+  ])('%j reads "%s" / "%s"', (over, en, ms) => {
+    expect(questText(quest(over), 'en')).toBe(en);
+    expect(questText(quest(over), 'ms')).toBe(ms);
+  });
+
+  it('quests saved before names were stored keep their saved title', () => {
+    expect(questText(quest({ kind: 'quizzesInSubject', target: 2 }), 'ms')).toBe('Saved title');
+  });
+
+  it('every generated quest reads in both languages', () => {
+    for (let d = 1; d <= 28; d++) {
+      for (const q of generateDailyQuests('kid', `2026-02-${String(d).padStart(2, '0')}`, [{ id: 'math', name: 'Mathematics', nameAlt: 'Matematik', lang: 'en', emoji: '🔢' }], 5)) {
+        expect(questText(q, 'en')).toBe(q.title);
+        expect(questText(q, 'ms')).not.toBe(q.title);
+      }
     }
   });
 });

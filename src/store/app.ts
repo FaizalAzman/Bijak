@@ -27,6 +27,8 @@ import { levelFromXp, REWARDS, xpForAnswer } from '@/features/gamify/xp';
 import { topicStatus } from '@/features/progress/selectors';
 import { cleanReminders, DEFAULT_REMINDERS } from '@/features/reminders/plan';
 import { dueCards, srsUpdate, type SrsContext } from '@/features/srs/srs';
+import { isUiLang } from '@/i18n/core';
+import { deviceLang } from '@/i18n/detect';
 import { dayKey } from '@/lib/date';
 import { kv } from '@/lib/storage';
 import { cleanVoiceChoices } from '@/lib/voice';
@@ -125,7 +127,7 @@ export const REVIEW_QUIZ_ID = 'review';
 
 const NO_REWARD: FinishReward = { xp: 0, coins: 0, newBest: false, badges: [], questsDone: [], streak: 0, shieldEarned: false };
 
-export const DEFAULT_SETTINGS: Settings = { sound: true, haptics: true, voice: true, autoRead: false, restDays: [], voices: {}, reminders: DEFAULT_REMINDERS };
+export const DEFAULT_SETTINGS: Settings = { uiLang: deviceLang(), sound: true, haptics: true, voice: true, autoRead: false, restDays: [], voices: {}, reminders: DEFAULT_REMINDERS };
 const OPTIONAL_SLOTS: Slot[] = ['hat', 'glasses', 'pet'];
 const MAX_NAME = 30;
 export const MAX_ATTEMPTS = 200;
@@ -318,6 +320,7 @@ export const useApp = create<AppState>()(
           set((s) => {
             const settings: Settings = { ...s.settings, ...patch, reminders: s.settings.reminders };
             if (patch.restDays) settings.restDays = cleanRestDays(patch.restDays);
+            if (!isUiLang(settings.uiLang)) settings.uiLang = s.settings.uiLang;
             // Voice choices merge per language; an empty choice goes back to automatic.
             if (patch.voices) settings.voices = cleanVoiceChoices({ ...s.settings.voices, ...patch.voices });
             if (patch.reminders) settings.reminders = cleanReminders({ ...s.settings.reminders, ...patch.reminders }, s.settings.reminders ?? DEFAULT_REMINDERS);
@@ -573,7 +576,9 @@ export const useApp = create<AppState>()(
       // Settings added in later versions get their defaults on devices with an older save.
       merge: (persisted, current) => {
         const saved = (persisted ?? {}) as Partial<AppState>;
-        return { ...current, ...saved, settings: { ...current.settings, ...saved.settings } };
+        const settings = { ...current.settings, ...saved.settings };
+        if (!isUiLang(settings.uiLang)) settings.uiLang = current.settings.uiLang;
+        return { ...current, ...saved, settings };
       },
     },
   ),

@@ -152,6 +152,15 @@ describe('updateProfile / removeProfile / selectProfile / resetProgress', () => 
     expect(s().settings.reminders).toEqual({ daily: true, time: '18:00', streak: false, weekly: true });
   });
 
+  it('the app language is English or Bahasa Melayu, never anything else', () => {
+    expect(s().settings.uiLang).toBe('en');
+    s().updateSettings({ uiLang: 'ms' });
+    expect(s().settings.uiLang).toBe('ms');
+    s().updateSettings({ uiLang: 'fr' as never });
+    s().updateSettings({ uiLang: undefined as never, sound: false });
+    expect(s().settings).toMatchObject({ uiLang: 'ms', sound: false });
+  });
+
   it('rest days from the parent are cleaned before saving', () => {
     s().updateSettings({ restDays: [6, 0, 6, 12, 3] });
     expect(s().settings.restDays).toEqual([6, 0]);

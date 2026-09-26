@@ -9,6 +9,7 @@ import { Pressable, View } from 'react-native';
 import Svg, { Circle, Line, Rect, Text as SvgText } from 'react-native-svg';
 import { RichText, Txt } from '@/components/ui';
 import type { LessonBlock } from '@/features/content/schema';
+import { translate } from '@/i18n/core';
 import { fx, speak } from '@/lib/feedback';
 import { groupDigits } from '@/lib/format';
 import { colors, fonts } from '@/theme';
@@ -17,7 +18,7 @@ function SpeakButton({ text, lang, size = 34 }: { text: string; lang: 'en' | 'ms
   return (
     <Pressable
       accessibilityRole="button"
-      accessibilityLabel={`Listen: ${text}`}
+      accessibilityLabel={translate(lang, 'lesson.listen', text)}
       onPress={() => {
         fx.tap();
         speak(text, lang);
@@ -38,9 +39,9 @@ function SpeakButton({ text, lang, size = 34 }: { text: string; lang: 'en' | 'ms
   );
 }
 
-function PlaceValue({ n }: { n: number }) {
+/** Place names in the lesson's own language. */
+function PlaceValue({ n, lang }: { n: number; lang: 'en' | 'ms' }) {
   const digits = String(n).split('');
-  const names = ['Ones', 'Tens', 'Hundreds', 'Thousands', 'Ten thousands', 'Hundred thousands', 'Millions'];
   const tints = [colors['mint-soft'], colors['sky-soft'], colors['sun-soft'], colors['tangerine-soft'], colors['grape-soft'], colors['berry-soft'], colors.sand];
   return (
     <View style={{ flexDirection: 'row', borderWidth: 2, borderColor: colors.ink, borderRadius: 14, overflow: 'hidden' }}>
@@ -50,7 +51,7 @@ function PlaceValue({ n }: { n: number }) {
           <View key={i} style={{ flex: 1, backgroundColor: tints[place], borderLeftWidth: i ? 2 : 0, borderColor: colors.ink }}>
             <View style={{ paddingVertical: 6, borderBottomWidth: 2, borderColor: colors.ink, alignItems: 'center' }}>
               <Txt style={{ fontFamily: fonts.black, fontSize: 10, textAlign: 'center' }} numberOfLines={2}>
-                {names[place]}
+                {translate(lang, 'lesson.place', place)}
               </Txt>
             </View>
             <Txt variant="hero" style={{ textAlign: 'center', paddingVertical: 8, fontSize: 38 }}>
@@ -145,7 +146,7 @@ export function LessonBlockView({ block, lang }: { block: LessonBlock; lang: 'en
             <Txt style={{ fontSize: 24 }}>{block.emoji ?? '💡'}</Txt>
             <View style={{ flex: 1, gap: 2 }}>
               <Txt variant="label" style={{ color: colors.ink }}>
-                {block.tone === 'remember' ? 'Remember' : block.tone === 'fun' ? 'Fun fact' : 'Tip'}
+                {translate(lang, block.tone === 'remember' ? 'lesson.remember' : block.tone === 'fun' ? 'lesson.funFact' : 'lesson.tip')}
               </Txt>
               <RichText text={block.text} />
             </View>
@@ -205,7 +206,13 @@ export function LessonBlockView({ block, lang }: { block: LessonBlock; lang: 'en
     case 'example':
       return (
         <Card bg={colors['sky-soft']}>
-          {block.title ? <Txt variant="label" style={{ color: colors.ink }}>{`Example · ${block.title}`}</Txt> : <Txt variant="label">Example</Txt>}
+          {block.title ? (
+            <Txt variant="label" style={{ color: colors.ink }}>
+              {translate(lang, 'lesson.exampleOf', block.title)}
+            </Txt>
+          ) : (
+            <Txt variant="label">{translate(lang, 'lesson.example')}</Txt>
+          )}
           {block.lines.map((l, i) => (
             <RichText key={i} text={l} className="font-mono text-[16px] leading-[24px]" />
           ))}
@@ -249,7 +256,7 @@ export function LessonBlockView({ block, lang }: { block: LessonBlock; lang: 'en
         </View>
       );
     case 'placeValue':
-      return <PlaceValue n={block.number} />;
+      return <PlaceValue n={block.number} lang={lang} />;
     case 'numberLine':
       return (
         <Card>

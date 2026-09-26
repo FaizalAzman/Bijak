@@ -6,6 +6,7 @@ import { Kancil } from '@/components/mascot/Kancil';
 import { Chunky, PressChunky, ProgressBar, Screen, TopBar, Txt } from '@/components/ui';
 import { useChildContent } from '@/hooks/useChildContent';
 import { subjectProgress, topicStatus } from '@/features/progress/selectors';
+import { standardName, useT } from '@/i18n';
 import { useLayout } from '@/hooks/useLayout';
 import { useProgress } from '@/store/app';
 import { accent, colors } from '@/theme';
@@ -43,16 +44,17 @@ export default function SubjectPath() {
   const p = useProgress();
   const standard = index.standard(standardId);
   const subject = index.subject(standardId, subjectId);
+  const t = useT();
   if (!standard || !subject) {
     return (
-      <Screen header={<TopBar title="Not found" />}>
-        <Txt>This subject is not available.</Txt>
+      <Screen header={<TopBar title={t('common.notFound')} />}>
+        <Txt>{t('subject.notAvailable')}</Txt>
       </Screen>
     );
   }
   const a = accent(subject.color);
   const sp = subjectProgress(subject, p);
-  const statuses = subject.topics.map((t) => topicStatus(t, p));
+  const statuses = subject.topics.map((topic) => topicStatus(topic, p));
   const current = statuses.findIndex((s) => !s.mastered);
 
   return (
@@ -62,42 +64,42 @@ export default function SubjectPath() {
           <Txt style={{ fontSize: 40 }}>{subject.emoji}</Txt>
           <View style={{ flex: 1 }}>
             <Txt variant="label" style={{ color: colors.ink }}>
-              {standard.title} · {standard.titleAlt}
+              {standardName(standard, t.lang)} · {standardName(standard, t.lang === 'ms' ? 'en' : 'ms')}
             </Txt>
             <Txt variant="display">{subject.nameAlt ?? subject.name}</Txt>
           </View>
         </View>
         <ProgressBar value={sp.ratio} color={colors.paper} height={14} />
         <Txt variant="small" style={{ color: colors.ink }}>
-          {sp.mastered} of {sp.total} topics mastered
+          {t('subject.progress', sp.mastered, sp.total)}
         </Txt>
       </Chunky>
 
       <View style={{ paddingVertical: 26, alignItems: 'center' }}>
-        {subject.topics.map((t, i) => {
+        {subject.topics.map((topic, i) => {
           const st = statuses[i];
           const offset = Math.sin(i * 1.15) * swing;
           const isCurrent = i === current;
           const size = 92;
           return (
-            <View key={t.id} style={{ marginBottom: 18 }}>
+            <View key={topic.id} style={{ marginBottom: 18 }}>
               <View style={{ alignItems: 'center', transform: [{ translateX: offset }], width: 180 }}>
                 {isCurrent && (
                   <View style={{ backgroundColor: colors.ink, paddingHorizontal: 12, paddingVertical: 5, borderRadius: 10, marginBottom: 8 }}>
-                    <Txt style={{ color: colors.lime, fontFamily: 'PlusJakartaSans_800ExtraBold', fontSize: 12, letterSpacing: 1 }}>{st.stars ? 'CONTINUE' : 'START'}</Txt>
+                    <Txt style={{ color: colors.lime, fontFamily: 'PlusJakartaSans_800ExtraBold', fontSize: 12, letterSpacing: 1 }}>{st.stars ? t('subject.continue') : t('subject.start')}</Txt>
                   </View>
                 )}
                 <View style={{ width: size, height: size, alignItems: 'center', justifyContent: 'center' }}>
                   <Ring ratio={st.ratio} color={st.mastered ? colors.mint : a.strong} size={size} />
                   <PressChunky
-                    onPress={() => router.push(`/topic/${t.id}`)}
+                    onPress={() => router.push(`/topic/${topic.id}`)}
                     bg={st.mastered ? colors.mint : isCurrent ? a.strong : colors.paper}
                     radius={34}
                     depth={5}
-                    accessibilityLabel={t.title}
+                    accessibilityLabel={topic.title}
                     innerStyle={{ width: 68, height: 68, alignItems: 'center', justifyContent: 'center' }}
                   >
-                    <Txt style={{ fontSize: 30 }}>{t.emoji}</Txt>
+                    <Txt style={{ fontSize: 30 }}>{topic.emoji}</Txt>
                   </PressChunky>
                   {st.mastered && (
                     <View
@@ -118,7 +120,7 @@ export default function SubjectPath() {
                   )}
                 </View>
                 <Txt variant="subtitle" numberOfLines={2} style={{ textAlign: 'center', marginTop: 4, fontSize: 14 }}>
-                  {t.title}
+                  {topic.title}
                 </Txt>
                 <Txt style={{ fontSize: 13, letterSpacing: 2 }}>{'★'.repeat(st.stars) + '☆'.repeat(3 - st.stars)}</Txt>
               </View>
@@ -129,7 +131,7 @@ export default function SubjectPath() {
           <Kancil mood={sp.mastered === sp.total && sp.total > 0 ? 'cheer' : 'idle'} size={110} />
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
             {sp.mastered === sp.total && sp.total > 0 ? null : <Lock size={14} color={colors.muted} />}
-            <Txt variant="small">{sp.mastered === sp.total && sp.total > 0 ? `${subject.name} complete! 🏆` : `Master every topic to earn the ${subject.name} badge`}</Txt>
+            <Txt variant="small">{sp.mastered === sp.total && sp.total > 0 ? t('subject.complete', subject.name) : t('subject.masterAll', subject.name)}</Txt>
           </View>
         </View>
       </View>

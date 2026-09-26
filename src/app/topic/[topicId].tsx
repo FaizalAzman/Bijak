@@ -6,6 +6,7 @@ import { Chunky, PressChunky, Screen, SectionLabel, Tag, TopBar, Txt } from '@/c
 import { useChildContent } from '@/hooks/useChildContent';
 import { REWARDS } from '@/features/gamify/xp';
 import { topicStatus } from '@/features/progress/selectors';
+import { standardName, useT } from '@/i18n';
 import { useActiveProfile, useProgress } from '@/store/app';
 import { accent, colors } from '@/theme';
 
@@ -14,10 +15,11 @@ export default function TopicScreen() {
   const ref = useChildContent().topic(topicId);
   const p = useProgress();
   const profile = useActiveProfile();
+  const t = useT();
   if (!ref) {
     return (
-      <Screen header={<TopBar title="Not found" />}>
-        <Txt>This topic is not available.</Txt>
+      <Screen header={<TopBar title={t('common.notFound')} />}>
+        <Txt>{t('topic.notAvailable')}</Txt>
       </Screen>
     );
   }
@@ -47,7 +49,7 @@ export default function TopicScreen() {
             </View>
             <View style={{ flex: 1 }}>
               <Txt variant="label">
-                {standard.title} · {subject.name}
+                {standardName(standard, t.lang)} · {subject.name}
               </Txt>
               <Txt variant="display" style={{ fontSize: 24, lineHeight: 30 }}>
                 {topic.title}
@@ -57,16 +59,16 @@ export default function TopicScreen() {
           </View>
           <View style={{ flexDirection: 'row', gap: 8, flexWrap: 'wrap' }}>
             <Tag label={`${'★'.repeat(st.stars)}${'☆'.repeat(3 - st.stars)}`} bg={colors.sun} />
-            {stat?.answered ? <Tag label={`${Math.round((stat.correct / stat.answered) * 100)}% accuracy`} bg={colors.paper} /> : null}
-            {st.mastered ? <Tag label="Mastered" /> : null}
-            {profile?.schoolTopics?.[subject.id] === topic.id ? <Tag label="🏫 At school this week" bg={colors['sky-soft']} /> : null}
+            {stat?.answered ? <Tag label={t('topic.accuracy', Math.round((stat.correct / stat.answered) * 100))} bg={colors.paper} /> : null}
+            {st.mastered ? <Tag label={t('common.mastered')} /> : null}
+            {profile?.schoolTopics?.[subject.id] === topic.id ? <Tag label={t('topic.atSchool')} bg={colors['sky-soft']} /> : null}
           </View>
         </Chunky>
       </View>
 
       {topic.objectives.length > 0 && (
         <View>
-          <SectionLabel>You will learn</SectionLabel>
+          <SectionLabel>{t('topic.youWillLearn')}</SectionLabel>
           <Chunky depth={3} innerStyle={{ padding: 14, gap: 10 }}>
             {topic.objectives.map((o) => (
               <View key={o.code + o.text} style={{ flexDirection: 'row', gap: 10, alignItems: 'flex-start' }}>
@@ -86,19 +88,19 @@ export default function TopicScreen() {
 
       {topic.lesson.length > 0 && (
         <View>
-          <SectionLabel>Lesson</SectionLabel>
+          <SectionLabel>{t('topic.lesson')}</SectionLabel>
           <PressChunky
             onPress={() => router.push(`/lesson/${topic.id}`)}
             bg={st.lessonDone ? colors.paper : colors.lime}
             innerStyle={{ padding: 16, flexDirection: 'row', alignItems: 'center', gap: 12 }}
-            accessibilityLabel={st.lessonDone ? 'Read the lesson again' : 'Read the lesson'}
+            accessibilityLabel={st.lessonDone ? t('topic.readAgain.a11y') : t('topic.read')}
           >
             <View style={{ width: 46, height: 46, borderRadius: 14, backgroundColor: colors.ink, alignItems: 'center', justifyContent: 'center' }}>
               <BookOpen size={22} color={colors.lime} strokeWidth={2.5} />
             </View>
             <View style={{ flex: 1 }}>
-              <Txt variant="subtitle">{st.lessonDone ? 'Read again' : 'Read the lesson'}</Txt>
-              <Txt variant="small">{st.lessonDone ? 'Completed ✓' : `${toSlides(topic.lesson).length} cards · +${REWARDS.lesson.xp} XP`}</Txt>
+              <Txt variant="subtitle">{st.lessonDone ? t('topic.readAgain') : t('topic.read')}</Txt>
+              <Txt variant="small">{st.lessonDone ? t('topic.completed') : t('topic.cards', toSlides(topic.lesson).length, REWARDS.lesson.xp)}</Txt>
             </View>
             <ChevronRight size={22} color={colors.ink} strokeWidth={3} />
           </PressChunky>
@@ -106,7 +108,7 @@ export default function TopicScreen() {
       )}
 
       <View>
-        <SectionLabel>Quizzes</SectionLabel>
+        <SectionLabel>{t('topic.quizzes')}</SectionLabel>
         <View style={{ gap: 12 }}>
           {topic.quizzes.map((q) => {
             const best = stat?.best[q.id];
@@ -134,12 +136,12 @@ export default function TopicScreen() {
                 </View>
                 <View style={{ flex: 1 }}>
                   <Txt variant="subtitle">{q.title}</Txt>
-                  <Txt variant="small">{q.generator ? `${q.count ?? 10} questions · new every time` : `${q.count ?? q.questions.length} questions`}</Txt>
+                  <Txt variant="small">{q.generator ? t('topic.generated', q.count ?? 10) : t('common.questions', q.count ?? q.questions.length)}</Txt>
                 </View>
                 {best != null ? (
                   <Tag label={`${best}%`} bg={best >= 80 ? colors.mint : best >= 50 ? colors.sun : colors['berry-soft']} />
                 ) : (
-                  <Tag label="New" bg={colors['sky-soft']} />
+                  <Tag label={t('common.new')} bg={colors['sky-soft']} />
                 )}
               </PressChunky>
             );

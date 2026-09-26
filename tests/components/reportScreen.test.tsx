@@ -50,6 +50,23 @@ it('shows the child’s week at a glance', async () => {
   expect(router.push).toHaveBeenCalledWith(`/parent/school?child=${id}`);
 });
 
+it('reads in Bahasa Melayu, and shares in Bahasa Melayu, when the app is in Malay', async () => {
+  const id = setupChild({ name: 'Adam' });
+  s().setSchoolTopic(id, 'math', 's3-math-fractions');
+  playQuiz('s3-math-fractions-q1', undefined, { seconds: 600 });
+  s().updateSettings({ uiLang: 'ms' });
+  const open = jest.spyOn(Linking, 'openURL').mockResolvedValue(true);
+  await render(<Report />);
+  expect(screen.getByText('Minggu Adam')).toBeOnTheScreen();
+  expect(screen.getByText('2 Mac – 8 Mac')).toBeOnTheScreen();
+  expect(screen.getByText('🔥 Rentetan 1 hari (terbaik 1)')).toBeOnTheScreen();
+  expect(screen.getByText(/Fractions, Decimals & Percent · Matematik/)).toBeOnTheScreen();
+  expect(screen.getByText('Dikuasai ✓')).toBeOnTheScreen();
+  expect(screen.getByTestId('share-preview')).toHaveTextContent(/^📊 \*Minggu Adam di Bijak\*/);
+  await tap('Kongsi di WhatsApp');
+  expect(decodeURIComponent(open.mock.calls[0][0])).toContain('_Dihantar dari Bijak_');
+});
+
 it('a quiet week has friendly empty states', async () => {
   setupChild({ name: 'Aina' });
   await render(<Report />);

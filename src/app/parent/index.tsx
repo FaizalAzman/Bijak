@@ -8,6 +8,7 @@ import { Keypad, PinDots, Screen, TopBar, Txt } from '@/components/ui';
 import { isParentUnlocked, useParentSession } from '@/features/profile/parentSession';
 import { lockRemaining, usePinGuard } from '@/features/profile/pinGuard';
 import { useNow } from '@/hooks/useNow';
+import { useT } from '@/i18n';
 import { fx } from '@/lib/feedback';
 import { verifyParentPin } from '@/lib/secure';
 import { colors } from '@/theme';
@@ -23,6 +24,7 @@ export default function ParentGate() {
   const waitMs = lockRemaining(guard, now);
   const locked = waitMs > 0;
   const { style, shake } = useShake();
+  const t = useT();
 
   // Where the parent was heading: adding a learner, the weekly report (from its reminder), or the dashboard.
   const go = () => router.replace(next === 'add-child' ? '/onboarding' : next === 'report' ? '/parent/report' : '/parent/dashboard');
@@ -55,19 +57,19 @@ export default function ParentGate() {
   };
 
   return (
-    <Screen header={<TopBar title="Parent zone" close />}>
+    <Screen header={<TopBar title={t('gate.title')} close />}>
       <View style={{ gap: 26, paddingTop: 10 }}>
-        <MascotSays text="Grown-ups only! Enter your 4-digit parent PIN." mood="think" size={90} />
+        <MascotSays text={t('gate.mascot')} mood="think" size={90} />
         <Animated.View style={style}>
           <PinDots length={4} filled={pin.length} error={error} />
         </Animated.View>
         {locked ? (
           <Txt variant="small" style={{ textAlign: 'center', color: colors.berry }} testID="pin-locked">
-            Too many tries. Wait {Math.ceil(waitMs / 1000)} seconds.
+            {t('gate.locked', Math.ceil(waitMs / 1000))}
           </Txt>
         ) : error ? (
           <Txt variant="small" style={{ textAlign: 'center', color: colors.berry }}>
-            Wrong PIN, try again.
+            {t('gate.wrong')}
           </Txt>
         ) : null}
         <Keypad onKey={onKey} disabled={locked} />

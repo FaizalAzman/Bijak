@@ -3,6 +3,7 @@ import { View } from 'react-native';
 import { BarList } from '@/components/parent/Charts';
 import { Button, Chunky, Screen, SectionLabel, TopBar, Txt } from '@/components/ui';
 import { useRequireParent } from '@/features/profile/parentSession';
+import { useT } from '@/i18n';
 import { telemetry } from '@/lib/telemetry';
 import { colors } from '@/theme';
 
@@ -33,23 +34,24 @@ export default function Health() {
       .sort((a, b) => b.value - a.value)
       .slice(0, 8);
   }, [records]);
+  const t = useT();
   if (!ok) return null;
   return (
-    <Screen header={<TopBar title="App health" />}>
-      <Txt variant="small">Collected on this device only. Nothing is sent anywhere unless you add a telemetry sink.</Txt>
-      <SectionLabel>Slowest screens · avg load</SectionLabel>
+    <Screen header={<TopBar title={t('dash.health')} />}>
+      <Txt variant="small">{t('health.note')}</Txt>
+      <SectionLabel>{t('health.slowest')}</SectionLabel>
       <Chunky depth={3} innerStyle={{ padding: 14 }}>
-        {screens.length ? <BarList rows={screens} format={(n) => `${n} ms`} /> : <Txt variant="small">No data yet.</Txt>}
+        {screens.length ? <BarList rows={screens} format={(n) => `${n} ms`} /> : <Txt variant="small">{t('health.noData')}</Txt>}
       </Chunky>
-      <SectionLabel>Dropped frames by feature</SectionLabel>
+      <SectionLabel>{t('health.jank')}</SectionLabel>
       <Chunky depth={3} innerStyle={{ padding: 14 }}>
-        {jank.length ? <BarList rows={jank} format={(n) => `${n} long frames`} /> : <Txt variant="small">Smooth so far — no jank bursts recorded. 🎉</Txt>}
+        {jank.length ? <BarList rows={jank} format={(n) => t('health.longFrames', n)} /> : <Txt variant="small">{t('health.smooth')}</Txt>}
       </Chunky>
-      <SectionLabel>{`Errors (${errors.length})`}</SectionLabel>
+      <SectionLabel>{t('health.errors', errors.length)}</SectionLabel>
       <View style={{ gap: 10 }}>
         {errors.length === 0 && (
           <Chunky depth={3} bg={colors['mint-soft']} innerStyle={{ padding: 14 }}>
-            <Txt variant="subtitle">No crashes recorded ✅</Txt>
+            <Txt variant="subtitle">{t('health.noCrashes')}</Txt>
           </Chunky>
         )}
         {errors.slice(0, 10).map((e) => (
@@ -58,14 +60,14 @@ export default function Health() {
               {e.name}
             </Txt>
             <Txt variant="small">
-              {new Date(e.at).toLocaleString()} · {String(e.data?.context ?? '')}
+              {new Date(e.at).toLocaleString(t('date.locale'))} · {String(e.data?.context ?? '')}
             </Txt>
           </Chunky>
         ))}
       </View>
       <View style={{ marginTop: 20 }}>
         <Button
-          label="Clear report"
+          label={t('health.clear')}
           tone="paper"
           size="sm"
           onPress={() => {

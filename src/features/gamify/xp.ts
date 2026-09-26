@@ -17,11 +17,11 @@ export function levelProgress(xp: number) {
 }
 
 export const TIERS = [
-  { from: 1, name: 'Rookie', emoji: '🐣' },
-  { from: 5, name: 'Explorer', emoji: '🧭' },
-  { from: 10, name: 'Scholar', emoji: '🎓' },
-  { from: 15, name: 'Champion', emoji: '🏆' },
-  { from: 20, name: 'Legend', emoji: '🐉' },
+  { from: 1, name: 'Rookie', key: 'tier.rookie', emoji: '🐣' },
+  { from: 5, name: 'Explorer', key: 'tier.explorer', emoji: '🧭' },
+  { from: 10, name: 'Scholar', key: 'tier.scholar', emoji: '🎓' },
+  { from: 15, name: 'Champion', key: 'tier.champion', emoji: '🏆' },
+  { from: 20, name: 'Legend', key: 'tier.legend', emoji: '🐉' },
 ] as const;
 
 export function tierFor(level: number) {

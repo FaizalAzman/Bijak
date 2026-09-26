@@ -64,3 +64,28 @@ describe('architecture', () => {
     expect(offenders(/\b(TODO|FIXME|XXX)\b/)).toEqual([]);
   });
 });
+
+describe('bilingual UI (every word comes from src/i18n/messages, in English and Malay)', () => {
+  const tsx = sources.filter((s) => s.file.endsWith('.tsx'));
+
+  it('no hard-coded words between JSX tags', () => {
+    const bad: string[] = [];
+    for (const s of tsx) {
+      s.text.split('\n').forEach((line, i) => {
+        // A line of plain words (how Prettier lays out JSX text), or words inside <Txt>…</Txt>.
+        if (/^\s+[A-Z][A-Za-z0-9…!?.,'’:;&—-]*(?:\s+[A-Za-z0-9…!?.,'’:;&—-]+)+\s*$/.test(line) || /<(Txt|Text)\b[^>{]*>[^<{]*[A-Za-z]{3,}[^<{]*<\/(Txt|Text)>/.test(line)) bad.push(`${s.file}:${i + 1}`);
+      });
+    }
+    expect(bad).toEqual([]);
+  });
+
+  it('no hard-coded words in labels, titles, hints or placeholders', () => {
+    const allowed = ['accessibilityLabel="Sang Kancil"', 'label="XP"', 'placeholder="https://example.com/bijak-content"'];
+    const bad = tsx.flatMap((s) =>
+      [...s.text.matchAll(/\b(label|title|subtitle|placeholder|accessibilityLabel|hint|sub|text|message)="[^"]*[A-Za-z]{2,}[^"]*"/g)]
+        .filter((m) => !allowed.includes(m[0]))
+        .map((m) => `${s.file}: ${m[0]}`),
+    );
+    expect(bad).toEqual([]);
+  });
+});

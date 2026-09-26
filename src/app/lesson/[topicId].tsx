@@ -6,7 +6,10 @@ import { toast } from '@/components/gamify/Toaster';
 import { LessonBlockView, toSlides } from '@/components/lesson/LessonBlocks';
 import { MascotSays } from '@/components/mascot/MascotSays';
 import { BackButton, Button, FrameRow, ProgressBar, Screen, Tag, Txt } from '@/components/ui';
+import { badgeDescription, badgeTitle } from '@/features/gamify/badges';
+import { questText } from '@/features/gamify/quests';
 import { useChildContent } from '@/hooks/useChildContent';
+import { useT } from '@/i18n';
 import { fx, stopSpeaking } from '@/lib/feedback';
 import { useApp } from '@/store/app';
 import { accent, colors } from '@/theme';
@@ -21,6 +24,7 @@ export default function LessonScreen() {
   const [earned, setEarned] = useState({ xp: 0, coins: 0 });
   const started = useRef(0);
   const scroll = useRef<ScrollView>(null);
+  const t = useT();
 
   useEffect(() => {
     started.current = Date.now();
@@ -46,9 +50,9 @@ export default function LessonScreen() {
     setDone(true);
     if (reward) {
       setEarned({ xp: reward.xp, coins: reward.coins });
-      reward.badges.forEach((b) => toast({ emoji: b.emoji, title: `Badge unlocked: ${b.title}`, subtitle: b.description }));
-      reward.questsDone.forEach((q) => toast({ emoji: q.emoji, title: 'Quest complete!', subtitle: q.title, bg: colors.sun }));
-      if (reward.shieldEarned) toast({ emoji: '🛡️', title: 'Rest-day shield earned!', subtitle: 'It saves your streak if you miss a day.' });
+      reward.badges.forEach((b) => toast({ emoji: b.emoji, title: t('lesson.badge', badgeTitle(b, t.lang)), subtitle: badgeDescription(b, t.lang) }));
+      reward.questsDone.forEach((q) => toast({ emoji: q.emoji, title: t('quest.complete'), subtitle: questText(q, t.lang), bg: colors.sun }));
+      if (reward.shieldEarned) toast({ emoji: '🛡️', title: t('lesson.shieldEarned'), subtitle: t('quests.shieldSaves') });
     }
   };
 
@@ -70,14 +74,14 @@ export default function LessonScreen() {
         <FrameRow style={{ paddingTop: 10, paddingBottom: 12, gap: 10 }}>
           {done ? (
             <>
-              {topic.quizzes[0] && <Button label="Take the quiz!" tone="lime" size="lg" full onPress={() => router.replace(`/quiz/${topic.quizzes[0].id}`)} />}
-              <Button label="Back to topic" tone="paper" full onPress={() => router.back()} />
+              {topic.quizzes[0] && <Button label={t('lesson.takeQuiz')} tone="lime" size="lg" full onPress={() => router.replace(`/quiz/${topic.quizzes[0].id}`)} />}
+              <Button label={t('lesson.backToTopic')} tone="paper" full onPress={() => router.back()} />
             </>
           ) : (
             <View style={{ flexDirection: 'row', gap: 10 }}>
-              {i > 0 && <Button label="Back" tone="paper" size="lg" onPress={() => setI(i - 1)} />}
+              {i > 0 && <Button label={t('common.back')} tone="paper" size="lg" onPress={() => setI(i - 1)} />}
               <View style={{ flex: 1 }}>
-                <Button label={last ? 'Finish lesson' : 'Next'} tone={last ? 'lime' : 'ink'} size="lg" full onPress={next} testID="lesson-next" />
+                <Button label={last ? t('lesson.finish') : t('lesson.next')} tone={last ? 'lime' : 'ink'} size="lg" full onPress={next} testID="lesson-next" />
               </View>
             </View>
           )}
@@ -87,7 +91,7 @@ export default function LessonScreen() {
       <ScrollView ref={scroll} showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingVertical: 12, gap: 16 }}>
         {done ? (
           <Animated.View entering={swapIn} style={{ gap: 20, paddingTop: 40 }}>
-            <MascotSays text={`Lesson complete! You're ready for the ${topic.title} quiz.`} mood="cheer" size={120} />
+            <MascotSays text={t('lesson.done', topic.title)} mood="cheer" size={120} />
             {earned.xp + earned.coins > 0 && (
               <View style={{ flexDirection: 'row', justifyContent: 'center', gap: 10 }} testID="lesson-reward">
                 {earned.xp > 0 && <Tag label={`+${earned.xp} XP`} bg={colors.lime} />}

@@ -1,5 +1,7 @@
 /** Module 19 — Badges & Achievements (persistent trophy room). */
 import type { ContentIndex } from '@/features/content/registry';
+import type { UiLang } from '@/i18n/define';
+import { standardName, subjectName } from '@/i18n/names';
 import type { Progress } from '@/store/types';
 import { levelFromXp } from './xp';
 
@@ -12,7 +14,33 @@ export interface BadgeDef {
   earned: (p: Progress) => boolean;
   /** 0..1 progress towards the badge, for the trophy room. */
   progress?: (p: Progress) => number;
+  /** The badge in Bahasa Melayu. */
+  ms?: { title: string; description: string };
 }
+
+/** Bahasa Melayu names for the fixed badges (mastery badges build their own). */
+const MS: Record<string, { title: string; description: string }> = {
+  'first-quiz': { title: 'Langkah Pertama', description: 'Siapkan kuiz pertama kamu' },
+  'correct-10': { title: 'Minda Tajam', description: 'Jawab 10 soalan dengan betul' },
+  'correct-100': { title: 'Seratus', description: 'Jawab 100 soalan dengan betul' },
+  'correct-500': { title: 'Genius', description: 'Jawab 500 soalan dengan betul' },
+  'streak-3': { title: 'Semangat Membara', description: 'Belajar 3 hari berturut-turut' },
+  'streak-7': { title: 'Pahlawan Seminggu', description: 'Belajar 7 hari berturut-turut' },
+  'streak-30': { title: 'Tak Terhenti', description: 'Belajar 30 hari berturut-turut' },
+  'perfect-1': { title: 'Sempurna', description: 'Siapkan kuiz tanpa sebarang salah' },
+  'perfect-10': { title: 'Si Sempurna', description: 'Siapkan 10 kuiz dengan markah penuh' },
+  'combo-10': { title: 'Raja Kombo', description: 'Betul 10 kali berturut-turut' },
+  'level-5': { title: 'Penjelajah', description: 'Capai tahap 5' },
+  'level-10': { title: 'Cendekia', description: 'Capai tahap 10' },
+  'speed-20': { title: 'Si Pantas', description: 'Skor 20+ dalam permainan lawan masa' },
+  'speed-35': { title: 'Kilat', description: 'Skor 35+ dalam permainan lawan masa' },
+  bookworm: { title: 'Ulat Buku', description: 'Baca 10 pelajaran' },
+  reviewer: { title: 'Pantang Menyerah', description: 'Betulkan 25 soalan mencabar semasa ulang kaji' },
+  shopper: { title: 'Bergaya', description: 'Beli barang pertama di kedai' },
+};
+
+export const badgeTitle = (b: BadgeDef, lang: UiLang) => (lang === 'ms' ? (b.ms?.title ?? b.title) : b.title);
+export const badgeDescription = (b: BadgeDef, lang: UiLang) => (lang === 'ms' ? (b.ms?.description ?? b.description) : b.description);
 
 const ratio = (v: number, t: number) => Math.min(1, v / t);
 
@@ -158,10 +186,12 @@ export function masteryBadges(index: ContentIndex): BadgeDef[] {
       const quizzes = subject.topics.flatMap((t) => t.quizzes.map((q) => ({ topicId: t.id, quizId: q.id })));
       if (quizzes.length < 2) continue;
       const done = (p: Progress) => quizzes.filter((q) => (p.topics[q.topicId]?.best[q.quizId] ?? 0) >= 80).length;
+      const [stdMs, subjectMs] = [standardName(std, 'ms'), subjectName(subject, 'ms')];
       out.push({
         id: `master-${std.id}-${subject.id}`,
         title: `${std.title} ${subject.name} Master`,
         description: `Score 80%+ on every ${subject.name} quiz in ${std.title}`,
+        ms: { title: `Pakar ${subjectMs} ${stdMs}`, description: `Dapat 80%+ dalam setiap kuiz ${subjectMs} ${stdMs}` },
         emoji: subject.emoji,
         color: subject.color,
         earned: (p) => done(p) === quizzes.length,
@@ -171,6 +201,8 @@ export function masteryBadges(index: ContentIndex): BadgeDef[] {
   }
   return out;
 }
+
+for (const b of STATIC_BADGES) b.ms = MS[b.id];
 
 export function allBadges(index: ContentIndex): BadgeDef[] {
   return [...STATIC_BADGES, ...masteryBadges(index)];

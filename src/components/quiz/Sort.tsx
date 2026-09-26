@@ -7,7 +7,7 @@ import { fx } from '@/lib/feedback';
 import { shuffle } from '@/lib/random';
 import { colors } from '@/theme';
 import { Draggable, DropZone, DropZones } from './DnD';
-import type { QuestionProps } from './types';
+import { LABELS, type QuestionProps } from './types';
 import { useShake } from './useShake';
 import { WordChip } from './WordChip';
 
@@ -15,6 +15,7 @@ const BUCKET_BG = [colors['sky-soft'], colors['tangerine-soft'], colors['grape-s
 
 function Bucket({
   b,
+  name,
   i,
   items,
   onPress,
@@ -22,6 +23,7 @@ function Bucket({
   shakeKey,
 }: {
   b: { id: string; label: string; emoji?: string };
+  name: string;
   i: number;
   items: string[];
   onPress: () => void;
@@ -39,7 +41,7 @@ function Bucket({
         <Pressable
           onPress={onPress}
           accessibilityRole="button"
-          accessibilityLabel={`Bucket ${b.label}`}
+          accessibilityLabel={name}
           style={{
             flex: 1,
             minHeight: 170,
@@ -122,7 +124,7 @@ export function Sort({ q, onAnswer, locked }: QuestionProps<'sort'>) {
         </View>
         <View style={{ flexDirection: 'row', gap: 12 }}>
           {q.buckets.map((b, i) => (
-            <Bucket key={b.id} b={b} i={i} items={placed[b.id] ?? []} highlight={!!selected} shakeKey={shakes[b.id] ?? 0} onPress={() => selected && place(selected, b.id)} />
+            <Bucket key={b.id} b={b} name={`${LABELS[q.lang].bucket} ${b.label}`} i={i} items={placed[b.id] ?? []} highlight={!!selected} shakeKey={shakes[b.id] ?? 0} onPress={() => selected && place(selected, b.id)} />
           ))}
         </View>
       </View>

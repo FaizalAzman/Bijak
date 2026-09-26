@@ -1,4 +1,5 @@
 import type { Standard, Subject, Topic } from '@/features/content/schema';
+import { translate, type UiLang } from '@/i18n/core';
 import type { Progress } from '@/store/types';
 
 export interface TopicStatus {
@@ -72,10 +73,6 @@ export function nextTopic(standard: Standard | undefined, p: Progress, schoolTop
   return candidates[0];
 }
 
-export function greeting(date = new Date()): string {
-  const h = date.getHours();
-  if (h < 12) return 'Selamat pagi';
-  if (h < 15) return 'Selamat tengah hari';
-  if (h < 19) return 'Selamat petang';
-  return 'Selamat malam';
+export function greeting(lang: UiLang, date = new Date()): string {
+  return translate(lang, 'home.greeting', date.getHours());
 }

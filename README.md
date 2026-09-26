@@ -7,6 +7,7 @@ time-attack games. A PIN-protected Parent Zone shows where they need help.
 
 - 32 Standard 3 topics / 135 hand-written questions aligned to **KSSR (Semakan 2017)**, the curriculum Year 3 uses in 2026
 - Starter content for Standards 1, 2, 4, 5 and 6; every standard is plain JSON, so Standard 7 is just another file
+- The whole app in **Bahasa Melayu or English** — buttons, messages, reminders and the weekly report — switchable any time
 - Maths & Science in **English (DLP) or Bahasa Melayu**, set per child to match their school; progress carries across both
 - Parents pin the topic each class is on this week; Bijak practises it first and sets quests for it
 - Streaks that forgive real life: family rest days and rest-day shields
@@ -28,7 +29,7 @@ See [`docs/SETUP.md`](docs/SETUP.md) for builds, env vars and cloud sync, and
 ## Testing
 
 ```bash
-npm test          # 1,800+ unit, component, flow and meta tests
+npm test          # 2,300+ unit, component, flow and meta tests
 npm run verify    # typecheck + lint + content validation + tests with coverage thresholds
 ```
 
@@ -62,6 +63,9 @@ See [`docs/TESTING.md`](docs/TESTING.md).
 | 20 | Parent analytics: time per day/subject, accuracy, weak KSSR topics + offline activities; weekly report to share | `src/app/parent/`, `src/features/insights/` |
 | 21 | Gentle reminders: local notifications planned on the device, parent-controlled | `src/features/reminders/` |
 | 22 | Teaching language: Bahasa Melayu overlays for Maths & Science, same ids and answers | `src/features/content/localize.ts`, `content/standards/*.json` |
+| 23 | Bilingual UI: every message in English and Bahasa Melayu side by side, a family language setting | `src/i18n/` |
+
+What's next: [`docs/ROADMAP.md`](docs/ROADMAP.md).
 
 **Design:** NativeWind (Tailwind) tokens in `src/theme/tokens.js`; chunky neo-brutalist
 cards with hard ink shadows; Fredoka display + Plus Jakarta Sans body; Expo Haptics on

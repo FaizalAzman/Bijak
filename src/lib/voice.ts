@@ -10,6 +10,8 @@
  *    said the way a teacher would read it aloud.
  */
 
+import { translate, type MessageKey, type UiLang } from '@/i18n/core';
+
 export type SpeechLang = 'en' | 'ms';
 
 /** The fields of an installed voice we use (expo-speech `Voice`). */
@@ -89,25 +91,27 @@ export function pickVoice(voices: readonly VoiceInfo[], lang: SpeechLang, prefer
   return rankVoices(voices, lang)[0] ?? null;
 }
 
-const REGION: Record<string, string> = {
-  'en-gb': 'British English',
-  'en-us': 'American English',
-  'en-au': 'Australian English',
-  'en-nz': 'New Zealand English',
-  'en-ie': 'Irish English',
-  'en-in': 'Indian English',
-  'en-za': 'South African English',
-  'en-sg': 'Singapore English',
-  'ms-my': 'Bahasa Melayu',
-  'id-id': 'Bahasa Indonesia',
-};
+const REGION_KEY = {
+  'en-gb': 'region.en-gb',
+  'en-us': 'region.en-us',
+  'en-au': 'region.en-au',
+  'en-nz': 'region.en-nz',
+  'en-ie': 'region.en-ie',
+  'en-in': 'region.en-in',
+  'en-za': 'region.en-za',
+  'en-sg': 'region.en-sg',
+  'ms-my': 'region.ms-my',
+  'id-id': 'region.id-id',
+} as const satisfies Record<string, MessageKey>;
 
 /** A friendly name: "Daniel · British English", or for code-named Android voices "British English · gba". */
-export function voiceLabel(v: VoiceInfo): string {
-  const region = REGION[tagOf(v)] ?? v.language;
+export function voiceLabel(v: VoiceInfo, lang: UiLang = 'en'): string {
+  const tag = tagOf(v);
+  const region = tag in REGION_KEY ? translate(lang, REGION_KEY[tag as keyof typeof REGION_KEY]) : v.language;
   const coded = v.name.match(/^[a-z]{2,3}-[a-z]{2,3}-x-([a-z0-9]+)/i);
   const base = coded ? `${region} · ${coded[1]}` : `${v.name.replace(/\s*\((enhanced|premium)\)\s*/i, '').trim()} · ${region}`;
-  const notes = [/premium/i.test(`${v.identifier} ${v.name}`) ? 'premium' : v.quality === 'Enhanced' ? 'enhanced' : '', /network/i.test(v.identifier) ? 'needs internet' : ''].filter(Boolean);
+  const quality = /premium/i.test(`${v.identifier} ${v.name}`) ? 'voice.premium' : v.quality === 'Enhanced' ? 'voice.enhanced' : null;
+  const notes = [quality && translate(lang, quality), /network/i.test(v.identifier) && translate(lang, 'voice.online')].filter(Boolean);
   return notes.length ? `${base} (${notes.join(', ')})` : base;
 }
 
