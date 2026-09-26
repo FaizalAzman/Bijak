@@ -7,6 +7,7 @@ import { colors } from '@/theme';
 function Swatch({ color, selected, onPress, label }: { color: string; selected: boolean; onPress: () => void; label: string }) {
   return (
     <Pressable
+      accessibilityRole="button"
       accessibilityLabel={label}
       accessibilityState={{ selected }}
       onPress={() => {
@@ -29,6 +30,7 @@ function Swatch({ color, selected, onPress, label }: { color: string; selected: 
 function Option({ label, selected, onPress }: { label: string; selected: boolean; onPress: () => void }) {
   return (
     <Pressable
+      accessibilityRole="button"
       accessibilityState={{ selected }}
       onPress={() => {
         fx.tap();
@@ -45,6 +47,8 @@ function Option({ label, selected, onPress }: { label: string; selected: boolean
 
 const HAIR_LABEL: Record<AvatarConfig['hair'], string> = { short: 'Short', spiky: 'Spiky', curly: 'Curly', long: 'Long', bun: 'Bun', tudung: 'Tudung' };
 const EYE_LABEL: Record<AvatarConfig['eyes'], string> = { round: 'Bright', happy: 'Smiley', wink: 'Wink' };
+/** Spoken names for the swatches (screen readers would otherwise read hex codes). */
+const HAIR_COLOUR_LABEL = ['Black', 'Dark brown', 'Brown', 'Golden', 'Purple'];
 
 /** Free, always-available look options (skin, hair, eyes). */
 export function AvatarBasics({ value, onChange }: { value: AvatarConfig; onChange: (patch: Partial<AvatarConfig>) => void }) {
@@ -53,8 +57,8 @@ export function AvatarBasics({ value, onChange }: { value: AvatarConfig; onChang
       <View style={{ gap: 8 }}>
         <Txt variant="label">Skin</Txt>
         <View style={{ flexDirection: 'row', gap: 10, flexWrap: 'wrap' }}>
-          {SKIN_TONES.map((c) => (
-            <Swatch key={c} label={`Skin ${c}`} color={c} selected={value.skin === c} onPress={() => onChange({ skin: c })} />
+          {SKIN_TONES.map((c, i) => (
+            <Swatch key={c} label={`Skin tone ${i + 1}`} color={c} selected={value.skin === c} onPress={() => onChange({ skin: c })} />
           ))}
         </View>
       </View>
@@ -66,8 +70,8 @@ export function AvatarBasics({ value, onChange }: { value: AvatarConfig; onChang
           ))}
         </View>
         <View style={{ flexDirection: 'row', gap: 10, flexWrap: 'wrap', marginTop: 4 }}>
-          {HAIR_COLORS.map((c) => (
-            <Swatch key={c} label={`Hair colour ${c}`} color={c} selected={value.hairColor === c} onPress={() => onChange({ hairColor: c })} />
+          {HAIR_COLORS.map((c, i) => (
+            <Swatch key={c} label={`${HAIR_COLOUR_LABEL[i] ?? `Colour ${i + 1}`} hair`} color={c} selected={value.hairColor === c} onPress={() => onChange({ hairColor: c })} />
           ))}
         </View>
       </View>

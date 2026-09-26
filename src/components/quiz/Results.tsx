@@ -61,7 +61,8 @@ export function Results({ data, onDone, onRetry }: { data: ResultsData; onDone: 
         <Txt variant="subtitle" style={{ color: colors.muted, textAlign: 'center' }}>
           {data.title}
         </Txt>
-        <View style={{ flexDirection: 'row', gap: 10 }}>
+        {/* Read as one phrase ("2 of 3 stars") instead of three separate emoji. */}
+        <View style={{ flexDirection: 'row', gap: 10 }} accessible accessibilityLabel={`${stars} of 3 stars`} testID="stars">
           {[0, 1, 2].map((i) => (
             <Txt key={i} style={{ fontSize: 46, opacity: i < stars ? 1 : 0.2 }}>
               ⭐

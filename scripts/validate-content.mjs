@@ -4,15 +4,17 @@ import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { Manifest } from '../src/features/content/schema.ts';
-import { parseStandard } from '../src/features/content/validate.ts';
+import { crossStandardIssues, parseStandard } from '../src/features/content/validate.ts';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..', 'content');
 const manifest = Manifest.parse(JSON.parse(readFileSync(join(root, 'manifest.json'), 'utf8')));
 
 let failed = 0;
+const parsed = [];
 for (const entry of manifest.standards) {
   try {
     const std = parseStandard(JSON.parse(readFileSync(join(root, entry.file), 'utf8')));
+    parsed.push(std);
     if (std.id !== entry.id || std.version !== entry.version || std.level !== entry.level) {
       throw new Error(`manifest entry (id/level/version) does not match ${entry.file}`);
     }
@@ -23,5 +25,9 @@ for (const entry of manifest.standards) {
     failed++;
     console.error(`✘ ${entry.id}: ${e.message}`);
   }
+}
+for (const issue of crossStandardIssues(parsed)) {
+  failed++;
+  console.error(`✘ ${issue}`);
 }
 process.exit(failed ? 1 : 0);

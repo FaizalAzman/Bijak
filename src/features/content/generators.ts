@@ -4,27 +4,35 @@
  * System can track e.g. "7 × 8" across sessions exactly like authored questions.
  */
 import { groupDigits } from '@/lib/format';
-import { int, pick, shuffle, type Rng } from '@/lib/random';
+import { hashString, int, pick, shuffle, type Rng } from '@/lib/random';
 import type { GeneratorSpec, Question } from './schema';
 
 export type GenStyle = 'numpad' | 'mcq';
 
-function numericOptions(rng: Rng, answer: number, spread: number[]): { options: { id: string; text: string }[]; answer: string } {
+/** Kebab-case id fragment for a word ("Selamat pagi" → "selamat-pagi-1x2y3z"); the hash keeps ids unique. */
+function slug(word: string): string {
+  const base = word
+    .toLowerCase()
+    .normalize('NFKD')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+  return [base, hashString(word).toString(36)].filter(Boolean).join('-');
+}
+
+/** Four distinct, non-negative whole-number options: the answer plus plausible mistakes. */
+export function numericOptions(rng: Rng, answer: number, spread: number[]): { options: { id: string; text: string }[]; answer: string } {
   const set = new Set<number>([answer]);
   const candidates = shuffle(
-    spread.map((d) => answer + d).filter((v) => v >= 0 && v !== answer),
+    spread.map((d) => answer + d).filter((v) => Number.isInteger(v) && v >= 0 && v !== answer),
     rng,
   );
   for (const c of candidates) {
     if (set.size >= 4) break;
     set.add(c);
   }
-  let bump = 1;
-  while (set.size < 4) set.add(answer + bump++ * (rng() < 0.5 ? -1 : 1) + 11);
-  const values = shuffle(
-    [...set].filter((v) => v >= 0),
-    rng,
-  );
+  // Not enough plausible mistakes: fill with near neighbours (never negative).
+  for (let step = 1; set.size < 4; step++) set.add(rng() < 0.5 && answer - step >= 0 ? answer - step : answer + step);
+  const values = shuffle([...set], rng);
   const options = values.map((v, i) => ({ id: String.fromCharCode(97 + i), text: groupDigits(v) }));
   return { options, answer: options[values.indexOf(answer)].id };
 }
@@ -37,7 +45,7 @@ function numeric(id: string, prompt: string, answer: number, style: GenStyle, rn
   return { id, type: 'numpad', prompt, lang: 'en', difficulty: 1, answer: String(answer), ...extra } as Question;
 }
 
-const PLACES = ['ones', 'tens', 'hundreds', 'thousands', 'ten thousands', 'hundred thousands'];
+export const PLACES = ['ones', 'tens', 'hundreds', 'thousands', 'ten thousands', 'hundred thousands', 'millions'];
 
 function one(spec: GeneratorSpec, rng: Rng, style: GenStyle): Question {
   switch (spec.kind) {
@@ -50,12 +58,12 @@ function one(spec: GeneratorSpec, rng: Rng, style: GenStyle): Question {
     case 'division': {
       const d = pick(rng, spec.tables);
       const q = int(rng, 1, spec.maxFactor);
-      return numeric(`div-${d * q}/${d}`, `${d * q} ÷ ${d} = ?`, q, style, rng, [1, -1, 2, -2, 3], { difficulty: d > 5 ? 2 : 1 });
+      return numeric(`div-${d * q}-by-${d}`, `${d * q} ÷ ${d} = ?`, q, style, rng, [1, -1, 2, -2, 3], { difficulty: d > 5 ? 2 : 1 });
     }
     case 'addition': {
       const terms = Array.from({ length: spec.terms }, () => int(rng, 1, Math.max(2, Math.floor(spec.max / spec.terms))));
       const sum = terms.reduce((s, v) => s + v, 0);
-      return numeric(`add-${terms.join('+')}`, `${terms.map(groupDigits).join(' + ')} = ?`, sum, style, rng, [1, -1, 10, -10, 100, -100], {
+      return numeric(`add-${terms.join('-')}`, `${terms.map(groupDigits).join(' + ')} = ?`, sum, style, rng, [1, -1, 10, -10, 100, -100], {
         difficulty: spec.max > 1000 ? 2 : 1,
       });
     }
@@ -85,14 +93,22 @@ function one(spec: GeneratorSpec, rng: Rng, style: GenStyle): Question {
       };
     }
     case 'placeValue': {
-      const n = int(rng, 10, spec.max);
+      // Only ask about a non-zero digit that appears once: "the digit 5 in 3 535" would be ambiguous.
+      const askable = (n: number) => {
+        const ds = String(n).split('').reverse();
+        return ds.map((_, i) => i).filter((i) => ds[i] !== '0' && ds.indexOf(ds[i]) === ds.lastIndexOf(ds[i]));
+      };
+      let n = int(rng, 10, spec.max);
+      for (let tries = 0; tries < 50 && askable(n).length === 0; tries++) n = int(rng, 10, spec.max);
+      if (askable(n).length === 0) n = 10;
       const digits = String(n).split('').reverse();
-      let pos = int(rng, 0, digits.length - 1);
-      // Prefer non-zero digits so the question is meaningful.
-      for (let i = 0; i < digits.length && digits[pos] === '0'; i++) pos = (pos + 1) % digits.length;
+      const pos = pick(rng, askable(n));
       const digit = digits[pos];
       if (rng() < 0.5) {
-        const options = PLACES.slice(0, Math.max(4, digits.length)).map((p, i) => ({ id: String(i), text: p }));
+        // Four places, in reading order: the right one plus three others (ids are place indexes).
+        const pool = PLACES.map((_, i) => i).slice(0, Math.max(4, digits.length));
+        const chosen = [pos, ...shuffle(pool.filter((i) => i !== pos), rng).slice(0, 3)].sort((a, b) => a - b);
+        const options = chosen.map((i) => ({ id: String(i), text: PLACES[i] }));
         return {
           id: `pv-place-${n}-${pos}`,
           type: 'mcq',
@@ -110,7 +126,7 @@ function one(spec: GeneratorSpec, rng: Rng, style: GenStyle): Question {
         value,
         style,
         rng,
-        [value * 9, -value + Number(digit), value * 10 - value],
+        [value * 9, Number(digit) - value, value / 10 - value],
         {
           difficulty: 2,
           explain: `${digit} is in the ${PLACES[pos]} place, so it is worth ${groupDigits(value)}.`,
@@ -154,7 +170,7 @@ function one(spec: GeneratorSpec, rng: Rng, style: GenStyle): Question {
       const values = shuffle([meaning, ...others], rng);
       const options = values.map((v, i) => ({ id: String.fromCharCode(97 + i), text: v }));
       return {
-        id: `vocab-${word}`,
+        id: `vocab-${slug(word)}`,
         type: 'mcq',
         prompt: spec.lang === 'ms' ? `Apakah maksud "${word}"?` : `What does "${word}" mean?`,
         lang: spec.lang,

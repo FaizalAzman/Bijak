@@ -16,6 +16,7 @@ import { colors, fonts } from '@/theme';
 function SpeakButton({ text, lang, size = 34 }: { text: string; lang: 'en' | 'ms'; size?: number }) {
   return (
     <Pressable
+      accessibilityRole="button"
       accessibilityLabel={`Listen: ${text}`}
       onPress={() => {
         fx.tap();
@@ -39,8 +40,8 @@ function SpeakButton({ text, lang, size = 34 }: { text: string; lang: 'en' | 'ms
 
 function PlaceValue({ n }: { n: number }) {
   const digits = String(n).split('');
-  const names = ['Ones', 'Tens', 'Hundreds', 'Thousands', 'Ten thousands', 'Hundred thousands'];
-  const tints = [colors['mint-soft'], colors['sky-soft'], colors['sun-soft'], colors['tangerine-soft'], colors['grape-soft'], colors['berry-soft']];
+  const names = ['Ones', 'Tens', 'Hundreds', 'Thousands', 'Ten thousands', 'Hundred thousands', 'Millions'];
+  const tints = [colors['mint-soft'], colors['sky-soft'], colors['sun-soft'], colors['tangerine-soft'], colors['grape-soft'], colors['berry-soft'], colors.sand];
   return (
     <View style={{ flexDirection: 'row', borderWidth: 2, borderColor: colors.ink, borderRadius: 14, overflow: 'hidden' }}>
       {digits.map((d, i) => {

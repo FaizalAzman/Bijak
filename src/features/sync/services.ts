@@ -35,9 +35,10 @@ let syncing = false;
 
 export async function syncNow(): Promise<{ ok: boolean; message: string }> {
   if (!cloudSyncConfigured()) return { ok: false, message: 'Cloud sync is not configured' };
-  const { parent, profiles, progress, dirtyAt, syncedAt, markSynced } = useApp.getState();
+  // Snapshot first: anything changed while uploading has a higher revision and syncs next time.
+  const { parent, profiles, progress, dirtyAt, syncedRevision, markSynced } = useApp.getState();
   if (!parent) return { ok: false, message: 'No family yet' };
-  if (syncedAt && syncedAt >= dirtyAt) return { ok: true, message: 'Already up to date' };
+  if (syncedRevision != null && syncedRevision >= dirtyAt) return { ok: true, message: 'Already up to date' };
   if (syncing) return { ok: false, message: 'Sync in progress' };
   syncing = true;
   try {
@@ -66,8 +67,7 @@ export async function syncNow(): Promise<{ ok: boolean; message: string }> {
       body: JSON.stringify(rows),
     });
     if (!res.ok) throw new Error(`Supabase HTTP ${res.status}`);
-    const at = Date.now();
-    markSynced(at);
+    markSynced(Date.now(), dirtyAt);
     telemetry.event('sync_ok', { profiles: rows.length });
     return { ok: true, message: 'Synced' };
   } catch (e) {

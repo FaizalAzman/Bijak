@@ -30,7 +30,8 @@ export default function Quests() {
   const countdown = useCountdown();
   const days = lastNDays(7);
   const today = dayKey();
-  const active = new Set(Object.keys(p.days).filter((d) => (p.days[d]?.answered ?? 0) > 0 || Object.keys(p.days[d]?.seconds ?? {}).length > 0));
+  // Lit days are exactly the streak days: a quiz or lesson was finished (which records time).
+  const active = new Set(Object.keys(p.days).filter((d) => Object.keys(p.days[d]?.seconds ?? {}).length > 0));
   const done = p.quests.list.filter((q) => q.claimed).length;
 
   return (
@@ -52,9 +53,17 @@ export default function Quests() {
             {days.map((d) => {
               const on = active.has(d);
               const isToday = d === today;
-              const label = ['S', 'M', 'T', 'W', 'T', 'F', 'S'][new Date(`${d}T12:00:00`).getDay()];
+              const weekday = new Date(`${d}T12:00:00`).getDay();
+              const label = ['S', 'M', 'T', 'W', 'T', 'F', 'S'][weekday];
+              const name = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][weekday];
               return (
-                <View key={d} style={{ alignItems: 'center', gap: 4 }}>
+                <View
+                  key={d}
+                  style={{ alignItems: 'center', gap: 4 }}
+                  accessible
+                  accessibilityLabel={`${name}: ${on ? 'streak day' : isToday ? 'today, not done yet' : 'no streak'}`}
+                  testID={`day-${d}`}
+                >
                   <Txt style={{ fontFamily: 'PlusJakartaSans_800ExtraBold', fontSize: 12, color: colors.paper }}>{label}</Txt>
                   <View
                     style={{
@@ -82,7 +91,7 @@ export default function Quests() {
 
       <SectionLabel right={<Txt variant="small">Resets in {countdown}</Txt>}>{`Today's quests · ${done}/${p.quests.list.length}`}</SectionLabel>
       <View style={{ gap: 12 }}>
-        {p.quests.list.map((q, i) => (
+        {p.quests.list.map((q) => (
           <View key={q.id}>
             <QuestRow
               quest={q}

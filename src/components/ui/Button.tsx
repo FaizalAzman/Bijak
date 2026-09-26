@@ -25,11 +25,16 @@ interface ButtonProps {
   size?: 'md' | 'lg' | 'sm';
   disabled?: boolean;
   loading?: boolean;
+  /** Stretch to the container width. */
   full?: boolean;
+  /** Alignment when not `full`: 'start' in columns (default), 'center' inside rows. */
+  align?: 'start' | 'center';
   testID?: string;
 }
 
-export function Button({ label, onPress, tone = 'ink', icon, iconRight, size = 'md', disabled, loading, full, testID }: ButtonProps) {
+const ALIGN = { start: 'flex-start', center: 'center' } as const;
+
+export function Button({ label, onPress, tone = 'ink', icon, iconRight, size = 'md', disabled, loading, full, align = 'start', testID }: ButtonProps) {
   const t = disabled ? { bg: colors.sand, fg: colors.muted } : TONES[tone];
   const pad = size === 'lg' ? 17 : size === 'sm' ? 8 : 13;
   return (
@@ -43,12 +48,21 @@ export function Button({ label, onPress, tone = 'ink', icon, iconRight, size = '
       radius={size === 'sm' ? 12 : 16}
       depth={disabled ? 0 : size === 'sm' ? 3 : 4}
       borderColor={disabled ? colors.line : colors.ink}
-      style={full ? { alignSelf: 'stretch' } : { alignSelf: 'flex-start' }}
+      style={{ alignSelf: full ? 'stretch' : ALIGN[align], maxWidth: '100%' }}
       innerStyle={{ paddingVertical: pad, paddingHorizontal: size === 'sm' ? 12 : 20 }}
     >
-      <View className="flex-row items-center justify-center" style={{ gap: 8 }}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
         {loading ? <ActivityIndicator color={t.fg} /> : icon}
-        <Txt variant={size === 'lg' ? 'title' : 'subtitle'} style={{ color: t.fg, fontSize: size === 'sm' ? 13 : undefined }}>
+        {/* One line only: a wrapping label is what made buttons grow tall and narrow. */}
+        <Txt
+          testID={testID ? `${testID}-label` : undefined}
+          variant={size === 'lg' ? 'title' : 'subtitle'}
+          numberOfLines={1}
+          adjustsFontSizeToFit
+          minimumFontScale={0.75}
+          maxFontSizeMultiplier={1.2}
+          style={{ color: t.fg, fontSize: size === 'sm' ? 13 : undefined, flexShrink: 1, textAlign: 'center' }}
+        >
           {label}
         </Txt>
         {iconRight}

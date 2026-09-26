@@ -10,8 +10,17 @@ content/
   standards/std3.json      # one file per standard
 ```
 
-Run `npm run validate-content` after every edit. It checks the schema and cross-references
-(answers exist, blank counts match, ids are unique).
+Run `npm run validate-content` after every edit. It checks the schema and cross-references:
+
+- answers exist, blank counts match, and every blank answer is in the word bank;
+- ids are unique within a standard **and across all standards** (progress is keyed by id);
+- multiple-choice options look different (case counts: "The cat" ≠ "the cat"), sort items
+  and vocab words/meanings are unique, and an order distractor is never a real token;
+- blanks are exactly `___`, a `count` is never larger than the question pool, arcade games
+  are time attacks, and place-value numbers stay within 7 digits (millions).
+
+`npm test` then goes further: every question is built with many seeds and answered through
+the real UI, and every lesson is rendered (see `docs/TESTING.md`).
 
 ## Structure
 
@@ -92,7 +101,8 @@ Kinds: `multiplication`, `division`, `addition`, `subtraction`, `compare`, `plac
 2. Bump the standard's `version` in both its file and `manifest.json`.
 3. In the app: **Parent zone → Content & sync → Content URL** (or set
    `EXPO_PUBLIC_CONTENT_URL` at build time). Devices download and validate newer standards
-   in the background; invalid payloads are rejected and the bundled copy stays in use.
+   in the background; invalid payloads (or ids that clash with another standard) are
+   rejected as a whole and the current copy stays in use.
 
 ## KSSR alignment
 

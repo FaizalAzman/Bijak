@@ -46,7 +46,7 @@ export function QuestRow({ quest, onClaim, compact }: { quest: Quest; onClaim?: 
           <Check size={18} color={colors.ink} strokeWidth={3.5} />
         </View>
       ) : done && onClaim ? (
-        <Button label={`+${quest.reward} 🪙`} tone="lime" size="sm" onPress={onClaim} />
+        <Button label={`+${quest.reward} 🪙`} tone="lime" size="sm" align="center" onPress={onClaim} testID={`claim-${quest.id}`} />
       ) : (
         <Txt variant="small" style={{ color: colors.ink }}>
           🪙 {quest.reward}

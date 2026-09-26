@@ -57,7 +57,7 @@ export function Numpad({ q, onAnswer, locked }: QuestionProps<'numpad'>) {
             RM
           </Txt>
         )}
-        <Txt variant="hero" style={{ fontSize: 40, lineHeight: 48, color: value ? colors.ink : colors.line }}>
+        <Txt variant="hero" testID="numpad-value" style={{ fontSize: 40, lineHeight: 48, color: value ? colors.ink : colors.line }}>
           {shown}
         </Txt>
         {q.unit && q.unit !== 'RM' ? (

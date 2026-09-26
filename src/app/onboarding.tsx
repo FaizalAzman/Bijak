@@ -58,15 +58,20 @@ export default function Onboarding() {
 
   const finish = async () => {
     setSaving(true);
-    const s = useApp.getState();
-    if (!s.parent) {
-      s.setupFamily(parentName || 'Parent');
-      await setParentPin(pin);
+    try {
+      const s = useApp.getState();
+      if (!s.parent) {
+        s.setupFamily(parentName.trim() || 'Parent');
+        await setParentPin(pin);
+      }
+      const id = s.addProfile({ name: childName.trim(), level, avatar });
+      useApp.getState().selectProfile(id);
+      fx.levelUp();
+      router.replace('/home');
+    } catch {
+      fx.wrong();
+      setSaving(false);
     }
-    const id = s.addProfile({ name: childName.trim(), level, avatar });
-    useApp.getState().selectProfile(id);
-    fx.levelUp();
-    router.replace('/home');
   };
 
   const mascot: Record<Step, { text: string; mood: 'wave' | 'happy' | 'think' | 'cheer' | 'idle' }> = {

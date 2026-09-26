@@ -38,6 +38,7 @@ function Bucket({
       <DropZone id={b.id} style={{ flex: 1 }}>
         <Pressable
           onPress={onPress}
+          accessibilityRole="button"
           accessibilityLabel={`Bucket ${b.label}`}
           style={{
             flex: 1,

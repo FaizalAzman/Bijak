@@ -11,6 +11,9 @@ import { haptic } from '@/lib/feedback';
 import { DURATION, EASE_OUT } from '@/theme/motion';
 
 type Rect = { x: number; y: number; w: number; h: number };
+
+/** Screen readers "activate" (double-tap) an item; we treat that exactly like a tap. */
+export const ACTIVATE = [{ name: 'activate' as const }];
 interface Zones {
   register: (id: string, view: View | null) => void;
   hitTest: (x: number, y: number) => Promise<string | null>;
@@ -50,6 +53,7 @@ export function Draggable({
   onTap,
   disabled,
   style,
+  accessibilityLabel,
 }: {
   children: ReactNode;
   /** Return true if the drop was accepted (the item will be re-parented by the caller). */
@@ -57,6 +61,8 @@ export function Draggable({
   onTap?: () => void;
   disabled?: boolean;
   style?: StyleProp<ViewStyle>;
+  /** Defaults to the text inside the tile. */
+  accessibilityLabel?: string;
 }) {
   const zones = useContext(ZoneCtx);
   const tx = useSharedValue(0);
@@ -104,7 +110,19 @@ export function Draggable({
 
   return (
     <GestureDetector gesture={Gesture.Exclusive(pan, tap)}>
-      <Animated.View style={[style, aStyle]}>{children}</Animated.View>
+      <Animated.View
+        style={[style, aStyle]}
+        accessible
+        accessibilityRole="button"
+        accessibilityLabel={accessibilityLabel}
+        accessibilityState={{ disabled: !!disabled }}
+        accessibilityActions={ACTIVATE}
+        onAccessibilityAction={(e) => {
+          if (e.nativeEvent.actionName === 'activate' && !disabled) onTap?.();
+        }}
+      >
+        {children}
+      </Animated.View>
     </GestureDetector>
   );
 }

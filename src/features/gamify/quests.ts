@@ -13,11 +13,14 @@ export interface Quest {
   reward: number;
   subjectId?: string;
   claimed: boolean;
+  /** The child has been told this quest is complete (so the toast shows once). */
+  notified?: boolean;
 }
 
+/** `review` sessions mix subjects, so they never count towards a subject's quiz quest. */
 export type QuestEvent =
   | { type: 'answer'; correct: boolean; combo: number }
-  | { type: 'quizComplete'; subjectId: string; perfect: boolean; timeAttack: boolean }
+  | { type: 'quizComplete'; subjectId: string; perfect: boolean; timeAttack: boolean; review?: boolean }
   | { type: 'lesson' }
   | { type: 'review'; correct: boolean }
   | { type: 'xp'; amount: number };
@@ -65,7 +68,7 @@ function delta(q: Quest, e: QuestEvent): number | 'set' {
     case 'combo':
       return e.type === 'answer' && e.correct && e.combo > q.progress ? 'set' : 0;
     case 'quizzesInSubject':
-      return e.type === 'quizComplete' && !e.timeAttack && e.subjectId === q.subjectId ? 1 : 0;
+      return e.type === 'quizComplete' && !e.timeAttack && !e.review && e.subjectId === q.subjectId ? 1 : 0;
     case 'lesson':
       return e.type === 'lesson' ? 1 : 0;
     case 'timeAttack':

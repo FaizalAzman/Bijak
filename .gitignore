@@ -16,3 +16,6 @@ android/
 npm-debug.*
 yarn-error.*
 *.tsbuildinfo
+
+# test coverage reports
+coverage/

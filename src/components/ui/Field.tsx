@@ -10,6 +10,7 @@ export function Field({ label, ...props }: TextInputProps & { label?: string }) 
       {label ? <Txt variant="label">{label}</Txt> : null}
       <TextInput
         placeholderTextColor={colors.muted}
+        accessibilityLabel={label ?? props.placeholder}
         {...props}
         onFocus={(e) => {
           setFocus(true);

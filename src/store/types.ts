@@ -31,6 +31,8 @@ export interface TopicStat {
   /** Best score (0–100) per quiz id. */
   best: Record<string, number>;
   lastAt: number;
+  /** Day a re-read of this lesson last earned XP (re-reads earn XP once per day). */
+  lessonXpDay?: string;
 }
 
 export interface DayStat {
@@ -62,6 +64,8 @@ export interface Progress {
     purchases: number;
   };
   timeAttackBest: Record<string, number>;
+  /** Today's paid bonuses: `quizId` → completion bonus day, `quizId:perfect` → perfect bonus day. */
+  quizBonusDay?: Record<string, string>;
 }
 
 export interface Settings {
