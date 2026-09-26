@@ -43,12 +43,24 @@ EXPO_PUBLIC_SUPABASE_ANON_KEY=eyJ...
 
 Without these the app is 100% offline; all data lives in on-device SQLite.
 
-## Building & over-the-air updates (EAS)
+## Building an APK & over-the-air updates (EAS)
+
+`eas.json` has two build profiles: `preview` makes an installable **APK** for Android phones,
+`production` makes the app bundle (`.aab`) Google Play needs.
 
 ```bash
-npx eas-cli@latest build:configure
-npx eas-cli@latest build --profile preview --platform android   # installable APK
-npx eas-cli@latest update:configure                              # enables expo-updates
+npx eas-cli@latest login                                        # free Expo account
+npx eas-cli@latest build --platform android --profile preview   # installable APK
+```
+
+The first build offers to create the project on your Expo account and to generate the
+Android signing key (let EAS keep it). When the cloud build finishes you get a link and a QR
+code: open it on the phone, download the `.apk` and install it (allow installs from the
+browser when asked). The APK includes everything, reminders too.
+
+```bash
+npx eas-cli@latest build --platform android --profile production   # .aab for Google Play
+npx eas-cli@latest update:configure                                 # enables expo-updates
 npx eas-cli@latest update --branch production --message "New Std 4 content"
 ```
 
