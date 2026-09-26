@@ -1,5 +1,5 @@
 import { router } from 'expo-router';
-import { Activity, ChevronRight, Download, School, Settings, Users } from 'lucide-react-native';
+import { Activity, BarChart3, ChevronRight, Download, School, Settings, Users } from 'lucide-react-native';
 import { useMemo, useState } from 'react';
 import { View } from 'react-native';
 import { Avatar } from '@/components/avatar/Avatar';
@@ -200,6 +200,14 @@ export default function ParentDashboard() {
       <View style={{ gap: 10 }}>
         {child && (
           <NavRow
+            icon={<BarChart3 size={22} color={colors.ink} />}
+            label="Weekly report"
+            sub={`${child.name}'s week, ready to share on WhatsApp`}
+            onPress={() => router.push(`/parent/report?child=${child.id}`)}
+          />
+        )}
+        {child && (
+          <NavRow
             icon={<School size={22} color={colors.ink} />}
             label="At school now"
             sub={`Topics ${child.name}'s class is on this week`}
@@ -209,7 +217,7 @@ export default function ParentDashboard() {
         <NavRow icon={<Users size={22} color={colors.ink} />} label="Children" sub="Add, edit standard, language, reset" onPress={() => router.push('/parent/children')} />
         <NavRow icon={<Download size={22} color={colors.ink} />} label="Content & sync" sub="Syllabus updates, cloud backup" onPress={() => router.push('/parent/content')} />
         <NavRow icon={<Activity size={22} color={colors.ink} />} label="App health" sub="Crashes & performance" onPress={() => router.push('/parent/health')} />
-        <NavRow icon={<Settings size={22} color={colors.ink} />} label="Settings" sub="Read-aloud voice, rest days, PIN" onPress={() => router.push('/parent/settings')} />
+        <NavRow icon={<Settings size={22} color={colors.ink} />} label="Settings" sub="Reminders, voice, rest days, PIN" onPress={() => router.push('/parent/settings')} />
       </View>
     </Screen>
   );

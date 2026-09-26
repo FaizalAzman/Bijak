@@ -2,6 +2,7 @@ import { router } from 'expo-router';
 import { useState } from 'react';
 import { View } from 'react-native';
 import { toast } from '@/components/gamify/Toaster';
+import { ReminderSettings } from '@/components/parent/ReminderSettings';
 import { VoicePicker } from '@/components/parent/VoicePicker';
 import { Button, Chip, Chunky, Keypad, PinDots, Screen, SectionLabel, TopBar, Txt } from '@/components/ui';
 import { REST_DAY_PRESETS, restDayPreset, type RestDayPreset } from '@/features/gamify/streak';
@@ -57,6 +58,11 @@ export default function ParentSettings() {
   };
   return (
     <Screen header={<TopBar title="Settings" />}>
+      <SectionLabel>Reminders</SectionLabel>
+      <Chunky depth={3} innerStyle={{ padding: 14 }}>
+        <ReminderSettings />
+      </Chunky>
+
       <SectionLabel>Streak rest days</SectionLabel>
       <Chunky depth={3} innerStyle={{ padding: 14, gap: 12 }}>
         <Txt variant="small">Days that never break a streak (playing on them still counts). Pick your family’s weekend.</Txt>

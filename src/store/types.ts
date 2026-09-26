@@ -1,4 +1,5 @@
 import type { Lang } from '@/features/content/schema';
+import type { Reminders } from '@/features/reminders/plan';
 import type { Quest } from '@/features/gamify/quests';
 import type { AvatarConfig, Slot } from '@/features/gamify/shop';
 import type { SrsCard } from '@/features/srs/srs';
@@ -96,7 +97,12 @@ export interface Settings {
   restDays: number[];
   /** Read-aloud voice a parent picked per language (a device voice id); the best one when unset. */
   voices?: Partial<Record<Lang, string>>;
+  /** Gentle reminders (off until a parent turns them on). */
+  reminders?: Reminders;
 }
+
+/** What `updateSettings` accepts: voice and reminder choices merge into the saved ones. */
+export type SettingsPatch = Partial<Omit<Settings, 'reminders'>> & { reminders?: Partial<Reminders> };
 
 export interface Parent {
   name: string;

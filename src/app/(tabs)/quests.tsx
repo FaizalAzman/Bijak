@@ -95,29 +95,29 @@ export default function Quests() {
               );
             })}
           </View>
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }} testID="shields">
-            <Txt style={{ fontSize: 24 }}>🛡️</Txt>
-            <View style={{ flex: 1 }}>
-              <Txt variant="subtitle" style={{ color: colors.paper }}>{`Rest-day shields · ${shields}/${SHIELD.max}`}</Txt>
-              <Txt variant="small" style={{ color: colors.paper }}>
-                {`Saves your streak on a day you can't play. You earn one every ${SHIELD.earnEvery} days.`}
-              </Txt>
+          <View style={{ gap: 6 }} testID="shields">
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+              <Txt style={{ fontSize: 24 }}>🛡️</Txt>
+              <Txt variant="subtitle" style={{ color: colors.paper, flex: 1 }}>{`Rest-day shields · ${shields}/${SHIELD.max}`}</Txt>
+              {shields < SHIELD.max && (
+                <Button
+                  label={`Buy · ${SHIELD.price} 🪙`}
+                  tone="paper"
+                  size="sm"
+                  align="center"
+                  disabled={p.coins < SHIELD.price}
+                  testID="buy-shield"
+                  onPress={() => {
+                    if (!buyShield()) return;
+                    fx.coin();
+                    toast({ emoji: '🛡️', title: 'Shield ready!', subtitle: 'It saves your streak if you miss a day.' });
+                  }}
+                />
+              )}
             </View>
-            {shields < SHIELD.max && (
-              <Button
-                label={`Buy · ${SHIELD.price} 🪙`}
-                tone="paper"
-                size="sm"
-                align="center"
-                disabled={p.coins < SHIELD.price}
-                testID="buy-shield"
-                onPress={() => {
-                  if (!buyShield()) return;
-                  fx.coin();
-                  toast({ emoji: '🛡️', title: 'Shield ready!', subtitle: 'It saves your streak if you miss a day.' });
-                }}
-              />
-            )}
+            <Txt variant="small" style={{ color: colors.paper }}>
+              {`Saves your streak on a day you can't play. You earn one every ${SHIELD.earnEvery} days.`}
+            </Txt>
           </View>
           <Txt variant="small" style={{ color: colors.paper }}>
             Best streak: {p.streak.best} day{p.streak.best === 1 ? '' : 's'}

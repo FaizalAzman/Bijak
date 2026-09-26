@@ -8,7 +8,7 @@ import { PlusJakartaSans_800ExtraBold } from '@expo-google-fonts/plus-jakarta-sa
 import { SpaceMono_400Regular } from '@expo-google-fonts/space-mono/400Regular';
 import { SpaceMono_700Bold } from '@expo-google-fonts/space-mono/700Bold';
 import { useFonts } from 'expo-font';
-import { Stack, usePathname, type ErrorBoundaryProps } from 'expo-router';
+import { router, Stack, usePathname, type ErrorBoundaryProps, type Href } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useRef } from 'react';
@@ -18,6 +18,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { Toaster } from '@/components/gamify/Toaster';
 import { Kancil } from '@/components/mascot/Kancil';
 import { Button, Txt } from '@/components/ui';
+import { startReminders } from '@/features/reminders/service';
 import { startBackgroundServices } from '@/features/sync/services';
 import { loadVoices } from '@/lib/feedback';
 import { lockPhonesToPortrait } from '@/lib/orientation';
@@ -84,9 +85,12 @@ export default function RootLayout() {
     const stopServices = startBackgroundServices();
     // Find the most natural read-aloud voice now, so the first question is read without a pause.
     void loadVoices();
+    // Reminders follow progress; tapping one (even one that launched the app) opens its screen.
+    const stopReminders = startReminders((url) => router.push(url as Href));
     return () => {
       stopFrames();
       stopServices();
+      stopReminders();
     };
   }, []);
 

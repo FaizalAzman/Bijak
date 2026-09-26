@@ -2,7 +2,7 @@ import { createAudioPlayer, setAudioModeAsync } from 'expo-audio';
 import * as Haptics from 'expo-haptics';
 import * as Speech from 'expo-speech';
 import { Platform } from 'react-native';
-import { fx, haptic, loadVoices, playSfx, previewVoice, refreshVoices, speak, stopSpeaking } from '@/lib/feedback';
+import { fx, haptic, loadVoices, playSfx, previewVoice, refreshVoices, speak, stopSpeaking, VOICE_WAIT_MS } from '@/lib/feedback';
 import { telemetry } from '@/lib/telemetry';
 import type { VoiceInfo } from '@/lib/voice';
 import { useApp } from '@/store/app';
@@ -174,6 +174,19 @@ describe('read aloud', () => {
     await flush();
     expect(spoken()[1]).toEqual(['Again', 'en-gb-x-gba-local', 'en-GB']);
     expect(await loadVoices()).toBe(ANDROID);
+  });
+
+  it('a browser that never lists voices doesn’t hold speech up for long', async () => {
+    jest.useFakeTimers({ doNotFake: ['queueMicrotask', 'nextTick'] });
+    voiceList.mockReturnValue(new Promise(() => undefined));
+    void refreshVoices();
+    speak('Hello', 'en');
+    await flush();
+    expect(Speech.speak).not.toHaveBeenCalled();
+    jest.advanceTimersByTime(VOICE_WAIT_MS);
+    await flush();
+    expect(spoken()).toEqual([['Hello', undefined, 'en-GB']]);
+    jest.useRealTimers();
   });
 
   it('a failing voice list is reported and speech still works', async () => {

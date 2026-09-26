@@ -32,6 +32,7 @@ const SCREENS: Record<string, { params?: Record<string, string>; parent?: boolea
   'src/app/parent/children.tsx': { parent: true },
   'src/app/parent/content.tsx': { parent: true },
   'src/app/parent/dashboard.tsx': { parent: true },
+  'src/app/parent/report.tsx': { parent: true },
   'src/app/parent/health.tsx': { parent: true },
   'src/app/parent/index.tsx': {},
   'src/app/parent/school.tsx': { parent: true },

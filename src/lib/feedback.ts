@@ -106,10 +106,13 @@ let loading: Promise<VoiceInfo[]> | null = null;
 /** Bumped by every speak/stop, so a slow first voice lookup never talks over newer speech. */
 let turn = 0;
 
+/** Browsers without any voice never answer the voice query; don't let speech wait on it. */
+export const VOICE_WAIT_MS = 1500;
+
 /** The device's voices (cached once the engine reports any; an empty list is asked again later). */
 export function loadVoices(): Promise<VoiceInfo[]> {
   if (voices) return Promise.resolve(voices);
-  loading ??= Speech.getAvailableVoicesAsync()
+  loading ??= Promise.race([Speech.getAvailableVoicesAsync(), new Promise<VoiceInfo[]>((resolve) => setTimeout(() => resolve([]), VOICE_WAIT_MS))])
     .then((list) => {
       if (list.length) voices = list;
       else loading = null;

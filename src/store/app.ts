@@ -25,11 +25,12 @@ import { advanceStreak, cleanRestDays, liveStreak as streakShown, SHIELD } from 
 import { DEFAULT_AVATAR, EYES, FREE_ITEMS, HAIR_COLORS, HAIR_STYLES, itemById, SKIN_TONES, type AvatarConfig, type Slot } from '@/features/gamify/shop';
 import { levelFromXp, REWARDS, xpForAnswer } from '@/features/gamify/xp';
 import { topicStatus } from '@/features/progress/selectors';
+import { cleanReminders, DEFAULT_REMINDERS } from '@/features/reminders/plan';
 import { dueCards, srsUpdate, type SrsContext } from '@/features/srs/srs';
 import { dayKey } from '@/lib/date';
 import { kv } from '@/lib/storage';
 import { cleanVoiceChoices } from '@/lib/voice';
-import type { Attempt, Parent, Profile, Progress, Settings, TopicStat } from './types';
+import type { Attempt, Parent, Profile, Progress, Settings, SettingsPatch, TopicStat } from './types';
 
 export function emptyProgress(): Progress {
   return {
@@ -100,7 +101,7 @@ interface AppState {
   setSchoolTopic: (profileId: string, subjectId: string, topicId: string | null) => boolean;
   removeProfile: (id: string) => void;
   selectProfile: (id: string | null) => void;
-  updateSettings: (patch: Partial<Settings>) => void;
+  updateSettings: (patch: SettingsPatch) => void;
   resetProgress: (id: string) => void;
   /** Record a finished backup of the snapshot taken at revision `revision` (its `dirtyAt`). */
   markSynced: (at: number, revision: number) => void;
@@ -124,7 +125,7 @@ export const REVIEW_QUIZ_ID = 'review';
 
 const NO_REWARD: FinishReward = { xp: 0, coins: 0, newBest: false, badges: [], questsDone: [], streak: 0, shieldEarned: false };
 
-export const DEFAULT_SETTINGS: Settings = { sound: true, haptics: true, voice: true, autoRead: false, restDays: [], voices: {} };
+export const DEFAULT_SETTINGS: Settings = { sound: true, haptics: true, voice: true, autoRead: false, restDays: [], voices: {}, reminders: DEFAULT_REMINDERS };
 const OPTIONAL_SLOTS: Slot[] = ['hat', 'glasses', 'pet'];
 const MAX_NAME = 30;
 export const MAX_ATTEMPTS = 200;
@@ -315,10 +316,11 @@ export const useApp = create<AppState>()(
 
         updateSettings: (patch) =>
           set((s) => {
-            const settings = { ...s.settings, ...patch };
+            const settings: Settings = { ...s.settings, ...patch, reminders: s.settings.reminders };
             if (patch.restDays) settings.restDays = cleanRestDays(patch.restDays);
             // Voice choices merge per language; an empty choice goes back to automatic.
             if (patch.voices) settings.voices = cleanVoiceChoices({ ...s.settings.voices, ...patch.voices });
+            if (patch.reminders) settings.reminders = cleanReminders({ ...s.settings.reminders, ...patch.reminders }, s.settings.reminders ?? DEFAULT_REMINDERS);
             return { settings };
           }),
 

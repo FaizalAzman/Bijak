@@ -40,7 +40,14 @@
       "expo-audio",
       "expo-sqlite",
       "expo-secure-store",
-      "expo-asset"
+      "expo-asset",
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/android-icon-monochrome.png",
+          "color": "#F26B3A"
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": false
