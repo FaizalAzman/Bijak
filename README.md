@@ -7,6 +7,11 @@ time-attack games. A PIN-protected Parent Zone shows where they need help.
 
 - 32 Standard 3 topics / 135 hand-written questions aligned to **KSSR (Semakan 2017)**, the curriculum Year 3 uses in 2026
 - Starter content for Standards 1, 2, 4, 5 and 6; every standard is plain JSON, so Standard 7 is just another file
+- Maths & Science in **English (DLP) or Bahasa Melayu**, set per child to match their school; progress carries across both
+- Parents pin the topic each class is on this week; Bijak practises it first and sets quests for it
+- Streaks that forgive real life: family rest days and rest-day shields
+- Gentle, parent-controlled reminders and a **weekly report** to share on WhatsApp
+- Read-aloud in the most natural voice on the device, reading maths the way a teacher would
 - Endless generated practice (times tables, place value, money, vocabulary…)
 - Works fully offline, with optional cloud backup and over-the-air content updates
 
@@ -23,7 +28,7 @@ See [`docs/SETUP.md`](docs/SETUP.md) for builds, env vars and cloud sync, and
 ## Testing
 
 ```bash
-npm test          # 1,200+ unit, component, flow and meta tests
+npm test          # 1,800+ unit, component, flow and meta tests
 npm run verify    # typecheck + lint + content validation + tests with coverage thresholds
 ```
 
@@ -42,7 +47,7 @@ See [`docs/TESTING.md`](docs/TESTING.md).
 | 5 | Telemetry: crash handler, error boundary, screen load times, dropped-frame bursts per quiz engine | `src/lib/telemetry.ts`, Parent ▸ App health |
 | 6 | KSSR syllabus model: Standard → Subject → Topic (objectives) → Lesson + Quizzes (zod-validated) | `src/features/content/schema.ts` |
 | 7 | Spaced repetition (Leitner boxes) for every missed question | `src/features/srs/srs.ts`, `/quiz/review` |
-| 8 | Audio: SFX via `expo-audio`, read-aloud in English/BM via on-device TTS (`expo-speech`) | `src/lib/feedback.ts` |
+| 8 | Audio: SFX via `expo-audio`, read-aloud in English/BM via on-device TTS (`expo-speech`) with the best installed voice and teacher-style speech text | `src/lib/feedback.ts`, `src/lib/voice.ts` |
 | 9 | Lesson parser: rich text, maths, fractions, place-value charts, number lines, emoji arrays | `src/components/lesson/` |
 | 10 | MCQ engine (text/emoji, instant validation, shake) | `src/components/quiz/MCQ.tsx` |
 | 11 | Gesture matching: draw lines between pairs | `src/components/quiz/Match.tsx` |
@@ -50,11 +55,13 @@ See [`docs/TESTING.md`](docs/TESTING.md).
 | 13 | Fill in the blanks with a word bank (no keyboard) + numeric keypad | `src/components/quiz/{FillBlank,Numpad}.tsx` |
 | 14 | Time-attack mode with depleting timer bar | `src/components/quiz/TimerBar.tsx`, arcade games |
 | 15 | XP & levels with tiers and level-up celebration | `src/features/gamify/xp.ts` |
-| 16 | Streaks & 3 seeded daily quests that reset at midnight | `src/features/gamify/quests.ts` |
+| 16 | Streaks with rest days & shields; 3 seeded daily quests that reset at midnight and follow the school topics | `src/features/gamify/{streak,quests}.ts` |
 | 17 | Coins & shop (cosmetics + unlockable arcade games) | `src/features/gamify/shop.ts`, Shop tab |
 | 18 | SVG avatar builder that reacts to progress (excited / happy / sleepy) | `src/components/avatar/` |
 | 19 | Badges & trophy room, incl. auto-generated "Standard N Subject Master" badges | `src/features/gamify/badges.ts` |
-| 20 | Parent analytics: time per day/subject, accuracy, weak KSSR topics + offline activities | `src/app/parent/` |
+| 20 | Parent analytics: time per day/subject, accuracy, weak KSSR topics + offline activities; weekly report to share | `src/app/parent/`, `src/features/insights/` |
+| 21 | Gentle reminders: local notifications planned on the device, parent-controlled | `src/features/reminders/` |
+| 22 | Teaching language: Bahasa Melayu overlays for Maths & Science, same ids and answers | `src/features/content/localize.ts`, `content/standards/*.json` |
 
 **Design:** NativeWind (Tailwind) tokens in `src/theme/tokens.js`; chunky neo-brutalist
 cards with hard ink shadows; Fredoka display + Plus Jakarta Sans body; Expo Haptics on

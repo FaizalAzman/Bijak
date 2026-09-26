@@ -42,7 +42,9 @@ Docs: https://docs.expo.dev/eas/index.md
 
 ## Bijak project notes
 
-- Curriculum lives in `content/**/*.json`; run `npm run validate-content` after edits. See `docs/CONTENT.md`.
+- Curriculum lives in `content/**/*.json`; run `npm run validate-content` after edits. See `docs/CONTENT.md`. Maths & Science also carry a Bahasa Melayu `translations.ms` overlay (same ids and answers): when you add or change English text there, update the BM text too — the validator lists anything left untranslated.
+- Child screens read the syllabus through `useChildContent()` (the child's teaching language); non-hook code passes the child's `medium` to `getContentIndex()`.
+- Read-aloud text goes through `speakable()` in `src/lib/voice.ts`; teach it new symbols or units there rather than special-casing callers.
 - Design tokens: `src/theme/tokens.js` (shared with `tailwind.config.js`). Reuse `src/components/ui` (Chunky, Button, Txt…).
 - Reanimated shared values: prefer `.set()` in callbacks returned from hooks (React Compiler lint).
 - Layout must work from a 320px phone to a landscape tablet: wrap screens in `Screen` (`frame="wide"` for grid screens), use `Grid` instead of fixed `%` widths, `HScroll` for edge-to-edge scrollers, and `useLayout()`/`useFrame()` for size decisions. When a card stretches to its row, pass `style={{ flex: 1 }}` to it.
