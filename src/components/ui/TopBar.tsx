@@ -1,0 +1,42 @@
+import { router } from 'expo-router';
+import { ChevronLeft, X } from 'lucide-react-native';
+import type { ReactNode } from 'react';
+import { View } from 'react-native';
+import { colors } from '@/theme';
+import { PressChunky } from './Chunky';
+import { Txt } from './Txt';
+
+export function IconButton({ icon, onPress, label, bg = colors.paper }: { icon: ReactNode; onPress: () => void; label: string; bg?: string }) {
+  return (
+    <PressChunky onPress={onPress} accessibilityLabel={label} bg={bg} radius={14} depth={3} innerStyle={{ width: 42, height: 42, alignItems: 'center', justifyContent: 'center' }}>
+      {icon}
+    </PressChunky>
+  );
+}
+
+export function BackButton({ close, onPress }: { close?: boolean; onPress?: () => void }) {
+  const Icon = close ? X : ChevronLeft;
+  return (
+    <IconButton
+      label={close ? 'Close' : 'Back'}
+      icon={<Icon size={22} color={colors.ink} strokeWidth={2.75} />}
+      onPress={onPress ?? (() => (router.canGoBack() ? router.back() : router.replace('/')))}
+    />
+  );
+}
+
+export function TopBar({ title, right, close, onBack }: { title?: string; right?: ReactNode; close?: boolean; onBack?: () => void }) {
+  return (
+    <View className="flex-row items-center px-[18px] pt-2 pb-2" style={{ gap: 12, maxWidth: 720, width: '100%', alignSelf: 'center' }}>
+      <BackButton close={close} onPress={onBack} />
+      <View style={{ flex: 1 }}>
+        {title ? (
+          <Txt variant="title" numberOfLines={1}>
+            {title}
+          </Txt>
+        ) : null}
+      </View>
+      {right}
+    </View>
+  );
+}

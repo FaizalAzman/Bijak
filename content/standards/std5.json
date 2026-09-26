@@ -1,0 +1,27 @@
+{
+  "id": "std5",
+  "level": 5,
+  "title": "Standard 5",
+  "titleAlt": "Tahun 5",
+  "version": 1,
+  "subjects": [
+    {
+      "id": "math",
+      "name": "Mathematics",
+      "nameAlt": "Matematik",
+      "emoji": "🔢",
+      "color": "lime",
+      "topics": [
+        {
+          "id": "s5-math-numbers",
+          "title": "Numbers up to 1 000 000",
+          "titleAlt": "Nombor hingga 1 000 000",
+          "emoji": "🧮",
+          "lesson": [{ "type": "placeValue", "number": 385020 }],
+          "quizzes": [{ "id": "s5-math-numbers-q1", "title": "Millions quest", "count": 8, "generator": { "kind": "placeValue", "max": 999999 } }]
+        }
+      ]
+    }
+  ],
+  "arcade": []
+}

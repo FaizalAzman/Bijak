@@ -1,0 +1,5100 @@
+{
+ "id": "std3",
+ "level": 3,
+ "title": "Standard 3",
+ "titleAlt": "Tahun 3",
+ "version": 1,
+ "subjects": [
+  {
+   "id": "math",
+   "name": "Mathematics",
+   "nameAlt": "Matematik",
+   "emoji": "🔢",
+   "color": "lime",
+   "lang": "en",
+   "topics": [
+    {
+     "id": "s3-math-numbers",
+     "title": "Numbers up to 10 000",
+     "titleAlt": "Nombor Bulat hingga 10 000",
+     "emoji": "🧮",
+     "objectives": [
+      {
+       "code": "1.1",
+       "text": "Name and write numbers up to 10 000"
+      },
+      {
+       "code": "1.2",
+       "text": "Determine the place value and digit value of a number"
+      },
+      {
+       "code": "1.4",
+       "text": "Compare and order numbers up to 10 000"
+      }
+     ],
+     "offlineActivity": "Play 'Bank Teller' with paper notes of RM1000, RM100, RM10 and RM1. Say a number like 3 406 and let him build it with the notes.",
+     "lesson": [
+      {
+       "type": "heading",
+       "text": "Meet the thousands!"
+      },
+      {
+       "type": "text",
+       "text": "Every digit in a number lives in a **house**. The house tells us how much the digit is worth. This is called **place value** (nilai tempat)."
+      },
+      {
+       "type": "placeValue",
+       "number": 4725
+      },
+      {
+       "type": "list",
+       "items": [
+        "**4** thousands = 4 000",
+        "**7** hundreds = 700",
+        "**2** tens = 20",
+        "**5** ones = 5"
+       ]
+      },
+      {
+       "type": "math",
+       "expr": "4 000 + 700 + 20 + 5 = 4 725",
+       "caption": "Expanded form"
+      },
+      {
+       "type": "say",
+       "text": "Four thousand, seven hundred and twenty-five",
+       "lang": "en"
+      },
+      {
+       "type": "callout",
+       "emoji": "💡",
+       "tone": "tip",
+       "text": "A zero is a placeholder. In **3 062** there are **no** hundreds, so we write 0 in the hundreds house."
+      },
+      {
+       "type": "heading",
+       "text": "Counting on the number line"
+      },
+      {
+       "type": "numberLine",
+       "from": 5000,
+       "to": 6000,
+       "step": 200,
+       "highlight": [
+        5400
+       ]
+      },
+      {
+       "type": "text",
+       "text": "To compare numbers, look at the **biggest** place first. 5 400 is bigger than 5 040 because 4 hundreds > 0 hundreds."
+      }
+     ],
+     "quizzes": [
+      {
+       "id": "s3-math-numbers-q1",
+       "title": "Place value detective",
+       "questions": [
+        {
+         "id": "q1",
+         "type": "mcq",
+         "prompt": "What is the place value of 7 in 4 725?",
+         "visual": "🔍",
+         "objective": "1.2",
+         "options": [
+          {
+           "id": "a",
+           "text": "Ones"
+          },
+          {
+           "id": "b",
+           "text": "Tens"
+          },
+          {
+           "id": "c",
+           "text": "Hundreds"
+          },
+          {
+           "id": "d",
+           "text": "Thousands"
+          }
+         ],
+         "answer": "c",
+         "explain": "7 sits in the hundreds house, so it is worth 700."
+        },
+        {
+         "id": "q2",
+         "type": "mcq",
+         "prompt": "Which number is 'six thousand and eight'?",
+         "objective": "1.1",
+         "options": [
+          {
+           "id": "a",
+           "text": "6 800"
+          },
+          {
+           "id": "b",
+           "text": "6 008"
+          },
+          {
+           "id": "c",
+           "text": "6 080"
+          },
+          {
+           "id": "d",
+           "text": "608"
+          }
+         ],
+         "answer": "b",
+         "explain": "6 thousands, 0 hundreds, 0 tens and 8 ones = 6 008."
+        },
+        {
+         "id": "q3",
+         "type": "numpad",
+         "prompt": "3 000 + 400 + 50 + 2 = ?",
+         "objective": "1.2",
+         "answer": "3452"
+        },
+        {
+         "id": "q4",
+         "type": "trueFalse",
+         "prompt": "The digit value of 9 in 9 130 is 9 000.",
+         "objective": "1.2",
+         "answer": true
+        },
+        {
+         "id": "q5",
+         "type": "mcq",
+         "prompt": "Which number is the biggest?",
+         "objective": "1.4",
+         "difficulty": 2,
+         "options": [
+          {
+           "id": "a",
+           "text": "7 099"
+          },
+          {
+           "id": "b",
+           "text": "7 910"
+          },
+          {
+           "id": "c",
+           "text": "7 190"
+          },
+          {
+           "id": "d",
+           "text": "7 901"
+          }
+         ],
+         "answer": "b"
+        },
+        {
+         "id": "q6",
+         "type": "order",
+         "prompt": "Arrange from smallest to biggest.",
+         "objective": "1.4",
+         "difficulty": 2,
+         "tokens": [
+          "2 089",
+          "2 809",
+          "2 890",
+          "8 209"
+         ]
+        },
+        {
+         "id": "q7",
+         "type": "numpad",
+         "prompt": "What number comes just after 4 999?",
+         "objective": "1.1",
+         "answer": "5000"
+        },
+        {
+         "id": "q8",
+         "type": "match",
+         "prompt": "Match the number to its words.",
+         "objective": "1.1",
+         "pairs": [
+          {
+           "left": "1 204",
+           "right": "one thousand two hundred and four"
+          },
+          {
+           "left": "1 024",
+           "right": "one thousand and twenty-four"
+          },
+          {
+           "left": "1 420",
+           "right": "one thousand four hundred and twenty"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "s3-math-numbers-q2",
+       "title": "Number crunch (random)",
+       "count": 8,
+       "generator": {
+        "kind": "placeValue",
+        "max": 9999
+       }
+      },
+      {
+       "id": "s3-math-numbers-q3",
+       "title": "Bigger or smaller?",
+       "count": 8,
+       "generator": {
+        "kind": "compare",
+        "max": 9999
+       }
+      }
+     ]
+    },
+    {
+     "id": "s3-math-operations",
+     "title": "Add, Subtract, Multiply, Divide",
+     "titleAlt": "Operasi Asas",
+     "emoji": "➕",
+     "objectives": [
+      {
+       "code": "2.1",
+       "text": "Add and subtract numbers within 10 000"
+      },
+      {
+       "code": "2.3",
+       "text": "Multiply using the 6, 7, 8 and 9 times tables"
+      },
+      {
+       "code": "2.4",
+       "text": "Divide using the 6, 7, 8 and 9 times tables"
+      },
+      {
+       "code": "2.6",
+       "text": "Solve daily problems involving the four operations"
+      }
+     ],
+     "offlineActivity": "Cook together! Ask: 'We need 3 eggs for one cake. How many eggs for 4 cakes?' Let him count the real eggs.",
+     "lesson": [
+      {
+       "type": "heading",
+       "text": "Multiplication is quick adding"
+      },
+      {
+       "type": "emojiGrid",
+       "emoji": "🍎",
+       "rows": 3,
+       "cols": 6,
+       "caption": "3 rows of 6 apples"
+      },
+      {
+       "type": "math",
+       "expr": "6 + 6 + 6 = 3 × 6 = 18"
+      },
+      {
+       "type": "callout",
+       "emoji": "🧠",
+       "tone": "remember",
+       "text": "Multiplying can swap: **3 × 6** is the same as **6 × 3**. Both are 18!"
+      },
+      {
+       "type": "heading",
+       "text": "Division is fair sharing"
+      },
+      {
+       "type": "text",
+       "text": "18 sweets shared equally among 3 friends. Each friend gets **6**."
+      },
+      {
+       "type": "math",
+       "expr": "18 ÷ 3 = 6"
+      },
+      {
+       "type": "heading",
+       "text": "Column addition"
+      },
+      {
+       "type": "example",
+       "title": "2 458 + 1 375",
+       "lines": [
+        "  2 4 5 8",
+        "+ 1 3 7 5",
+        "─────────",
+        "  3 8 3 3"
+       ]
+      },
+      {
+       "type": "callout",
+       "emoji": "✨",
+       "tone": "tip",
+       "text": "Start from the **ones**. 8 + 5 = 13, write 3 and carry 1 to the tens."
+      }
+     ],
+     "quizzes": [
+      {
+       "id": "s3-math-operations-q1",
+       "title": "Word problems",
+       "questions": [
+        {
+         "id": "q1",
+         "type": "numpad",
+         "prompt": "Aina has 1 250 stickers. Her mother gives her 480 more. How many stickers does she have now?",
+         "visual": "⭐",
+         "objective": "2.6",
+         "difficulty": 2,
+         "answer": "1730"
+        },
+        {
+         "id": "q2",
+         "type": "numpad",
+         "prompt": "A shop had 3 000 balloons. It sold 1 275. How many are left?",
+         "visual": "🎈",
+         "objective": "2.6",
+         "difficulty": 2,
+         "answer": "1725"
+        },
+        {
+         "id": "q3",
+         "type": "mcq",
+         "prompt": "There are 7 boxes. Each box has 8 pencils. How many pencils altogether?",
+         "visual": "✏️",
+         "objective": "2.3",
+         "options": [
+          {
+           "id": "a",
+           "text": "15"
+          },
+          {
+           "id": "b",
+           "text": "54"
+          },
+          {
+           "id": "c",
+           "text": "56"
+          },
+          {
+           "id": "d",
+           "text": "63"
+          }
+         ],
+         "answer": "c",
+         "explain": "7 × 8 = 56"
+        },
+        {
+         "id": "q4",
+         "type": "numpad",
+         "prompt": "45 durians are shared equally among 9 families. How many durians does each family get?",
+         "visual": "🥭",
+         "objective": "2.4",
+         "answer": "5"
+        },
+        {
+         "id": "q5",
+         "type": "trueFalse",
+         "prompt": "6 × 9 = 56",
+         "objective": "2.3",
+         "answer": false,
+         "explain": "6 × 9 = 54"
+        },
+        {
+         "id": "q6",
+         "type": "fillBlank",
+         "prompt": "Fill in the missing numbers.",
+         "objective": "2.3",
+         "text": "8 × ___ = 72 and 72 ÷ 8 = ___",
+         "blanks": [
+          "9",
+          "9"
+         ],
+         "bank": [
+          "7",
+          "8",
+          "9",
+          "9",
+          "6"
+         ]
+        }
+       ]
+      },
+      {
+       "id": "s3-math-operations-q2",
+       "title": "Times tables 6–9",
+       "count": 10,
+       "generator": {
+        "kind": "multiplication",
+        "tables": [
+         6,
+         7,
+         8,
+         9
+        ]
+       }
+      },
+      {
+       "id": "s3-math-operations-q3",
+       "title": "Sharing is caring (÷)",
+       "count": 10,
+       "generator": {
+        "kind": "division",
+        "tables": [
+         6,
+         7,
+         8,
+         9
+        ]
+       }
+      },
+      {
+       "id": "s3-math-operations-q4",
+       "title": "Adding big numbers",
+       "count": 8,
+       "generator": {
+        "kind": "addition",
+        "max": 5000
+       }
+      }
+     ]
+    },
+    {
+     "id": "s3-math-fractions",
+     "title": "Fractions, Decimals & Percent",
+     "titleAlt": "Pecahan, Perpuluhan dan Peratus",
+     "emoji": "🍕",
+     "objectives": [
+      {
+       "code": "3.1",
+       "text": "Name and write proper fractions with denominators up to 10"
+      },
+      {
+       "code": "3.2",
+       "text": "Name and write decimals up to one decimal place"
+      },
+      {
+       "code": "3.3",
+       "text": "Name and write percentages"
+      }
+     ],
+     "offlineActivity": "Share a pizza or roti canai. Cut it into 4 or 8 equal parts and ask what fraction each person gets.",
+     "lesson": [
+      {
+       "type": "heading",
+       "text": "Sharing a pizza"
+      },
+      {
+       "type": "text",
+       "text": "A pizza is cut into **4 equal parts**. You eat **3** parts. You ate **three quarters** of the pizza."
+      },
+      {
+       "type": "fraction",
+       "numerator": 3,
+       "denominator": 4,
+       "caption": "3 out of 4 equal parts"
+      },
+      {
+       "type": "list",
+       "items": [
+        "The **top** number (numerator) = parts we take",
+        "The **bottom** number (denominator) = total equal parts"
+       ]
+      },
+      {
+       "type": "heading",
+       "text": "Decimals"
+      },
+      {
+       "type": "text",
+       "text": "One tenth can be written as a fraction or a decimal."
+      },
+      {
+       "type": "math",
+       "expr": "1/10 = 0.1"
+      },
+      {
+       "type": "heading",
+       "text": "Percent means 'out of 100'"
+      },
+      {
+       "type": "emojiGrid",
+       "emoji": "🟩",
+       "rows": 5,
+       "cols": 10,
+       "caption": "50 out of 100 squares = 50%"
+      },
+      {
+       "type": "callout",
+       "emoji": "💯",
+       "tone": "fun",
+       "text": "**100%** means the whole thing. Half is **50%**."
+      }
+     ],
+     "quizzes": [
+      {
+       "id": "s3-math-fractions-q1",
+       "title": "Fraction fun",
+       "questions": [
+        {
+         "id": "q1",
+         "type": "mcq",
+         "prompt": "A cake is cut into 8 equal slices. Ali eats 3 slices. What fraction did he eat?",
+         "visual": "🎂",
+         "objective": "3.1",
+         "options": [
+          {
+           "id": "a",
+           "text": "3/8"
+          },
+          {
+           "id": "b",
+           "text": "8/3"
+          },
+          {
+           "id": "c",
+           "text": "5/8"
+          },
+          {
+           "id": "d",
+           "text": "3/5"
+          }
+         ],
+         "answer": "a"
+        },
+        {
+         "id": "q2",
+         "type": "match",
+         "prompt": "Match the fraction with its name.",
+         "objective": "3.1",
+         "pairs": [
+          {
+           "left": "1/2",
+           "right": "one half"
+          },
+          {
+           "left": "1/4",
+           "right": "one quarter"
+          },
+          {
+           "left": "3/4",
+           "right": "three quarters"
+          }
+         ]
+        },
+        {
+         "id": "q3",
+         "type": "mcq",
+         "prompt": "Which decimal is the same as 7/10?",
+         "objective": "3.2",
+         "options": [
+          {
+           "id": "a",
+           "text": "7.0"
+          },
+          {
+           "id": "b",
+           "text": "0.07"
+          },
+          {
+           "id": "c",
+           "text": "0.7"
+          },
+          {
+           "id": "d",
+           "text": "70"
+          }
+         ],
+         "answer": "c"
+        },
+        {
+         "id": "q4",
+         "type": "trueFalse",
+         "prompt": "50% is the same as one half.",
+         "objective": "3.3",
+         "answer": true
+        },
+        {
+         "id": "q5",
+         "type": "mcq",
+         "prompt": "Which fraction is bigger?",
+         "objective": "3.1",
+         "difficulty": 2,
+         "options": [
+          {
+           "id": "a",
+           "text": "1/2"
+          },
+          {
+           "id": "b",
+           "text": "1/5"
+          }
+         ],
+         "answer": "a",
+         "explain": "When the top numbers are the same, the smaller bottom number gives bigger pieces."
+        },
+        {
+         "id": "q6",
+         "type": "numpad",
+         "prompt": "25 out of 100 marbles are red. What percent are red?",
+         "visual": "🔴",
+         "objective": "3.3",
+         "answer": "25",
+         "unit": "%"
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "id": "s3-math-money",
+     "title": "Money up to RM1000",
+     "titleAlt": "Wang hingga RM1000",
+     "emoji": "💵",
+     "objectives": [
+      {
+       "code": "4.1",
+       "text": "Represent money value up to RM1000"
+      },
+      {
+       "code": "4.2",
+       "text": "Add and subtract money up to RM1000"
+      },
+      {
+       "code": "4.4",
+       "text": "Solve daily problems involving money"
+      }
+     ],
+     "offlineActivity": "At the pasar or kedai runcit, let him hand over the money and check the change is correct.",
+     "lesson": [
+      {
+       "type": "heading",
+       "text": "Ringgit and sen"
+      },
+      {
+       "type": "text",
+       "text": "**RM1 = 100 sen**. We write RM5 and 50 sen as **RM5.50**."
+      },
+      {
+       "type": "table",
+       "headers": [
+        "Note",
+        "Value"
+       ],
+       "rows": [
+        [
+         "💵 RM1",
+         "100 sen"
+        ],
+        [
+         "💵 RM10",
+         "10 × RM1"
+        ],
+        [
+         "💵 RM50",
+         "5 × RM10"
+        ],
+        [
+         "💵 RM100",
+         "10 × RM10"
+        ]
+       ]
+      },
+      {
+       "type": "example",
+       "title": "Buying a book",
+       "lines": [
+        "Price: RM18.50",
+        "You pay: RM20.00",
+        "Change: RM20.00 − RM18.50 = RM1.50"
+       ]
+      },
+      {
+       "type": "callout",
+       "emoji": "🪙",
+       "tone": "remember",
+       "text": "Line up the **decimal points** when adding or subtracting money."
+      }
+     ],
+     "quizzes": [
+      {
+       "id": "s3-math-money-q1",
+       "title": "Kedai runcit",
+       "questions": [
+        {
+         "id": "q1",
+         "type": "mcq",
+         "prompt": "How many sen are in RM3?",
+         "visual": "🪙",
+         "objective": "4.1",
+         "options": [
+          {
+           "id": "a",
+           "text": "30 sen"
+          },
+          {
+           "id": "b",
+           "text": "300 sen"
+          },
+          {
+           "id": "c",
+           "text": "3 000 sen"
+          },
+          {
+           "id": "d",
+           "text": "3 sen"
+          }
+         ],
+         "answer": "b"
+        },
+        {
+         "id": "q2",
+         "type": "numpad",
+         "prompt": "A shirt costs RM35 and a cap costs RM12. How much altogether? (RM)",
+         "visual": "👕",
+         "objective": "4.2",
+         "answer": "47",
+         "unit": "RM"
+        },
+        {
+         "id": "q3",
+         "type": "mcq",
+         "prompt": "You pay RM50 for a toy that costs RM37. What is your change?",
+         "visual": "🧸",
+         "objective": "4.4",
+         "difficulty": 2,
+         "options": [
+          {
+           "id": "a",
+           "text": "RM13"
+          },
+          {
+           "id": "b",
+           "text": "RM23"
+          },
+          {
+           "id": "c",
+           "text": "RM87"
+          },
+          {
+           "id": "d",
+           "text": "RM17"
+          }
+         ],
+         "answer": "a"
+        },
+        {
+         "id": "q4",
+         "type": "trueFalse",
+         "prompt": "RM4.50 is the same as 450 sen.",
+         "objective": "4.1",
+         "answer": true
+        },
+        {
+         "id": "q5",
+         "type": "sort",
+         "prompt": "Can you buy it with RM10?",
+         "objective": "4.4",
+         "buckets": [
+          {
+           "id": "yes",
+           "label": "Yes",
+           "emoji": "✅"
+          },
+          {
+           "id": "no",
+           "label": "Too expensive",
+           "emoji": "❌"
+          }
+         ],
+         "items": [
+          {
+           "text": "🍦 RM3",
+           "bucket": "yes"
+          },
+          {
+           "text": "🚲 RM250",
+           "bucket": "no"
+          },
+          {
+           "text": "📒 RM6.50",
+           "bucket": "yes"
+          },
+          {
+           "text": "👟 RM89",
+           "bucket": "no"
+          },
+          {
+           "text": "🍌 RM4",
+           "bucket": "yes"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "s3-math-money-q2",
+       "title": "Money maths (random)",
+       "count": 8,
+       "generator": {
+        "kind": "money",
+        "maxRinggit": 1000
+       }
+      }
+     ]
+    },
+    {
+     "id": "s3-math-time",
+     "title": "Time",
+     "titleAlt": "Masa dan Waktu",
+     "emoji": "⏰",
+     "objectives": [
+      {
+       "code": "5.1",
+       "text": "Read and write time in hours and minutes"
+      },
+      {
+       "code": "5.2",
+       "text": "Know the relationship between units of time"
+      }
+     ],
+     "offlineActivity": "Give him a real clock at home. Ask him to tell you when it is 'half past 7' before dinner.",
+     "lesson": [
+      {
+       "type": "heading",
+       "text": "Units of time"
+      },
+      {
+       "type": "table",
+       "headers": [
+        "",
+        "equals"
+       ],
+       "rows": [
+        [
+         "1 minute",
+         "60 seconds"
+        ],
+        [
+         "1 hour",
+         "60 minutes"
+        ],
+        [
+         "1 day",
+         "24 hours"
+        ],
+        [
+         "1 week",
+         "7 days"
+        ],
+        [
+         "1 year",
+         "12 months"
+        ]
+       ]
+      },
+      {
+       "type": "callout",
+       "emoji": "🕧",
+       "tone": "tip",
+       "text": "**Half past** means 30 minutes after the hour. **Quarter past** means 15 minutes after."
+      },
+      {
+       "type": "example",
+       "title": "How long?",
+       "lines": [
+        "Start: 8:15 a.m.",
+        "End: 9:00 a.m.",
+        "Time taken: 45 minutes"
+       ]
+      }
+     ],
+     "quizzes": [
+      {
+       "id": "s3-math-time-q1",
+       "title": "Tick tock",
+       "questions": [
+        {
+         "id": "q1",
+         "type": "numpad",
+         "prompt": "How many minutes are in 2 hours?",
+         "objective": "5.2",
+         "answer": "120"
+        },
+        {
+         "id": "q2",
+         "type": "mcq",
+         "prompt": "Half past 7 is…",
+         "visual": "🕢",
+         "objective": "5.1",
+         "options": [
+          {
+           "id": "a",
+           "text": "7:15"
+          },
+          {
+           "id": "b",
+           "text": "7:30"
+          },
+          {
+           "id": "c",
+           "text": "6:30"
+          },
+          {
+           "id": "d",
+           "text": "7:45"
+          }
+         ],
+         "answer": "b"
+        },
+        {
+         "id": "q3",
+         "type": "match",
+         "prompt": "Match the units.",
+         "objective": "5.2",
+         "pairs": [
+          {
+           "left": "1 week",
+           "right": "7 days"
+          },
+          {
+           "left": "1 day",
+           "right": "24 hours"
+          },
+          {
+           "left": "1 year",
+           "right": "12 months"
+          },
+          {
+           "left": "1 hour",
+           "right": "60 minutes"
+          }
+         ]
+        },
+        {
+         "id": "q4",
+         "type": "numpad",
+         "prompt": "School starts at 7:30 a.m. and recess is at 10:00 a.m. How many minutes is that?",
+         "objective": "5.2",
+         "difficulty": 3,
+         "answer": "150"
+        },
+        {
+         "id": "q5",
+         "type": "order",
+         "prompt": "Put the months in order.",
+         "objective": "5.2",
+         "tokens": [
+          "January",
+          "February",
+          "March",
+          "April",
+          "May"
+         ]
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "id": "s3-math-measure",
+     "title": "Length, Mass & Volume",
+     "titleAlt": "Ukuran dan Sukatan",
+     "emoji": "📏",
+     "objectives": [
+      {
+       "code": "6.1",
+       "text": "Measure length in cm, m and mm"
+      },
+      {
+       "code": "6.2",
+       "text": "Measure mass in g and kg"
+      },
+      {
+       "code": "6.3",
+       "text": "Measure volume of liquid in ml and l"
+      }
+     ],
+     "offlineActivity": "Use a measuring tape and a kitchen scale. Guess, then measure: how long is the sofa? How heavy is a bag of rice?",
+     "lesson": [
+      {
+       "type": "heading",
+       "text": "Which unit?"
+      },
+      {
+       "type": "table",
+       "headers": [
+        "Measure",
+        "Units"
+       ],
+       "rows": [
+        [
+         "📏 Length",
+         "mm, cm, m"
+        ],
+        [
+         "⚖️ Mass",
+         "g, kg"
+        ],
+        [
+         "🥛 Volume",
+         "ml, l"
+        ]
+       ]
+      },
+      {
+       "type": "list",
+       "items": [
+        "1 m = 100 cm",
+        "1 kg = 1 000 g",
+        "1 l = 1 000 ml"
+       ]
+      },
+      {
+       "type": "callout",
+       "emoji": "🐘",
+       "tone": "fun",
+       "text": "Heavy things like a watermelon use **kg**. Light things like a pencil use **g**."
+      }
+     ],
+     "quizzes": [
+      {
+       "id": "s3-math-measure-q1",
+       "title": "Measuring master",
+       "questions": [
+        {
+         "id": "q1",
+         "type": "sort",
+         "prompt": "Would you measure it in g or kg?",
+         "objective": "6.2",
+         "buckets": [
+          {
+           "id": "g",
+           "label": "grams (g)",
+           "emoji": "🪶"
+          },
+          {
+           "id": "kg",
+           "label": "kilograms (kg)",
+           "emoji": "🏋️"
+          }
+         ],
+         "items": [
+          {
+           "text": "✏️ pencil",
+           "bucket": "g"
+          },
+          {
+           "text": "🍉 watermelon",
+           "bucket": "kg"
+          },
+          {
+           "text": "🔑 key",
+           "bucket": "g"
+          },
+          {
+           "text": "🧒 child",
+           "bucket": "kg"
+          },
+          {
+           "text": "🍚 sack of rice",
+           "bucket": "kg"
+          }
+         ]
+        },
+        {
+         "id": "q2",
+         "type": "numpad",
+         "prompt": "3 m = ___ cm",
+         "objective": "6.1",
+         "answer": "300",
+         "unit": "cm"
+        },
+        {
+         "id": "q3",
+         "type": "mcq",
+         "prompt": "Which is the best unit to measure water in a bathtub?",
+         "visual": "🛁",
+         "objective": "6.3",
+         "options": [
+          {
+           "id": "a",
+           "text": "ml"
+          },
+          {
+           "id": "b",
+           "text": "l"
+          },
+          {
+           "id": "c",
+           "text": "cm"
+          },
+          {
+           "id": "d",
+           "text": "g"
+          }
+         ],
+         "answer": "b"
+        },
+        {
+         "id": "q4",
+         "type": "numpad",
+         "prompt": "2 kg = ___ g",
+         "objective": "6.2",
+         "answer": "2000",
+         "unit": "g"
+        },
+        {
+         "id": "q5",
+         "type": "trueFalse",
+         "prompt": "1 l is more than 500 ml.",
+         "objective": "6.3",
+         "answer": true
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "id": "s3-math-shapes",
+     "title": "Shapes & Space",
+     "titleAlt": "Ruang",
+     "emoji": "🔷",
+     "objectives": [
+      {
+       "code": "7.1",
+       "text": "Identify 2D shapes and their properties"
+      },
+      {
+       "code": "7.2",
+       "text": "Identify 3D shapes and their properties"
+      }
+     ],
+     "offlineActivity": "Go on a 'shape hunt' around the house: find a cylinder, a cube, a cone and a sphere.",
+     "lesson": [
+      {
+       "type": "heading",
+       "text": "2D shapes are flat"
+      },
+      {
+       "type": "table",
+       "headers": [
+        "Shape",
+        "Sides",
+        "Corners"
+       ],
+       "rows": [
+        [
+         "🔺 Triangle",
+         "3",
+         "3"
+        ],
+        [
+         "🟥 Square",
+         "4",
+         "4"
+        ],
+        [
+         "▭ Rectangle",
+         "4",
+         "4"
+        ],
+        [
+         "⭕ Circle",
+         "0",
+         "0"
+        ]
+       ]
+      },
+      {
+       "type": "heading",
+       "text": "3D shapes are solid"
+      },
+      {
+       "type": "vocab",
+       "lang": "en",
+       "items": [
+        {
+         "word": "cube",
+         "meaning": "kubus",
+         "emoji": "🎲"
+        },
+        {
+         "word": "sphere",
+         "meaning": "sfera",
+         "emoji": "⚽"
+        },
+        {
+         "word": "cylinder",
+         "meaning": "silinder",
+         "emoji": "🥫"
+        },
+        {
+         "word": "cone",
+         "meaning": "kon",
+         "emoji": "🍦"
+        }
+       ]
+      }
+     ],
+     "quizzes": [
+      {
+       "id": "s3-math-shapes-q1",
+       "title": "Shape spotter",
+       "questions": [
+        {
+         "id": "q1",
+         "type": "match",
+         "prompt": "Match the object to its 3D shape.",
+         "objective": "7.2",
+         "pairs": [
+          {
+           "left": "🎲",
+           "right": "cube"
+          },
+          {
+           "left": "⚽",
+           "right": "sphere"
+          },
+          {
+           "left": "🥫",
+           "right": "cylinder"
+          },
+          {
+           "left": "🍦",
+           "right": "cone"
+          }
+         ]
+        },
+        {
+         "id": "q2",
+         "type": "numpad",
+         "prompt": "How many sides does a triangle have?",
+         "visual": "🔺",
+         "objective": "7.1",
+         "answer": "3"
+        },
+        {
+         "id": "q3",
+         "type": "mcq",
+         "prompt": "Which shape has no corners?",
+         "objective": "7.1",
+         "options": [
+          {
+           "id": "a",
+           "emoji": "🟥",
+           "text": "Square"
+          },
+          {
+           "id": "b",
+           "emoji": "⭕",
+           "text": "Circle"
+          },
+          {
+           "id": "c",
+           "emoji": "🔺",
+           "text": "Triangle"
+          },
+          {
+           "id": "d",
+           "emoji": "🔷",
+           "text": "Diamond"
+          }
+         ],
+         "answer": "b"
+        },
+        {
+         "id": "q4",
+         "type": "trueFalse",
+         "prompt": "A cube has 6 flat faces.",
+         "objective": "7.2",
+         "answer": true
+        },
+        {
+         "id": "q5",
+         "type": "sort",
+         "prompt": "Flat (2D) or solid (3D)?",
+         "objective": "7.2",
+         "buckets": [
+          {
+           "id": "2d",
+           "label": "2D flat",
+           "emoji": "📄"
+          },
+          {
+           "id": "3d",
+           "label": "3D solid",
+           "emoji": "📦"
+          }
+         ],
+         "items": [
+          {
+           "text": "square",
+           "bucket": "2d"
+          },
+          {
+           "text": "cube",
+           "bucket": "3d"
+          },
+          {
+           "text": "circle",
+           "bucket": "2d"
+          },
+          {
+           "text": "sphere",
+           "bucket": "3d"
+          },
+          {
+           "text": "cone",
+           "bucket": "3d"
+          },
+          {
+           "text": "triangle",
+           "bucket": "2d"
+          }
+         ]
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "id": "s3-math-coord",
+     "title": "Coordinates, Ratio & Proportion",
+     "titleAlt": "Koordinat, Nisbah dan Kadaran",
+     "emoji": "🗺️",
+     "objectives": [
+      {
+       "code": "8.1",
+       "text": "State the position of an object using coordinates (horizontal, then vertical)"
+      },
+      {
+       "code": "8.2",
+       "text": "Describe one-to-many ratio"
+      },
+      {
+       "code": "8.3",
+       "text": "Solve proportion problems (one-to-many)"
+      }
+     ],
+     "offlineActivity": "Draw a treasure map on grid paper. Hide a sweet at (3, 2) — he must move right 3, then up 2 to find it.",
+     "lesson": [
+      {
+       "type": "heading",
+       "text": "Finding places on a grid"
+      },
+      {
+       "type": "text",
+       "text": "To read a **coordinate**, move **across** (horizontal) first, then **up** (vertical). The treasure at **(4, 2)** is 4 steps across and 2 steps up."
+      },
+      {
+       "type": "callout",
+       "emoji": "🚶",
+       "tone": "remember",
+       "text": "Remember: **walk across the corridor, then go up the stairs!**"
+      },
+      {
+       "type": "heading",
+       "text": "One-to-many ratio"
+      },
+      {
+       "type": "emojiGrid",
+       "emoji": "🛞",
+       "rows": 1,
+       "cols": 4,
+       "caption": "1 car : 4 wheels"
+      },
+      {
+       "type": "table",
+       "headers": [
+        "Cars 🚗",
+        "Wheels 🛞"
+       ],
+       "rows": [
+        [
+         "1",
+         "4"
+        ],
+        [
+         "2",
+         "8"
+        ],
+        [
+         "3",
+         "12"
+        ]
+       ]
+      },
+      {
+       "type": "text",
+       "text": "This is **proportion** (kadaran): every time we add 1 car, we add 4 wheels."
+      }
+     ],
+     "quizzes": [
+      {
+       "id": "s3-math-coord-q1",
+       "title": "Treasure hunters",
+       "questions": [
+        {
+         "id": "q1",
+         "type": "mcq",
+         "prompt": "The treasure is 3 steps across and 5 steps up. What is its coordinate?",
+         "visual": "💎",
+         "objective": "8.1",
+         "options": [
+          {
+           "id": "a",
+           "text": "(3, 5)"
+          },
+          {
+           "id": "b",
+           "text": "(5, 3)"
+          },
+          {
+           "id": "c",
+           "text": "(3, 3)"
+          }
+         ],
+         "answer": "a"
+        },
+        {
+         "id": "q2",
+         "type": "trueFalse",
+         "prompt": "For coordinate (2, 6), we move up 2 first.",
+         "objective": "8.1",
+         "answer": false,
+         "explain": "Move across 2 first, then up 6."
+        },
+        {
+         "id": "q3",
+         "type": "numpad",
+         "prompt": "1 spider has 8 legs. How many legs do 3 spiders have?",
+         "visual": "🕷️",
+         "objective": "8.3",
+         "answer": "24"
+        },
+        {
+         "id": "q4",
+         "type": "numpad",
+         "prompt": "1 box has 6 eggs. How many boxes hold 30 eggs?",
+         "visual": "🥚",
+         "objective": "8.3",
+         "difficulty": 2,
+         "answer": "5"
+        },
+        {
+         "id": "q5",
+         "type": "mcq",
+         "prompt": "1 bicycle : 2 wheels. How many wheels do 5 bicycles have?",
+         "visual": "🚲",
+         "objective": "8.2",
+         "options": [
+          {
+           "id": "a",
+           "text": "7"
+          },
+          {
+           "id": "b",
+           "text": "10"
+          },
+          {
+           "id": "c",
+           "text": "12"
+          }
+         ],
+         "answer": "b"
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "id": "s3-math-data",
+     "title": "Data Handling",
+     "titleAlt": "Pengurusan Data",
+     "emoji": "📊",
+     "objectives": [
+      {
+       "code": "9.1",
+       "text": "Read and interpret information in pictographs and bar charts"
+      }
+     ],
+     "offlineActivity": "Make a tally chart of the colours of cars you see on the way to school. Which colour wins?",
+     "lesson": [
+      {
+       "type": "heading",
+       "text": "Reading a pictograph"
+      },
+      {
+       "type": "text",
+       "text": "Each 🍎 stands for **2 apples**."
+      },
+      {
+       "type": "table",
+       "headers": [
+        "Child",
+        "Apples picked"
+       ],
+       "rows": [
+        [
+         "Adam",
+         "🍎🍎🍎"
+        ],
+        [
+         "Mei Ling",
+         "🍎🍎🍎🍎🍎"
+        ],
+        [
+         "Kavin",
+         "🍎🍎"
+        ]
+       ]
+      },
+      {
+       "type": "list",
+       "items": [
+        "Adam picked 3 × 2 = **6** apples",
+        "Mei Ling picked the **most**: 10 apples",
+        "Kavin picked the **least**: 4 apples"
+       ]
+      }
+     ],
+     "quizzes": [
+      {
+       "id": "s3-math-data-q1",
+       "title": "Pictograph puzzles",
+       "questions": [
+        {
+         "id": "q1",
+         "type": "numpad",
+         "prompt": "Each 🍎 = 2 apples. Mei Ling has 🍎🍎🍎🍎🍎. How many apples does she have?",
+         "objective": "9.1",
+         "answer": "10"
+        },
+        {
+         "id": "q2",
+         "type": "mcq",
+         "prompt": "Each ⭐ = 5 stars. Kavin has ⭐⭐⭐. How many stars?",
+         "objective": "9.1",
+         "options": [
+          {
+           "id": "a",
+           "text": "3"
+          },
+          {
+           "id": "b",
+           "text": "8"
+          },
+          {
+           "id": "c",
+           "text": "15"
+          },
+          {
+           "id": "d",
+           "text": "35"
+          }
+         ],
+         "answer": "c"
+        },
+        {
+         "id": "q3",
+         "type": "trueFalse",
+         "prompt": "In a bar chart, the tallest bar shows the biggest number.",
+         "objective": "9.1",
+         "answer": true
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "science",
+   "name": "Science",
+   "nameAlt": "Sains",
+   "emoji": "🔬",
+   "color": "mint",
+   "lang": "en",
+   "topics": [
+    {
+     "id": "s3-sci-skills",
+     "title": "Scientific Skills",
+     "titleAlt": "Kemahiran Saintifik",
+     "emoji": "🔍",
+     "objectives": [
+      {
+       "code": "1.1",
+       "text": "Use science process skills: observe, classify, measure & use numbers, infer, predict, communicate"
+      }
+     ],
+     "offlineActivity": "Mystery bag: put 5 objects in a bag. He must observe using touch only, then predict what each one is before looking.",
+     "lesson": [
+      {
+       "type": "heading",
+       "text": "Think like a scientist!"
+      },
+      {
+       "type": "text",
+       "text": "Scientists use **process skills** to find out about the world."
+      },
+      {
+       "type": "table",
+       "headers": [
+        "Skill",
+        "What you do"
+       ],
+       "rows": [
+        [
+         "👀 Observe",
+         "Use your 5 senses"
+        ],
+        [
+         "🗂️ Classify",
+         "Group things that are alike"
+        ],
+        [
+         "📏 Measure",
+         "Use tools and numbers"
+        ],
+        [
+         "💭 Infer",
+         "Give a reason for what you see"
+        ],
+        [
+         "🔮 Predict",
+         "Guess what will happen next"
+        ],
+        [
+         "🗣️ Communicate",
+         "Share results with tables, charts or words"
+        ]
+       ]
+      },
+      {
+       "type": "callout",
+       "emoji": "🧪",
+       "tone": "tip",
+       "text": "An **inference** is a smart reason. The grass is wet → it probably **rained** last night."
+      }
+     ],
+     "quizzes": [
+      {
+       "id": "s3-sci-skills-q1",
+       "title": "Skill detective",
+       "questions": [
+        {
+         "id": "q1",
+         "type": "match",
+         "prompt": "Match the skill to the example.",
+         "objective": "1.1",
+         "pairs": [
+          {
+           "left": "observe",
+           "right": "The flower is red and smells sweet"
+          },
+          {
+           "left": "predict",
+           "right": "The ice will melt in the sun"
+          },
+          {
+           "left": "measure",
+           "right": "The pencil is 15 cm long"
+          },
+          {
+           "left": "classify",
+           "right": "Group animals that have fur"
+          }
+         ]
+        },
+        {
+         "id": "q2",
+         "type": "mcq",
+         "prompt": "The road is wet. 'It rained last night.' Which skill is this?",
+         "visual": "🌧️",
+         "objective": "1.1",
+         "options": [
+          {
+           "id": "a",
+           "text": "Inferring"
+          },
+          {
+           "id": "b",
+           "text": "Measuring"
+          },
+          {
+           "id": "c",
+           "text": "Classifying"
+          }
+         ],
+         "answer": "a"
+        },
+        {
+         "id": "q3",
+         "type": "mcq",
+         "prompt": "Which sense do you use to know the durian smells strong?",
+         "visual": "👃",
+         "objective": "1.1",
+         "options": [
+          {
+           "id": "a",
+           "text": "Sight"
+          },
+          {
+           "id": "b",
+           "text": "Smell"
+          },
+          {
+           "id": "c",
+           "text": "Hearing"
+          },
+          {
+           "id": "d",
+           "text": "Touch"
+          }
+         ],
+         "answer": "b"
+        },
+        {
+         "id": "q4",
+         "type": "trueFalse",
+         "prompt": "Drawing a bar chart of your results is 'communicating'.",
+         "objective": "1.1",
+         "answer": true
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "id": "s3-sci-rules",
+     "title": "Science Room Rules",
+     "titleAlt": "Peraturan Bilik Sains",
+     "emoji": "🥽",
+     "objectives": [
+      {
+       "code": "2.1",
+       "text": "Follow the rules of the science room"
+      }
+     ],
+     "offlineActivity": "Make a 'Safety First' poster together for the kitchen: no running, wash hands, ask before touching hot things.",
+     "lesson": [
+      {
+       "type": "heading",
+       "text": "Stay safe in the lab"
+      },
+      {
+       "type": "list",
+       "items": [
+        "Enter only with a **teacher's** permission",
+        "**Never** taste or smell chemicals",
+        "Do not run or play",
+        "Report spills and broken glass **quickly**",
+        "Wash your hands after experiments",
+        "Keep the room clean and tidy"
+       ]
+      },
+      {
+       "type": "callout",
+       "emoji": "⚠️",
+       "tone": "remember",
+       "text": "If something breaks, **tell your teacher** — don't pick up broken glass yourself!"
+      }
+     ],
+     "quizzes": [
+      {
+       "id": "s3-sci-rules-q1",
+       "title": "Safety first",
+       "questions": [
+        {
+         "id": "q1",
+         "type": "sort",
+         "prompt": "Safe or unsafe in the science room?",
+         "objective": "2.1",
+         "buckets": [
+          {
+           "id": "safe",
+           "label": "Safe",
+           "emoji": "✅"
+          },
+          {
+           "id": "unsafe",
+           "label": "Unsafe",
+           "emoji": "⛔"
+          }
+         ],
+         "items": [
+          {
+           "text": "washing hands",
+           "bucket": "safe"
+          },
+          {
+           "text": "running around",
+           "bucket": "unsafe"
+          },
+          {
+           "text": "tasting chemicals",
+           "bucket": "unsafe"
+          },
+          {
+           "text": "reporting a spill",
+           "bucket": "safe"
+          },
+          {
+           "text": "eating in the lab",
+           "bucket": "unsafe"
+          }
+         ]
+        },
+        {
+         "id": "q2",
+         "type": "mcq",
+         "prompt": "A test tube breaks. What should you do?",
+         "objective": "2.1",
+         "options": [
+          {
+           "id": "a",
+           "text": "Pick up the glass quickly"
+          },
+          {
+           "id": "b",
+           "text": "Tell the teacher"
+          },
+          {
+           "id": "c",
+           "text": "Hide it"
+          }
+         ],
+         "answer": "b"
+        },
+        {
+         "id": "q3",
+         "type": "trueFalse",
+         "prompt": "You may enter the science room without a teacher.",
+         "objective": "2.1",
+         "answer": false
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "id": "s3-sci-teeth",
+     "title": "Humans: Our Teeth",
+     "titleAlt": "Manusia: Gigi",
+     "emoji": "🦷",
+     "objectives": [
+      {
+       "code": "3.1",
+       "text": "Know milk teeth and permanent teeth"
+      },
+      {
+       "code": "3.2",
+       "text": "Identify types of teeth and their functions"
+      },
+      {
+       "code": "3.3",
+       "text": "Know the structure of a tooth"
+      },
+      {
+       "code": "3.4",
+       "text": "Practise correct dental care"
+      }
+     ],
+     "offlineActivity": "Brush teeth together in front of a mirror. Count his teeth and spot the incisors, canines and molars. Check for wobbly milk teeth!",
+     "lesson": [
+      {
+       "type": "heading",
+       "text": "Two sets of teeth"
+      },
+      {
+       "type": "table",
+       "headers": [
+        "",
+        "Milk teeth",
+        "Permanent teeth"
+       ],
+       "rows": [
+        [
+         "How many?",
+         "20",
+         "32"
+        ],
+        [
+         "Start growing",
+         "about 6 months old",
+         "about 6 years old"
+        ]
+       ]
+      },
+      {
+       "type": "heading",
+       "text": "Types of teeth"
+      },
+      {
+       "type": "table",
+       "headers": [
+        "Tooth",
+        "Job"
+       ],
+       "rows": [
+        [
+         "Incisor (gigi kacip)",
+         "Cut food ✂️"
+        ],
+        [
+         "Canine (gigi taring)",
+         "Tear food 🥩"
+        ],
+        [
+         "Premolar (gigi geraham kecil)",
+         "Chew & grind"
+        ],
+        [
+         "Molar (gigi geraham besar)",
+         "Chew & grind 🌽"
+        ]
+       ]
+      },
+      {
+       "type": "heading",
+       "text": "Inside a tooth"
+      },
+      {
+       "type": "list",
+       "items": [
+        "**Enamel** — the hardest outer layer",
+        "**Dentine** — under the enamel",
+        "**Pulp** — has nerves and blood vessels",
+        "**Gums** hold the teeth in place"
+       ]
+      },
+      {
+       "type": "callout",
+       "emoji": "🪥",
+       "tone": "remember",
+       "text": "Brush **twice a day**, floss, eat fewer sweets and visit the dentist every **6 months**."
+      }
+     ],
+     "quizzes": [
+      {
+       "id": "s3-sci-teeth-q1",
+       "title": "Tooth fairy test",
+       "questions": [
+        {
+         "id": "q1",
+         "type": "match",
+         "prompt": "Match the tooth to its job.",
+         "objective": "3.2",
+         "pairs": [
+          {
+           "left": "incisor",
+           "right": "cuts food"
+          },
+          {
+           "left": "canine",
+           "right": "tears food"
+          },
+          {
+           "left": "molar",
+           "right": "chews & grinds"
+          }
+         ]
+        },
+        {
+         "id": "q2",
+         "type": "numpad",
+         "prompt": "How many milk teeth does a child have?",
+         "visual": "🦷",
+         "objective": "3.1",
+         "answer": "20"
+        },
+        {
+         "id": "q3",
+         "type": "numpad",
+         "prompt": "How many permanent teeth does an adult have?",
+         "objective": "3.1",
+         "answer": "32"
+        },
+        {
+         "id": "q4",
+         "type": "mcq",
+         "prompt": "Which is the hardest part of a tooth?",
+         "objective": "3.3",
+         "options": [
+          {
+           "id": "a",
+           "text": "Pulp"
+          },
+          {
+           "id": "b",
+           "text": "Enamel"
+          },
+          {
+           "id": "c",
+           "text": "Gum"
+          },
+          {
+           "id": "d",
+           "text": "Dentine"
+          }
+         ],
+         "answer": "b"
+        },
+        {
+         "id": "q5",
+         "type": "sort",
+         "prompt": "Good or bad for your teeth?",
+         "objective": "3.4",
+         "buckets": [
+          {
+           "id": "good",
+           "label": "Good",
+           "emoji": "😁"
+          },
+          {
+           "id": "bad",
+           "label": "Bad",
+           "emoji": "😬"
+          }
+         ],
+         "items": [
+          {
+           "text": "🪥 brush twice a day",
+           "bucket": "good"
+          },
+          {
+           "text": "🍬 lots of sweets",
+           "bucket": "bad"
+          },
+          {
+           "text": "🧵 flossing",
+           "bucket": "good"
+          },
+          {
+           "text": "🥤 fizzy drinks",
+           "bucket": "bad"
+          },
+          {
+           "text": "👩‍⚕️ visit the dentist",
+           "bucket": "good"
+          }
+         ]
+        },
+        {
+         "id": "q6",
+         "type": "fillBlank",
+         "prompt": "Complete the sentence.",
+         "objective": "3.3",
+         "text": "The ___ has nerves and blood vessels. The ___ hold the teeth in place.",
+         "blanks": [
+          "pulp",
+          "gums"
+         ],
+         "bank": [
+          "pulp",
+          "gums",
+          "enamel",
+          "tongue"
+         ]
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "id": "s3-sci-animals",
+     "title": "Animals",
+     "titleAlt": "Haiwan",
+     "emoji": "🦁",
+     "objectives": [
+      {
+       "code": "4.1",
+       "text": "Group animals by body covering and how they reproduce"
+      },
+      {
+       "code": "4.2",
+       "text": "Classify animals by eating habits: herbivore, carnivore, omnivore"
+      },
+      {
+       "code": "4.3",
+       "text": "Relate the teeth of animals to what they eat"
+      }
+     ],
+     "offlineActivity": "Visit Zoo Negara, an aquarium or a farm. At each animal ask: What covers its body? Does it lay eggs? What does it eat?",
+     "lesson": [
+      {
+       "type": "heading",
+       "text": "Body coverings"
+      },
+      {
+       "type": "table",
+       "headers": [
+        "Covering",
+        "Examples"
+       ],
+       "rows": [
+        [
+         "Fur / hair",
+         "🐱 cat, 🐄 cow"
+        ],
+        [
+         "Feathers",
+         "🐔 chicken, 🦜 hornbill"
+        ],
+        [
+         "Scales",
+         "🐟 fish, 🐍 snake"
+        ],
+        [
+         "Shell",
+         "🐢 turtle, 🐌 snail"
+        ]
+       ]
+      },
+      {
+       "type": "heading",
+       "text": "Lay eggs or give birth?"
+      },
+      {
+       "type": "list",
+       "items": [
+        "**Lay eggs**: chicken, turtle, crocodile, frog",
+        "**Give birth**: cat, cow, goat, whale"
+       ]
+      },
+      {
+       "type": "heading",
+       "text": "Who eats what?"
+      },
+      {
+       "type": "table",
+       "headers": [
+        "Group",
+        "Eats",
+        "Teeth"
+       ],
+       "rows": [
+        [
+         "Herbivore 🐄",
+         "Plants only",
+         "Flat molars to grind grass"
+        ],
+        [
+         "Carnivore 🐯",
+         "Meat only",
+         "Sharp canines to tear"
+        ],
+        [
+         "Omnivore 🐻",
+         "Plants & meat",
+         "Sharp and flat teeth"
+        ]
+       ]
+      }
+     ],
+     "quizzes": [
+      {
+       "id": "s3-sci-animals-q1",
+       "title": "Animal kingdom",
+       "questions": [
+        {
+         "id": "q1",
+         "type": "sort",
+         "prompt": "Drag each animal to the right group.",
+         "objective": "4.2",
+         "buckets": [
+          {
+           "id": "herb",
+           "label": "Herbivore",
+           "emoji": "🌿"
+          },
+          {
+           "id": "carn",
+           "label": "Carnivore",
+           "emoji": "🥩"
+          }
+         ],
+         "items": [
+          {
+           "text": "🐄 cow",
+           "bucket": "herb"
+          },
+          {
+           "text": "🐯 tiger",
+           "bucket": "carn"
+          },
+          {
+           "text": "🐇 rabbit",
+           "bucket": "herb"
+          },
+          {
+           "text": "🦅 eagle",
+           "bucket": "carn"
+          },
+          {
+           "text": "🐘 elephant",
+           "bucket": "herb"
+          },
+          {
+           "text": "🐊 crocodile",
+           "bucket": "carn"
+          }
+         ]
+        },
+        {
+         "id": "q2",
+         "type": "match",
+         "prompt": "Match the animal to its body covering.",
+         "objective": "4.1",
+         "pairs": [
+          {
+           "left": "🐱 cat",
+           "right": "fur"
+          },
+          {
+           "left": "🐔 chicken",
+           "right": "feathers"
+          },
+          {
+           "left": "🐟 fish",
+           "right": "scales"
+          },
+          {
+           "left": "🐢 turtle",
+           "right": "shell"
+          }
+         ]
+        },
+        {
+         "id": "q3",
+         "type": "sort",
+         "prompt": "Lays eggs or gives birth?",
+         "objective": "4.1",
+         "buckets": [
+          {
+           "id": "egg",
+           "label": "Lays eggs",
+           "emoji": "🥚"
+          },
+          {
+           "id": "birth",
+           "label": "Gives birth",
+           "emoji": "🍼"
+          }
+         ],
+         "items": [
+          {
+           "text": "🐔 chicken",
+           "bucket": "egg"
+          },
+          {
+           "text": "🐐 goat",
+           "bucket": "birth"
+          },
+          {
+           "text": "🐸 frog",
+           "bucket": "egg"
+          },
+          {
+           "text": "🐋 whale",
+           "bucket": "birth"
+          },
+          {
+           "text": "🐢 turtle",
+           "bucket": "egg"
+          }
+         ]
+        },
+        {
+         "id": "q4",
+         "type": "mcq",
+         "prompt": "A tiger has long, sharp canines. What does it eat?",
+         "visual": "🐯",
+         "objective": "4.3",
+         "options": [
+          {
+           "id": "a",
+           "text": "Grass"
+          },
+          {
+           "id": "b",
+           "text": "Meat"
+          },
+          {
+           "id": "c",
+           "text": "Fruit only"
+          }
+         ],
+         "answer": "b"
+        },
+        {
+         "id": "q5",
+         "type": "mcq",
+         "prompt": "A chicken eats grains and worms. It is a…",
+         "visual": "🐔",
+         "objective": "4.2",
+         "options": [
+          {
+           "id": "a",
+           "text": "Herbivore"
+          },
+          {
+           "id": "b",
+           "text": "Carnivore"
+          },
+          {
+           "id": "c",
+           "text": "Omnivore"
+          }
+         ],
+         "answer": "c"
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "id": "s3-sci-plants",
+     "title": "Plants",
+     "titleAlt": "Tumbuhan",
+     "emoji": "🌱",
+     "objectives": [
+      {
+       "code": "5.1",
+       "text": "Know the different ways plants reproduce"
+      },
+      {
+       "code": "5.2",
+       "text": "Explain why plant reproduction is important"
+      }
+     ],
+     "offlineActivity": "Grow kangkung from seeds and a stem cutting side by side (like in the textbook). Compare which grows faster over two weeks.",
+     "lesson": [
+      {
+       "type": "heading",
+       "text": "How do plants make new plants?"
+      },
+      {
+       "type": "table",
+       "headers": [
+        "Way",
+        "Example"
+       ],
+       "rows": [
+        [
+         "Seeds (biji benih)",
+         "🌾 padi, 🥭 rambutan, 🌽 corn"
+        ],
+        [
+         "Stem cutting (keratan batang)",
+         "🍠 sweet potato, 🌺 bunga raya"
+        ],
+        [
+         "Leaves (daun)",
+         "🍃 cocor mayor (setawar)"
+        ],
+        [
+         "Suckers (sulur / anak pokok)",
+         "🍌 banana, 🍍 pineapple"
+        ],
+        [
+         "Underground stem",
+         "🫚 ginger, 🥔 potato"
+        ],
+        [
+         "Spores (spora)",
+         "🌿 fern, 🍄 mushroom"
+        ]
+       ]
+      },
+      {
+       "type": "callout",
+       "emoji": "🔬",
+       "tone": "fun",
+       "text": "Scientists can grow many plants from a tiny piece using **tissue culture** (kultur tisu)."
+      },
+      {
+       "type": "text",
+       "text": "Plants reproduce so they **don't become extinct** and so humans and animals always have **food**."
+      }
+     ],
+     "quizzes": [
+      {
+       "id": "s3-sci-plants-q1",
+       "title": "Plant parents",
+       "questions": [
+        {
+         "id": "q1",
+         "type": "match",
+         "prompt": "Match the plant to how it reproduces.",
+         "objective": "5.1",
+         "pairs": [
+          {
+           "left": "🌾 padi",
+           "right": "seeds"
+          },
+          {
+           "left": "🍌 banana",
+           "right": "suckers"
+          },
+          {
+           "left": "🌿 fern",
+           "right": "spores"
+          },
+          {
+           "left": "🫚 ginger",
+           "right": "underground stem"
+          }
+         ]
+        },
+        {
+         "id": "q2",
+         "type": "mcq",
+         "prompt": "How do we usually grow sweet potato (ubi keledek)?",
+         "visual": "🍠",
+         "objective": "5.1",
+         "options": [
+          {
+           "id": "a",
+           "text": "Stem cutting"
+          },
+          {
+           "id": "b",
+           "text": "Spores"
+          },
+          {
+           "id": "c",
+           "text": "Suckers"
+          }
+         ],
+         "answer": "a"
+        },
+        {
+         "id": "q3",
+         "type": "mcq",
+         "prompt": "Mushrooms reproduce using…",
+         "visual": "🍄",
+         "objective": "5.1",
+         "options": [
+          {
+           "id": "a",
+           "text": "seeds"
+          },
+          {
+           "id": "b",
+           "text": "spores"
+          },
+          {
+           "id": "c",
+           "text": "leaves"
+          }
+         ],
+         "answer": "b"
+        },
+        {
+         "id": "q4",
+         "type": "trueFalse",
+         "prompt": "Plant reproduction helps make sure we have enough food.",
+         "objective": "5.2",
+         "answer": true
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "id": "s3-sci-measure",
+     "title": "Measurement: Area & Volume",
+     "titleAlt": "Pengukuran",
+     "emoji": "📐",
+     "objectives": [
+      {
+       "code": "6.1",
+       "text": "Measure area using square units"
+      },
+      {
+       "code": "6.2",
+       "text": "Measure volume using cube units"
+      }
+     ],
+     "offlineActivity": "Use square sticky notes to cover a book cover, then count them. Build a box shape with Lego cubes and count the cubes for volume.",
+     "lesson": [
+      {
+       "type": "heading",
+       "text": "Area = how much surface"
+      },
+      {
+       "type": "emojiGrid",
+       "emoji": "🟦",
+       "rows": 3,
+       "cols": 4,
+       "caption": "3 rows × 4 squares = 12 square units"
+      },
+      {
+       "type": "heading",
+       "text": "Volume = how much space"
+      },
+      {
+       "type": "text",
+       "text": "We can count **cubes** to find the volume of a solid."
+      },
+      {
+       "type": "math",
+       "expr": "2 × 2 × 3 = 12 cubes"
+      },
+      {
+       "type": "callout",
+       "emoji": "📏",
+       "tone": "remember",
+       "text": "Standard units: area in **cm²**, volume in **cm³**."
+      }
+     ],
+     "quizzes": [
+      {
+       "id": "s3-sci-measure-q1",
+       "title": "Squares & cubes",
+       "questions": [
+        {
+         "id": "q1",
+         "type": "numpad",
+         "prompt": "A shape is covered by 4 rows of 5 squares. What is its area?",
+         "visual": "🟦",
+         "objective": "6.1",
+         "answer": "20",
+         "unit": "squares"
+        },
+        {
+         "id": "q2",
+         "type": "numpad",
+         "prompt": "A box is built from 3 layers of 4 cubes. What is its volume?",
+         "visual": "🧊",
+         "objective": "6.2",
+         "answer": "12",
+         "unit": "cubes"
+        },
+        {
+         "id": "q3",
+         "type": "mcq",
+         "prompt": "Which unit is used to measure area?",
+         "objective": "6.1",
+         "options": [
+          {
+           "id": "a",
+           "text": "cm"
+          },
+          {
+           "id": "b",
+           "text": "cm²"
+          },
+          {
+           "id": "c",
+           "text": "cm³"
+          }
+         ],
+         "answer": "b"
+        },
+        {
+         "id": "q4",
+         "type": "trueFalse",
+         "prompt": "Volume tells us how much space an object takes up.",
+         "objective": "6.2",
+         "answer": true
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "id": "s3-sci-density",
+     "title": "Density",
+     "titleAlt": "Ketumpatan",
+     "emoji": "🛟",
+     "objectives": [
+      {
+       "code": "7.1",
+       "text": "Relate floating and sinking to density"
+      }
+     ],
+     "offlineActivity": "Bath-time test: predict, then check if a spoon, a sponge, a coin, an apple and a plastic toy float or sink.",
+     "lesson": [
+      {
+       "type": "heading",
+       "text": "Float or sink?"
+      },
+      {
+       "type": "text",
+       "text": "Objects that are **less dense** than water **float**. Objects that are **denser** than water **sink**."
+      },
+      {
+       "type": "table",
+       "headers": [
+        "Floats 🛟",
+        "Sinks ⚓"
+       ],
+       "rows": [
+        [
+         "🪵 wood",
+         "🪨 stone"
+        ],
+        [
+         "🧽 sponge",
+         "🪙 coin"
+        ],
+        [
+         "🏐 ball",
+         "🔩 iron nail"
+        ]
+       ]
+      },
+      {
+       "type": "callout",
+       "emoji": "🫗",
+       "tone": "fun",
+       "text": "Cooking **oil floats on water** because oil is less dense than water."
+      }
+     ],
+     "quizzes": [
+      {
+       "id": "s3-sci-density-q1",
+       "title": "Bath-time science",
+       "questions": [
+        {
+         "id": "q1",
+         "type": "sort",
+         "prompt": "Does it float or sink in water?",
+         "objective": "7.1",
+         "buckets": [
+          {
+           "id": "float",
+           "label": "Floats",
+           "emoji": "🛟"
+          },
+          {
+           "id": "sink",
+           "label": "Sinks",
+           "emoji": "⚓"
+          }
+         ],
+         "items": [
+          {
+           "text": "🪵 wood",
+           "bucket": "float"
+          },
+          {
+           "text": "🪨 stone",
+           "bucket": "sink"
+          },
+          {
+           "text": "🪙 coin",
+           "bucket": "sink"
+          },
+          {
+           "text": "🍃 leaf",
+           "bucket": "float"
+          },
+          {
+           "text": "🔑 key",
+           "bucket": "sink"
+          },
+          {
+           "text": "🧽 sponge",
+           "bucket": "float"
+          }
+         ]
+        },
+        {
+         "id": "q2",
+         "type": "mcq",
+         "prompt": "Oil is poured into water. Where does the oil go?",
+         "visual": "🫗",
+         "objective": "7.1",
+         "options": [
+          {
+           "id": "a",
+           "text": "It floats on top"
+          },
+          {
+           "id": "b",
+           "text": "It sinks to the bottom"
+          },
+          {
+           "id": "c",
+           "text": "It disappears"
+          }
+         ],
+         "answer": "a"
+        },
+        {
+         "id": "q3",
+         "type": "trueFalse",
+         "prompt": "An object that is denser than water will sink.",
+         "objective": "7.1",
+         "answer": true
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "id": "s3-sci-acid",
+     "title": "Acids & Alkalis",
+     "titleAlt": "Asid dan Alkali",
+     "emoji": "🧫",
+     "objectives": [
+      {
+       "code": "8.1",
+       "text": "Identify acidic, alkaline and neutral substances using litmus paper"
+      }
+     ],
+     "offlineActivity": "With adult help, make red-cabbage 'magic water' and add lime juice, then soapy water. Watch the colours change!",
+     "lesson": [
+      {
+       "type": "heading",
+       "text": "The litmus test"
+      },
+      {
+       "type": "table",
+       "headers": [
+        "Substance",
+        "Blue litmus",
+        "Red litmus"
+       ],
+       "rows": [
+        [
+         "Acid 🍋",
+         "turns **red**",
+         "stays red"
+        ],
+        [
+         "Alkali 🧼",
+         "stays blue",
+         "turns **blue**"
+        ],
+        [
+         "Neutral 💧",
+         "no change",
+         "no change"
+        ]
+       ]
+      },
+      {
+       "type": "list",
+       "items": [
+        "Acids: lime juice, vinegar, tamarind (asam jawa)",
+        "Alkalis: soap, toothpaste, washing powder",
+        "Neutral: distilled water, salt water"
+       ]
+      },
+      {
+       "type": "callout",
+       "emoji": "⚠️",
+       "tone": "remember",
+       "text": "Use **litmus paper** to test — never taste!"
+      }
+     ],
+     "quizzes": [
+      {
+       "id": "s3-sci-acid-q1",
+       "title": "Litmus lab",
+       "questions": [
+        {
+         "id": "q1",
+         "type": "sort",
+         "prompt": "Acid or alkali?",
+         "objective": "8.1",
+         "buckets": [
+          {
+           "id": "acid",
+           "label": "Acid",
+           "emoji": "🍋"
+          },
+          {
+           "id": "alkali",
+           "label": "Alkali",
+           "emoji": "🧼"
+          }
+         ],
+         "items": [
+          {
+           "text": "lime juice",
+           "bucket": "acid"
+          },
+          {
+           "text": "soap",
+           "bucket": "alkali"
+          },
+          {
+           "text": "vinegar",
+           "bucket": "acid"
+          },
+          {
+           "text": "toothpaste",
+           "bucket": "alkali"
+          },
+          {
+           "text": "tamarind juice",
+           "bucket": "acid"
+          }
+         ]
+        },
+        {
+         "id": "q2",
+         "type": "mcq",
+         "prompt": "Blue litmus paper turns red. The substance is…",
+         "objective": "8.1",
+         "options": [
+          {
+           "id": "a",
+           "text": "an acid"
+          },
+          {
+           "id": "b",
+           "text": "an alkali"
+          },
+          {
+           "id": "c",
+           "text": "neutral"
+          }
+         ],
+         "answer": "a"
+        },
+        {
+         "id": "q3",
+         "type": "mcq",
+         "prompt": "Distilled water does not change either litmus paper. It is…",
+         "visual": "💧",
+         "objective": "8.1",
+         "options": [
+          {
+           "id": "a",
+           "text": "acidic"
+          },
+          {
+           "id": "b",
+           "text": "alkaline"
+          },
+          {
+           "id": "c",
+           "text": "neutral"
+          }
+         ],
+         "answer": "c"
+        },
+        {
+         "id": "q4",
+         "type": "trueFalse",
+         "prompt": "An alkali turns red litmus paper blue.",
+         "objective": "8.1",
+         "answer": true
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "id": "s3-sci-solar",
+     "title": "The Solar System",
+     "titleAlt": "Sistem Suria",
+     "emoji": "🪐",
+     "objectives": [
+      {
+       "code": "9.1",
+       "text": "Name the members of the Solar System and the order of the planets"
+      },
+      {
+       "code": "9.2",
+       "text": "Know that planets move around the Sun"
+      }
+     ],
+     "offlineActivity": "Learn the planet order with a silly sentence: 'My Very Excited Mother Just Served Us Nasi-lemak.' Make planets from playdough.",
+     "lesson": [
+      {
+       "type": "heading",
+       "text": "Our Solar System"
+      },
+      {
+       "type": "text",
+       "text": "The **Sun** is a star at the centre. **8 planets** move around it in their own paths (orbits)."
+      },
+      {
+       "type": "list",
+       "ordered": true,
+       "items": [
+        "Mercury — closest to the Sun",
+        "Venus — the hottest",
+        "Earth 🌍 — our home",
+        "Mars — the red planet",
+        "Jupiter — the biggest",
+        "Saturn 🪐 — beautiful rings",
+        "Uranus",
+        "Neptune — farthest from the Sun"
+       ]
+      },
+      {
+       "type": "callout",
+       "emoji": "🌙",
+       "tone": "fun",
+       "text": "The **Moon** moves around the **Earth**."
+      }
+     ],
+     "quizzes": [
+      {
+       "id": "s3-sci-solar-q1",
+       "title": "Space explorer",
+       "questions": [
+        {
+         "id": "q1",
+         "type": "order",
+         "prompt": "Put these planets in order from the Sun.",
+         "objective": "9.1",
+         "tokens": [
+          "Mercury",
+          "Venus",
+          "Earth",
+          "Mars"
+         ]
+        },
+        {
+         "id": "q2",
+         "type": "mcq",
+         "prompt": "Which is the biggest planet?",
+         "objective": "9.1",
+         "options": [
+          {
+           "id": "a",
+           "text": "Earth"
+          },
+          {
+           "id": "b",
+           "text": "Jupiter"
+          },
+          {
+           "id": "c",
+           "text": "Mars"
+          },
+          {
+           "id": "d",
+           "text": "Mercury"
+          }
+         ],
+         "answer": "b"
+        },
+        {
+         "id": "q3",
+         "type": "numpad",
+         "prompt": "How many planets are in the Solar System?",
+         "objective": "9.1",
+         "answer": "8"
+        },
+        {
+         "id": "q4",
+         "type": "mcq",
+         "prompt": "Which planet is farthest from the Sun?",
+         "objective": "9.1",
+         "options": [
+          {
+           "id": "a",
+           "text": "Neptune"
+          },
+          {
+           "id": "b",
+           "text": "Saturn"
+          },
+          {
+           "id": "c",
+           "text": "Venus"
+          }
+         ],
+         "answer": "a"
+        },
+        {
+         "id": "q5",
+         "type": "trueFalse",
+         "prompt": "The Sun moves around the Earth.",
+         "objective": "9.2",
+         "answer": false,
+         "explain": "The Earth moves around the Sun."
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "id": "s3-sci-machines",
+     "title": "Simple Machines",
+     "titleAlt": "Mesin Ringkas",
+     "emoji": "⚙️",
+     "objectives": [
+      {
+       "code": "10.1",
+       "text": "Identify types of simple machines and examples"
+      },
+      {
+       "code": "10.2",
+       "text": "Know that a complex machine is made of simple machines"
+      }
+     ],
+     "offlineActivity": "Machine hunt at home: find a lever (scissors), wheel and axle (doorknob), screw (jar lid), wedge (knife) and inclined plane (ramp).",
+     "lesson": [
+      {
+       "type": "heading",
+       "text": "Machines make work easier"
+      },
+      {
+       "type": "table",
+       "headers": [
+        "Simple machine",
+        "Example"
+       ],
+       "rows": [
+        [
+         "Lever (tuas)",
+         "see-saw, scissors"
+        ],
+        [
+         "Wheel & axle (roda dan gandar)",
+         "doorknob, steering wheel"
+        ],
+        [
+         "Pulley (takal)",
+         "flagpole"
+        ],
+        [
+         "Inclined plane (satah condong)",
+         "ramp, slide"
+        ],
+        [
+         "Wedge (baji)",
+         "knife, axe"
+        ],
+        [
+         "Screw (skru)",
+         "jar lid, bottle cap"
+        ],
+        [
+         "Gear (gear)",
+         "bicycle"
+        ]
+       ]
+      },
+      {
+       "type": "callout",
+       "emoji": "🚲",
+       "tone": "fun",
+       "text": "A bicycle is a **complex machine** — it has gears, wheels & axles and levers (brakes)!"
+      }
+     ],
+     "quizzes": [
+      {
+       "id": "s3-sci-machines-q1",
+       "title": "Machine master",
+       "questions": [
+        {
+         "id": "q1",
+         "type": "match",
+         "prompt": "Match the object to its simple machine.",
+         "objective": "10.1",
+         "pairs": [
+          {
+           "left": "flagpole",
+           "right": "pulley"
+          },
+          {
+           "left": "ramp",
+           "right": "inclined plane"
+          },
+          {
+           "left": "knife",
+           "right": "wedge"
+          },
+          {
+           "left": "see-saw",
+           "right": "lever"
+          }
+         ]
+        },
+        {
+         "id": "q2",
+         "type": "mcq",
+         "prompt": "A doorknob is an example of a…",
+         "objective": "10.1",
+         "options": [
+          {
+           "id": "a",
+           "text": "wheel and axle"
+          },
+          {
+           "id": "b",
+           "text": "pulley"
+          },
+          {
+           "id": "c",
+           "text": "wedge"
+          }
+         ],
+         "answer": "a"
+        },
+        {
+         "id": "q3",
+         "type": "mcq",
+         "prompt": "Which is a complex machine?",
+         "objective": "10.2",
+         "options": [
+          {
+           "id": "a",
+           "emoji": "🚲",
+           "text": "Bicycle"
+          },
+          {
+           "id": "b",
+           "emoji": "🔪",
+           "text": "Knife"
+          },
+          {
+           "id": "c",
+           "emoji": "🛝",
+           "text": "Slide"
+          }
+         ],
+         "answer": "a"
+        },
+        {
+         "id": "q4",
+         "type": "trueFalse",
+         "prompt": "Simple machines make our work easier.",
+         "objective": "10.1",
+         "answer": true
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "english",
+   "name": "English",
+   "nameAlt": "Bahasa Inggeris",
+   "emoji": "🔤",
+   "color": "grape",
+   "lang": "en",
+   "topics": [
+    {
+     "id": "s3-eng-animals",
+     "title": "Animals & Habitats",
+     "emoji": "🐯",
+     "objectives": [
+      {
+       "code": "V3",
+       "text": "Understand and use vocabulary about animals and habitats"
+      }
+     ],
+     "offlineActivity": "Watch a nature documentary together and pause to name 5 animals and where they live — in English.",
+     "lesson": [
+      {
+       "type": "heading",
+       "text": "Wild words"
+      },
+      {
+       "type": "vocab",
+       "lang": "en",
+       "items": [
+        {
+         "word": "tiger",
+         "meaning": "harimau",
+         "emoji": "🐯"
+        },
+        {
+         "word": "elephant",
+         "meaning": "gajah",
+         "emoji": "🐘"
+        },
+        {
+         "word": "crocodile",
+         "meaning": "buaya",
+         "emoji": "🐊"
+        },
+        {
+         "word": "monkey",
+         "meaning": "monyet",
+         "emoji": "🐒"
+        },
+        {
+         "word": "turtle",
+         "meaning": "penyu",
+         "emoji": "🐢"
+        },
+        {
+         "word": "hornbill",
+         "meaning": "enggang",
+         "emoji": "🦜"
+        }
+       ]
+      },
+      {
+       "type": "say",
+       "text": "The tiger lives in the jungle.",
+       "lang": "en"
+      },
+      {
+       "type": "callout",
+       "emoji": "🇲🇾",
+       "tone": "fun",
+       "text": "The **hornbill** is the state bird of Sarawak!"
+      }
+     ],
+     "quizzes": [
+      {
+       "id": "s3-eng-animals-q1",
+       "title": "Jungle words",
+       "questions": [
+        {
+         "id": "q1",
+         "type": "match",
+         "prompt": "Match the English word to the Malay word.",
+         "objective": "V3",
+         "pairs": [
+          {
+           "left": "🐯 tiger",
+           "right": "harimau"
+          },
+          {
+           "left": "🐘 elephant",
+           "right": "gajah"
+          },
+          {
+           "left": "🐊 crocodile",
+           "right": "buaya"
+          },
+          {
+           "left": "🐢 turtle",
+           "right": "penyu"
+          }
+         ]
+        },
+        {
+         "id": "q2",
+         "type": "mcq",
+         "prompt": "Which animal is this?",
+         "visual": "🐒",
+         "objective": "V3",
+         "options": [
+          {
+           "id": "a",
+           "text": "monkey"
+          },
+          {
+           "id": "b",
+           "text": "donkey"
+          },
+          {
+           "id": "c",
+           "text": "turkey"
+          },
+          {
+           "id": "d",
+           "text": "money"
+          }
+         ],
+         "answer": "a"
+        },
+        {
+         "id": "q3",
+         "type": "mcq",
+         "prompt": "Where does a fish live?",
+         "visual": "🐟",
+         "objective": "V3",
+         "options": [
+          {
+           "id": "a",
+           "text": "in the sky"
+          },
+          {
+           "id": "b",
+           "text": "in the water"
+          },
+          {
+           "id": "c",
+           "text": "in a tree"
+          }
+         ],
+         "answer": "b"
+        },
+        {
+         "id": "q4",
+         "type": "fillBlank",
+         "prompt": "Complete the sentence.",
+         "objective": "V3",
+         "text": "The ___ has a long trunk.",
+         "blanks": [
+          "elephant"
+         ],
+         "bank": [
+          "elephant",
+          "tiger",
+          "turtle"
+         ]
+        }
+       ]
+      },
+      {
+       "id": "s3-eng-animals-q2",
+       "title": "Word quiz (random)",
+       "count": 8,
+       "generator": {
+        "kind": "vocab",
+        "lang": "en",
+        "pairs": [
+         [
+          "tiger",
+          "harimau"
+         ],
+         [
+          "elephant",
+          "gajah"
+         ],
+         [
+          "crocodile",
+          "buaya"
+         ],
+         [
+          "monkey",
+          "monyet"
+         ],
+         [
+          "turtle",
+          "penyu"
+         ],
+         [
+          "hornbill",
+          "enggang"
+         ],
+         [
+          "snake",
+          "ular"
+         ],
+         [
+          "bird",
+          "burung"
+         ],
+         [
+          "rabbit",
+          "arnab"
+         ],
+         [
+          "goat",
+          "kambing"
+         ]
+        ]
+       }
+      }
+     ]
+    },
+    {
+     "id": "s3-eng-jobs",
+     "title": "Jobs People Do",
+     "emoji": "👩‍🚒",
+     "objectives": [
+      {
+       "code": "V3",
+       "text": "Understand and use vocabulary about occupations"
+      }
+     ],
+     "offlineActivity": "On the way to school, point to people working (police officer, cashier, driver) and ask 'What does he/she do?'",
+     "lesson": [
+      {
+       "type": "vocab",
+       "lang": "en",
+       "items": [
+        {
+         "word": "doctor",
+         "meaning": "doktor",
+         "emoji": "🧑‍⚕️"
+        },
+        {
+         "word": "firefighter",
+         "meaning": "ahli bomba",
+         "emoji": "🧑‍🚒"
+        },
+        {
+         "word": "farmer",
+         "meaning": "petani",
+         "emoji": "🧑‍🌾"
+        },
+        {
+         "word": "pilot",
+         "meaning": "juruterbang",
+         "emoji": "🧑‍✈️"
+        },
+        {
+         "word": "chef",
+         "meaning": "tukang masak",
+         "emoji": "🧑‍🍳"
+        },
+        {
+         "word": "teacher",
+         "meaning": "guru",
+         "emoji": "🧑‍🏫"
+        }
+       ]
+      },
+      {
+       "type": "say",
+       "text": "A firefighter puts out fires. A pilot flies an aeroplane.",
+       "lang": "en"
+      }
+     ],
+     "quizzes": [
+      {
+       "id": "s3-eng-jobs-q1",
+       "title": "When I grow up",
+       "questions": [
+        {
+         "id": "q1",
+         "type": "match",
+         "prompt": "Who does what?",
+         "pairs": [
+          {
+           "left": "🧑‍✈️ pilot",
+           "right": "flies a plane"
+          },
+          {
+           "left": "🧑‍🌾 farmer",
+           "right": "grows vegetables"
+          },
+          {
+           "left": "🧑‍🍳 chef",
+           "right": "cooks food"
+          },
+          {
+           "left": "🧑‍⚕️ doctor",
+           "right": "helps sick people"
+          }
+         ]
+        },
+        {
+         "id": "q2",
+         "type": "mcq",
+         "prompt": "Who puts out fires?",
+         "visual": "🔥",
+         "options": [
+          {
+           "id": "a",
+           "text": "firefighter"
+          },
+          {
+           "id": "b",
+           "text": "teacher"
+          },
+          {
+           "id": "c",
+           "text": "pilot"
+          }
+         ],
+         "answer": "a"
+        },
+        {
+         "id": "q3",
+         "type": "fillBlank",
+         "prompt": "Complete the sentence.",
+         "text": "My mother is a ___. She teaches children at school.",
+         "blanks": [
+          "teacher"
+         ],
+         "bank": [
+          "teacher",
+          "farmer",
+          "chef"
+         ]
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "id": "s3-eng-weather",
+     "title": "Weather & Clothes",
+     "emoji": "🌦️",
+     "objectives": [
+      {
+       "code": "V3",
+       "text": "Talk about the weather and what to wear"
+      }
+     ],
+     "offlineActivity": "Each morning, ask him to look outside and say 'It's sunny/rainy/cloudy today, so I'll take…'",
+     "lesson": [
+      {
+       "type": "vocab",
+       "lang": "en",
+       "items": [
+        {
+         "word": "sunny",
+         "meaning": "cerah",
+         "emoji": "☀️"
+        },
+        {
+         "word": "rainy",
+         "meaning": "hujan",
+         "emoji": "🌧️"
+        },
+        {
+         "word": "cloudy",
+         "meaning": "mendung",
+         "emoji": "☁️"
+        },
+        {
+         "word": "windy",
+         "meaning": "berangin",
+         "emoji": "💨"
+        },
+        {
+         "word": "stormy",
+         "meaning": "ribut",
+         "emoji": "⛈️"
+        }
+       ]
+      },
+      {
+       "type": "say",
+       "text": "It's rainy today. I need my umbrella and raincoat.",
+       "lang": "en"
+      }
+     ],
+     "quizzes": [
+      {
+       "id": "s3-eng-weather-q1",
+       "title": "Weather watch",
+       "questions": [
+        {
+         "id": "q1",
+         "type": "match",
+         "prompt": "Match the weather.",
+         "pairs": [
+          {
+           "left": "☀️",
+           "right": "sunny"
+          },
+          {
+           "left": "🌧️",
+           "right": "rainy"
+          },
+          {
+           "left": "☁️",
+           "right": "cloudy"
+          },
+          {
+           "left": "💨",
+           "right": "windy"
+          }
+         ]
+        },
+        {
+         "id": "q2",
+         "type": "mcq",
+         "prompt": "It's rainy. What should you take?",
+         "visual": "🌧️",
+         "options": [
+          {
+           "id": "a",
+           "emoji": "☂️",
+           "text": "an umbrella"
+          },
+          {
+           "id": "b",
+           "emoji": "🕶️",
+           "text": "sunglasses"
+          },
+          {
+           "id": "c",
+           "emoji": "🩳",
+           "text": "shorts"
+          }
+         ],
+         "answer": "a"
+        },
+        {
+         "id": "q3",
+         "type": "sort",
+         "prompt": "Sunny day or rainy day?",
+         "buckets": [
+          {
+           "id": "sun",
+           "label": "Sunny",
+           "emoji": "☀️"
+          },
+          {
+           "id": "rain",
+           "label": "Rainy",
+           "emoji": "🌧️"
+          }
+         ],
+         "items": [
+          {
+           "text": "🧢 cap",
+           "bucket": "sun"
+          },
+          {
+           "text": "☂️ umbrella",
+           "bucket": "rain"
+          },
+          {
+           "text": "🕶️ sunglasses",
+           "bucket": "sun"
+          },
+          {
+           "text": "🥾 boots",
+           "bucket": "rain"
+          }
+         ]
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "id": "s3-eng-past",
+     "title": "Simple Past Tense",
+     "emoji": "⏪",
+     "objectives": [
+      {
+       "code": "G3",
+       "text": "Use the simple past tense of regular and irregular verbs"
+      }
+     ],
+     "offlineActivity": "At dinner, ask 'What did you do today?' and gently recast his answers into the past tense.",
+     "lesson": [
+      {
+       "type": "heading",
+       "text": "Talking about yesterday"
+      },
+      {
+       "type": "text",
+       "text": "We use the **past tense** for things that already happened. Many verbs just add **-ed**."
+      },
+      {
+       "type": "table",
+       "headers": [
+        "Today",
+        "Yesterday"
+       ],
+       "rows": [
+        [
+         "play",
+         "played"
+        ],
+        [
+         "jump",
+         "jumped"
+        ],
+        [
+         "walk",
+         "walked"
+        ]
+       ]
+      },
+      {
+       "type": "heading",
+       "text": "Tricky verbs"
+      },
+      {
+       "type": "table",
+       "headers": [
+        "Today",
+        "Yesterday"
+       ],
+       "rows": [
+        [
+         "go",
+         "went"
+        ],
+        [
+         "eat",
+         "ate"
+        ],
+        [
+         "see",
+         "saw"
+        ],
+        [
+         "swim",
+         "swam"
+        ]
+       ]
+      },
+      {
+       "type": "say",
+       "text": "Yesterday I went to the park and played football.",
+       "lang": "en"
+      }
+     ],
+     "quizzes": [
+      {
+       "id": "s3-eng-past-q1",
+       "title": "Time machine",
+       "questions": [
+        {
+         "id": "q1",
+         "type": "fillBlank",
+         "prompt": "Choose the past tense.",
+         "objective": "G3",
+         "text": "Yesterday, I ___ football with my friends.",
+         "blanks": [
+          "played"
+         ],
+         "bank": [
+          "play",
+          "played",
+          "playing"
+         ]
+        },
+        {
+         "id": "q2",
+         "type": "match",
+         "prompt": "Match the verb to its past tense.",
+         "objective": "G3",
+         "pairs": [
+          {
+           "left": "go",
+           "right": "went"
+          },
+          {
+           "left": "eat",
+           "right": "ate"
+          },
+          {
+           "left": "see",
+           "right": "saw"
+          },
+          {
+           "left": "swim",
+           "right": "swam"
+          }
+         ]
+        },
+        {
+         "id": "q3",
+         "type": "mcq",
+         "prompt": "Last night, we ___ nasi lemak.",
+         "objective": "G3",
+         "options": [
+          {
+           "id": "a",
+           "text": "eat"
+          },
+          {
+           "id": "b",
+           "text": "eats"
+          },
+          {
+           "id": "c",
+           "text": "ate"
+          },
+          {
+           "id": "d",
+           "text": "eating"
+          }
+         ],
+         "answer": "c"
+        },
+        {
+         "id": "q4",
+         "type": "trueFalse",
+         "prompt": "The past tense of 'jump' is 'jumped'.",
+         "objective": "G3",
+         "answer": true
+        },
+        {
+         "id": "q5",
+         "type": "fillBlank",
+         "prompt": "Fill both blanks.",
+         "objective": "G3",
+         "difficulty": 2,
+         "text": "Mei ___ to the zoo and ___ a panda.",
+         "blanks": [
+          "went",
+          "saw"
+         ],
+         "bank": [
+          "went",
+          "saw",
+          "go",
+          "see"
+         ]
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "id": "s3-eng-prepositions",
+     "title": "Prepositions",
+     "emoji": "📦",
+     "objectives": [
+      {
+       "code": "G3",
+       "text": "Use prepositions of place: in, on, under, next to, behind"
+      }
+     ],
+     "offlineActivity": "Hide a toy and give clues using prepositions: 'It is under something soft, next to the door.'",
+     "lesson": [
+      {
+       "type": "heading",
+       "text": "Where is the cat?"
+      },
+      {
+       "type": "table",
+       "headers": [
+        "Word",
+        "Picture"
+       ],
+       "rows": [
+        [
+         "in",
+         "🐱 in the 📦"
+        ],
+        [
+         "on",
+         "🐱 on the 🪑"
+        ],
+        [
+         "under",
+         "🐱 under the 🛏️"
+        ],
+        [
+         "next to",
+         "🐱 next to the 🐶"
+        ],
+        [
+         "behind",
+         "🐱 behind the 🚪"
+        ]
+       ]
+      }
+     ],
+     "quizzes": [
+      {
+       "id": "s3-eng-prepositions-q1",
+       "title": "Hide and seek",
+       "questions": [
+        {
+         "id": "q1",
+         "type": "mcq",
+         "prompt": "The book is ___ the table. (It is on top.)",
+         "visual": "📚",
+         "objective": "G3",
+         "options": [
+          {
+           "id": "a",
+           "text": "on"
+          },
+          {
+           "id": "b",
+           "text": "under"
+          },
+          {
+           "id": "c",
+           "text": "in"
+          }
+         ],
+         "answer": "a"
+        },
+        {
+         "id": "q2",
+         "type": "fillBlank",
+         "prompt": "Complete it.",
+         "objective": "G3",
+         "text": "The fish is ___ the water.",
+         "blanks": [
+          "in"
+         ],
+         "bank": [
+          "in",
+          "on",
+          "behind"
+         ]
+        },
+        {
+         "id": "q3",
+         "type": "mcq",
+         "prompt": "The ball is ___ the bed. (It is below.)",
+         "visual": "⚽",
+         "objective": "G3",
+         "options": [
+          {
+           "id": "a",
+           "text": "on"
+          },
+          {
+           "id": "b",
+           "text": "under"
+          },
+          {
+           "id": "c",
+           "text": "next to"
+          }
+         ],
+         "answer": "b"
+        },
+        {
+         "id": "q4",
+         "type": "order",
+         "prompt": "Build the sentence.",
+         "objective": "G3",
+         "tokens": [
+          "The",
+          "dog",
+          "is",
+          "behind",
+          "the",
+          "door."
+         ]
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "id": "s3-eng-sentences",
+     "title": "Building Sentences",
+     "emoji": "🧱",
+     "objectives": [
+      {
+       "code": "W3",
+       "text": "Write simple sentences with correct word order"
+      }
+     ],
+     "offlineActivity": "Write words on sticky notes and let him build silly sentences on the fridge.",
+     "lesson": [
+      {
+       "type": "heading",
+       "text": "Who + does what"
+      },
+      {
+       "type": "text",
+       "text": "A sentence needs a **who** and a **doing word** (verb)."
+      },
+      {
+       "type": "example",
+       "title": "Examples",
+       "lines": [
+        "Ali **runs** fast.",
+        "The birds **sing** sweetly.",
+        "My sister **reads** a book."
+       ]
+      },
+      {
+       "type": "callout",
+       "emoji": "✍️",
+       "tone": "remember",
+       "text": "Start with a **capital letter** and end with a **full stop**."
+      }
+     ],
+     "quizzes": [
+      {
+       "id": "s3-eng-sentences-q1",
+       "title": "Sentence builder",
+       "questions": [
+        {
+         "id": "q1",
+         "type": "order",
+         "prompt": "Put the words in order.",
+         "objective": "W3",
+         "tokens": [
+          "I",
+          "like",
+          "to",
+          "eat",
+          "mangoes."
+         ]
+        },
+        {
+         "id": "q2",
+         "type": "order",
+         "prompt": "Put the words in order.",
+         "objective": "W3",
+         "tokens": [
+          "My",
+          "father",
+          "drives",
+          "a",
+          "blue",
+          "car."
+         ]
+        },
+        {
+         "id": "q3",
+         "type": "order",
+         "prompt": "Build the question.",
+         "objective": "W3",
+         "difficulty": 2,
+         "tokens": [
+          "Where",
+          "do",
+          "you",
+          "live?"
+         ],
+         "distractors": [
+          "does"
+         ]
+        },
+        {
+         "id": "q4",
+         "type": "mcq",
+         "prompt": "Which sentence is correct?",
+         "objective": "W3",
+         "options": [
+          {
+           "id": "a",
+           "text": "the cat sleeps."
+          },
+          {
+           "id": "b",
+           "text": "The cat sleeps."
+          },
+          {
+           "id": "c",
+           "text": "The cat sleeps"
+          }
+         ],
+         "answer": "b"
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "id": "s3-eng-reading",
+     "title": "Reading: A Day at the Farm",
+     "emoji": "🚜",
+     "objectives": [
+      {
+       "code": "R3",
+       "text": "Understand the main idea and details of a short text"
+      }
+     ],
+     "offlineActivity": "Read a short story together at bedtime. Ask 3 questions: who, where, and what happened.",
+     "lesson": [
+      {
+       "type": "heading",
+       "text": "Read the story"
+      },
+      {
+       "type": "text",
+       "text": "On Saturday, Hana visited her grandfather's farm in Kedah. She fed the **goats** and collected **eggs** from the chickens. In the afternoon, she helped Grandpa pick **rambutans**. Hana was tired but very happy."
+      },
+      {
+       "type": "say",
+       "text": "On Saturday, Hana visited her grandfather's farm in Kedah. She fed the goats and collected eggs from the chickens. In the afternoon, she helped Grandpa pick rambutans. Hana was tired but very happy.",
+       "lang": "en"
+      }
+     ],
+     "quizzes": [
+      {
+       "id": "s3-eng-reading-q1",
+       "title": "Story check",
+       "questions": [
+        {
+         "id": "q1",
+         "type": "mcq",
+         "prompt": "When did Hana visit the farm?",
+         "objective": "R3",
+         "options": [
+          {
+           "id": "a",
+           "text": "Monday"
+          },
+          {
+           "id": "b",
+           "text": "Saturday"
+          },
+          {
+           "id": "c",
+           "text": "Sunday"
+          }
+         ],
+         "answer": "b"
+        },
+        {
+         "id": "q2",
+         "type": "mcq",
+         "prompt": "What did Hana collect?",
+         "objective": "R3",
+         "options": [
+          {
+           "id": "a",
+           "emoji": "🥚",
+           "text": "eggs"
+          },
+          {
+           "id": "b",
+           "emoji": "🥛",
+           "text": "milk"
+          },
+          {
+           "id": "c",
+           "emoji": "🍯",
+           "text": "honey"
+          }
+         ],
+         "answer": "a"
+        },
+        {
+         "id": "q3",
+         "type": "trueFalse",
+         "prompt": "The farm is in Johor.",
+         "objective": "R3",
+         "answer": false,
+         "explain": "The farm is in Kedah."
+        },
+        {
+         "id": "q4",
+         "type": "mcq",
+         "prompt": "How did Hana feel at the end?",
+         "objective": "R3",
+         "options": [
+          {
+           "id": "a",
+           "text": "angry"
+          },
+          {
+           "id": "b",
+           "text": "tired but happy"
+          },
+          {
+           "id": "c",
+           "text": "scared"
+          }
+         ],
+         "answer": "b"
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "bm",
+   "name": "Bahasa Melayu",
+   "nameAlt": "Malay",
+   "emoji": "📖",
+   "color": "tangerine",
+   "lang": "ms",
+   "topics": [
+    {
+     "id": "s3-bm-katanama",
+     "title": "Kata Nama",
+     "titleAlt": "Nouns",
+     "emoji": "🏷️",
+     "objectives": [
+      {
+       "code": "5.1.1",
+       "text": "Memahami dan menggunakan kata nama am dan kata nama khas"
+      }
+     ],
+     "offlineActivity": "Semasa berjalan-jalan, main 'Cari Kata Nama Khas': papan tanda kedai, nama jalan dan nama bandar.",
+     "lesson": [
+      {
+       "type": "heading",
+       "text": "Apa itu kata nama?"
+      },
+      {
+       "type": "text",
+       "text": "**Kata nama** ialah perkataan yang menamakan orang, haiwan, benda, tempat atau perkara."
+      },
+      {
+       "type": "table",
+       "headers": [
+        "Kata nama am",
+        "Kata nama khas"
+       ],
+       "rows": [
+        [
+         "budak",
+         "Aiman"
+        ],
+        [
+         "sekolah",
+         "SK Taman Melati"
+        ],
+        [
+         "sungai",
+         "Sungai Pahang"
+        ],
+        [
+         "kucing",
+         "Si Comel"
+        ]
+       ]
+      },
+      {
+       "type": "callout",
+       "emoji": "🔠",
+       "tone": "remember",
+       "text": "Kata nama **khas** sentiasa bermula dengan **huruf besar**."
+      }
+     ],
+     "quizzes": [
+      {
+       "id": "s3-bm-katanama-q1",
+       "title": "Am atau khas?",
+       "questions": [
+        {
+         "id": "q1",
+         "type": "sort",
+         "lang": "ms",
+         "prompt": "Asingkan kata nama am dan kata nama khas.",
+         "objective": "5.1.1",
+         "buckets": [
+          {
+           "id": "am",
+           "label": "Kata nama am",
+           "emoji": "📦"
+          },
+          {
+           "id": "khas",
+           "label": "Kata nama khas",
+           "emoji": "⭐"
+          }
+         ],
+         "items": [
+          {
+           "text": "guru",
+           "bucket": "am"
+          },
+          {
+           "text": "Kuala Lumpur",
+           "bucket": "khas"
+          },
+          {
+           "text": "kereta",
+           "bucket": "am"
+          },
+          {
+           "text": "Cikgu Rahman",
+           "bucket": "khas"
+          },
+          {
+           "text": "Gunung Kinabalu",
+           "bucket": "khas"
+          },
+          {
+           "text": "pokok",
+           "bucket": "am"
+          }
+         ]
+        },
+        {
+         "id": "q2",
+         "type": "mcq",
+         "lang": "ms",
+         "prompt": "Antara berikut, yang manakah kata nama khas?",
+         "objective": "5.1.1",
+         "options": [
+          {
+           "id": "a",
+           "text": "bandar"
+          },
+          {
+           "id": "b",
+           "text": "Melaka"
+          },
+          {
+           "id": "c",
+           "text": "pasar"
+          },
+          {
+           "id": "d",
+           "text": "rumah"
+          }
+         ],
+         "answer": "b"
+        },
+        {
+         "id": "q3",
+         "type": "trueFalse",
+         "lang": "ms",
+         "prompt": "'kucing' ialah kata nama am.",
+         "objective": "5.1.1",
+         "answer": true
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "id": "s3-bm-katakerja",
+     "title": "Kata Kerja",
+     "titleAlt": "Verbs",
+     "emoji": "🏃",
+     "objectives": [
+      {
+       "code": "5.1.2",
+       "text": "Memahami dan menggunakan kata kerja dalam ayat"
+      }
+     ],
+     "offlineActivity": "Main 'Saya Buat, Awak Teka': lakonkan perbuatan (melompat, menyapu, membaca) dan dia teka kata kerjanya.",
+     "lesson": [
+      {
+       "type": "heading",
+       "text": "Perkataan perbuatan"
+      },
+      {
+       "type": "text",
+       "text": "**Kata kerja** menunjukkan perbuatan atau keadaan."
+      },
+      {
+       "type": "vocab",
+       "lang": "ms",
+       "items": [
+        {
+         "word": "berlari",
+         "meaning": "run",
+         "emoji": "🏃"
+        },
+        {
+         "word": "membaca",
+         "meaning": "read",
+         "emoji": "📖"
+        },
+        {
+         "word": "menulis",
+         "meaning": "write",
+         "emoji": "✍️"
+        },
+        {
+         "word": "berenang",
+         "meaning": "swim",
+         "emoji": "🏊"
+        },
+        {
+         "word": "makan",
+         "meaning": "eat",
+         "emoji": "🍽️"
+        }
+       ]
+      },
+      {
+       "type": "say",
+       "text": "Adik sedang membaca buku cerita.",
+       "lang": "ms"
+      }
+     ],
+     "quizzes": [
+      {
+       "id": "s3-bm-katakerja-q1",
+       "title": "Aksi!",
+       "questions": [
+        {
+         "id": "q1",
+         "type": "mcq",
+         "lang": "ms",
+         "prompt": "Apakah kata kerja dalam ayat ini: 'Ali menendang bola.'",
+         "objective": "5.1.2",
+         "options": [
+          {
+           "id": "a",
+           "text": "Ali"
+          },
+          {
+           "id": "b",
+           "text": "menendang"
+          },
+          {
+           "id": "c",
+           "text": "bola"
+          }
+         ],
+         "answer": "b"
+        },
+        {
+         "id": "q2",
+         "type": "match",
+         "lang": "ms",
+         "prompt": "Padankan gambar dengan kata kerja.",
+         "objective": "5.1.2",
+         "pairs": [
+          {
+           "left": "🏊",
+           "right": "berenang"
+          },
+          {
+           "left": "✍️",
+           "right": "menulis"
+          },
+          {
+           "left": "😴",
+           "right": "tidur"
+          },
+          {
+           "left": "🍽️",
+           "right": "makan"
+          }
+         ]
+        },
+        {
+         "id": "q3",
+         "type": "fillBlank",
+         "lang": "ms",
+         "prompt": "Lengkapkan ayat.",
+         "objective": "5.1.2",
+         "text": "Ibu sedang ___ nasi di dapur.",
+         "blanks": [
+          "memasak"
+         ],
+         "bank": [
+          "memasak",
+          "meja",
+          "merah"
+         ]
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "id": "s3-bm-adjektif",
+     "title": "Kata Adjektif",
+     "titleAlt": "Adjectives",
+     "emoji": "🌈",
+     "objectives": [
+      {
+       "code": "5.1.3",
+       "text": "Memahami dan menggunakan kata adjektif (warna, ukuran, sifat)"
+      }
+     ],
+     "offlineActivity": "Pilih satu buah (contoh: tembikai). Bergilir-gilir menyebut kata adjektif untuknya: besar, hijau, manis, berat.",
+     "lesson": [
+      {
+       "type": "heading",
+       "text": "Kata yang menerangkan"
+      },
+      {
+       "type": "text",
+       "text": "**Kata adjektif** menerangkan sifat sesuatu kata nama."
+      },
+      {
+       "type": "table",
+       "headers": [
+        "Jenis",
+        "Contoh"
+       ],
+       "rows": [
+        [
+         "Warna",
+         "merah, biru, hijau"
+        ],
+        [
+         "Ukuran",
+         "besar, kecil, panjang"
+        ],
+        [
+         "Sifat",
+         "rajin, baik, cantik"
+        ],
+        [
+         "Rasa",
+         "manis, masam, pedas"
+        ]
+       ]
+      },
+      {
+       "type": "say",
+       "text": "Buah mangga itu manis.",
+       "lang": "ms"
+      }
+     ],
+     "quizzes": [
+      {
+       "id": "s3-bm-adjektif-q1",
+       "title": "Warna-warni",
+       "questions": [
+        {
+         "id": "q1",
+         "type": "sort",
+         "lang": "ms",
+         "prompt": "Warna atau rasa?",
+         "objective": "5.1.3",
+         "buckets": [
+          {
+           "id": "warna",
+           "label": "Warna",
+           "emoji": "🎨"
+          },
+          {
+           "id": "rasa",
+           "label": "Rasa",
+           "emoji": "👅"
+          }
+         ],
+         "items": [
+          {
+           "text": "merah",
+           "bucket": "warna"
+          },
+          {
+           "text": "manis",
+           "bucket": "rasa"
+          },
+          {
+           "text": "kuning",
+           "bucket": "warna"
+          },
+          {
+           "text": "pedas",
+           "bucket": "rasa"
+          },
+          {
+           "text": "masam",
+           "bucket": "rasa"
+          }
+         ]
+        },
+        {
+         "id": "q2",
+         "type": "mcq",
+         "lang": "ms",
+         "prompt": "Gajah itu sangat ___.",
+         "visual": "🐘",
+         "objective": "5.1.3",
+         "options": [
+          {
+           "id": "a",
+           "text": "kecil"
+          },
+          {
+           "id": "b",
+           "text": "besar"
+          },
+          {
+           "id": "c",
+           "text": "manis"
+          }
+         ],
+         "answer": "b"
+        },
+        {
+         "id": "q3",
+         "type": "mcq",
+         "lang": "ms",
+         "prompt": "Yang manakah kata adjektif?",
+         "objective": "5.1.3",
+         "options": [
+          {
+           "id": "a",
+           "text": "rajin"
+          },
+          {
+           "id": "b",
+           "text": "berlari"
+          },
+          {
+           "id": "c",
+           "text": "sekolah"
+          }
+         ],
+         "answer": "a"
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "id": "s3-bm-imbuhan",
+     "title": "Imbuhan Awalan",
+     "titleAlt": "Prefixes ber- & me-",
+     "emoji": "🧩",
+     "objectives": [
+      {
+       "code": "5.2.1",
+       "text": "Memahami dan menggunakan imbuhan awalan ber- dan me-"
+      }
+     ],
+     "offlineActivity": "Tulis kata dasar pada kad (lari, baca, main). Dia tambah 'ber-' atau 'me-' dan bina ayat lisan.",
+     "lesson": [
+      {
+       "type": "heading",
+       "text": "Tambah di depan"
+      },
+      {
+       "type": "text",
+       "text": "**Imbuhan awalan** ditambah di **hadapan** kata dasar."
+      },
+      {
+       "type": "table",
+       "headers": [
+        "Kata dasar",
+        "+ imbuhan",
+        "Kata terbitan"
+       ],
+       "rows": [
+        [
+         "lari",
+         "ber-",
+         "berlari"
+        ],
+        [
+         "main",
+         "ber-",
+         "bermain"
+        ],
+        [
+         "baca",
+         "mem-",
+         "membaca"
+        ],
+        [
+         "tulis",
+         "men-",
+         "menulis"
+        ],
+        [
+         "sapu",
+         "meny-",
+         "menyapu"
+        ]
+       ]
+      },
+      {
+       "type": "callout",
+       "emoji": "🔎",
+       "tone": "tip",
+       "text": "'me-' boleh berubah menjadi **mem-, men-, meng-, meny-** mengikut huruf pertama kata dasar."
+      }
+     ],
+     "quizzes": [
+      {
+       "id": "s3-bm-imbuhan-q1",
+       "title": "Imbuhan hebat",
+       "questions": [
+        {
+         "id": "q1",
+         "type": "fillBlank",
+         "lang": "ms",
+         "prompt": "Pilih perkataan yang betul.",
+         "objective": "5.2.1",
+         "text": "Kami ___ bola sepak di padang.",
+         "blanks": [
+          "bermain"
+         ],
+         "bank": [
+          "bermain",
+          "main",
+          "memain"
+         ]
+        },
+        {
+         "id": "q2",
+         "type": "match",
+         "lang": "ms",
+         "prompt": "Padankan kata dasar dengan kata terbitan.",
+         "objective": "5.2.1",
+         "pairs": [
+          {
+           "left": "baca",
+           "right": "membaca"
+          },
+          {
+           "left": "tulis",
+           "right": "menulis"
+          },
+          {
+           "left": "sapu",
+           "right": "menyapu"
+          },
+          {
+           "left": "renang",
+           "right": "berenang"
+          }
+         ]
+        },
+        {
+         "id": "q3",
+         "type": "mcq",
+         "lang": "ms",
+         "prompt": "Kakak ___ lantai setiap pagi.",
+         "objective": "5.2.1",
+         "difficulty": 2,
+         "options": [
+          {
+           "id": "a",
+           "text": "sapu"
+          },
+          {
+           "id": "b",
+           "text": "bersapu"
+          },
+          {
+           "id": "c",
+           "text": "menyapu"
+          },
+          {
+           "id": "d",
+           "text": "mensapu"
+          }
+         ],
+         "answer": "c"
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "id": "s3-bm-simpulan",
+     "title": "Simpulan Bahasa",
+     "titleAlt": "Idioms",
+     "emoji": "🎭",
+     "objectives": [
+      {
+       "code": "5.3.1",
+       "text": "Memahami dan menggunakan simpulan bahasa dengan betul"
+      }
+     ],
+     "offlineActivity": "Pilih satu simpulan bahasa setiap hari dan cuba gunakan dalam perbualan di rumah.",
+     "lesson": [
+      {
+       "type": "heading",
+       "text": "Bahasa berkias"
+      },
+      {
+       "type": "text",
+       "text": "**Simpulan bahasa** ialah rangkai kata yang membawa maksud yang berbeza daripada makna asalnya."
+      },
+      {
+       "type": "table",
+       "headers": [
+        "Simpulan bahasa",
+        "Maksud"
+       ],
+       "rows": [
+        [
+         "ringan tulang",
+         "rajin bekerja"
+        ],
+        [
+         "panjang tangan",
+         "suka mencuri"
+        ],
+        [
+         "mulut murai",
+         "suka bercakap"
+        ],
+        [
+         "kaki bangku",
+         "tidak pandai bermain bola"
+        ],
+        [
+         "buah hati",
+         "orang yang sangat disayangi"
+        ]
+       ]
+      },
+      {
+       "type": "say",
+       "text": "Adik saya ringan tulang kerana selalu membantu ibu.",
+       "lang": "ms"
+      }
+     ],
+     "quizzes": [
+      {
+       "id": "s3-bm-simpulan-q1",
+       "title": "Padan maksud",
+       "questions": [
+        {
+         "id": "q1",
+         "type": "match",
+         "lang": "ms",
+         "prompt": "Padankan simpulan bahasa dengan maksudnya.",
+         "objective": "5.3.1",
+         "pairs": [
+          {
+           "left": "ringan tulang",
+           "right": "rajin bekerja"
+          },
+          {
+           "left": "mulut murai",
+           "right": "suka bercakap"
+          },
+          {
+           "left": "panjang tangan",
+           "right": "suka mencuri"
+          },
+          {
+           "left": "buah hati",
+           "right": "orang yang disayangi"
+          }
+         ]
+        },
+        {
+         "id": "q2",
+         "type": "mcq",
+         "lang": "ms",
+         "prompt": "Amin tidak pandai bermain bola. Dia seorang yang ___.",
+         "objective": "5.3.1",
+         "options": [
+          {
+           "id": "a",
+           "text": "kaki bangku"
+          },
+          {
+           "id": "b",
+           "text": "ringan tulang"
+          },
+          {
+           "id": "c",
+           "text": "buah hati"
+          }
+         ],
+         "answer": "a"
+        },
+        {
+         "id": "q3",
+         "type": "trueFalse",
+         "lang": "ms",
+         "prompt": "'Ringan tulang' bermaksud malas.",
+         "objective": "5.3.1",
+         "answer": false,
+         "explain": "'Ringan tulang' bermaksud rajin bekerja."
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "id": "s3-bm-ayat",
+     "title": "Bina Ayat",
+     "titleAlt": "Sentence building",
+     "emoji": "🧱",
+     "objectives": [
+      {
+       "code": "4.2.1",
+       "text": "Membina dan menulis ayat tunggal dengan betul"
+      }
+     ],
+     "offlineActivity": "Beri tiga perkataan (contoh: kucing, tidur, sofa). Dia bina satu ayat lengkap secara lisan.",
+     "lesson": [
+      {
+       "type": "heading",
+       "text": "Ayat yang lengkap"
+      },
+      {
+       "type": "text",
+       "text": "Ayat mempunyai **subjek** (siapa) dan **predikat** (buat apa)."
+      },
+      {
+       "type": "example",
+       "title": "Contoh",
+       "lines": [
+        "Siti | menyiram pokok bunga.",
+        "Ayah | membaca surat khabar."
+       ]
+      },
+      {
+       "type": "callout",
+       "emoji": "✍️",
+       "tone": "remember",
+       "text": "Mulakan dengan **huruf besar** dan akhiri dengan **noktah**."
+      }
+     ],
+     "quizzes": [
+      {
+       "id": "s3-bm-ayat-q1",
+       "title": "Susun ayat",
+       "questions": [
+        {
+         "id": "q1",
+         "type": "order",
+         "lang": "ms",
+         "prompt": "Susun perkataan menjadi ayat.",
+         "objective": "4.2.1",
+         "tokens": [
+          "Siti",
+          "menyiram",
+          "pokok",
+          "bunga."
+         ]
+        },
+        {
+         "id": "q2",
+         "type": "order",
+         "lang": "ms",
+         "prompt": "Susun perkataan menjadi ayat.",
+         "objective": "4.2.1",
+         "tokens": [
+          "Kami",
+          "pergi",
+          "ke",
+          "sekolah",
+          "dengan",
+          "bas."
+         ]
+        },
+        {
+         "id": "q3",
+         "type": "order",
+         "lang": "ms",
+         "prompt": "Susun perkataan menjadi ayat.",
+         "objective": "4.2.1",
+         "difficulty": 2,
+         "tokens": [
+          "Ayah",
+          "membeli",
+          "durian",
+          "di",
+          "pasar",
+          "malam."
+         ]
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "arcade": [
+  {
+   "id": "s3-arcade-times",
+   "title": "Times Table Blitz",
+   "emoji": "⚡",
+   "color": "sun",
+   "price": 0,
+   "subjectId": "math",
+   "quiz": {
+    "id": "s3-arcade-times-quiz",
+    "title": "Times Table Blitz",
+    "mode": "timeAttack",
+    "seconds": 60,
+    "generator": {
+     "kind": "multiplication",
+     "tables": [
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9
+     ]
+    }
+   }
+  },
+  {
+   "id": "s3-arcade-add",
+   "title": "Add Attack",
+   "emoji": "🚀",
+   "color": "sky",
+   "price": 0,
+   "subjectId": "math",
+   "quiz": {
+    "id": "s3-arcade-add-quiz",
+    "title": "Add Attack",
+    "mode": "timeAttack",
+    "seconds": 60,
+    "generator": {
+     "kind": "addition",
+     "max": 100
+    }
+   }
+  },
+  {
+   "id": "s3-arcade-words",
+   "title": "Word Rush",
+   "emoji": "🔤",
+   "color": "grape",
+   "price": 120,
+   "subjectId": "english",
+   "quiz": {
+    "id": "s3-arcade-words-quiz",
+    "title": "Word Rush",
+    "mode": "timeAttack",
+    "seconds": 60,
+    "generator": {
+     "kind": "vocab",
+     "lang": "en",
+     "pairs": [
+      [
+       "tiger",
+       "harimau"
+      ],
+      [
+       "elephant",
+       "gajah"
+      ],
+      [
+       "crocodile",
+       "buaya"
+      ],
+      [
+       "monkey",
+       "monyet"
+      ],
+      [
+       "turtle",
+       "penyu"
+      ],
+      [
+       "school",
+       "sekolah"
+      ],
+      [
+       "teacher",
+       "guru"
+      ],
+      [
+       "book",
+       "buku"
+      ],
+      [
+       "river",
+       "sungai"
+      ],
+      [
+       "mountain",
+       "gunung"
+      ],
+      [
+       "happy",
+       "gembira"
+      ],
+      [
+       "big",
+       "besar"
+      ],
+      [
+       "small",
+       "kecil"
+      ],
+      [
+       "red",
+       "merah"
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "s3-arcade-divide",
+   "title": "Division Dash",
+   "emoji": "🏁",
+   "color": "berry",
+   "price": 200,
+   "subjectId": "math",
+   "quiz": {
+    "id": "s3-arcade-divide-quiz",
+    "title": "Division Dash",
+    "mode": "timeAttack",
+    "seconds": 75,
+    "generator": {
+     "kind": "division",
+     "tables": [
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9
+     ]
+    }
+   }
+  }
+ ]
+}

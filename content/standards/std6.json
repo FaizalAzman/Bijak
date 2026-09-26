@@ -1,0 +1,29 @@
+{
+  "id": "std6",
+  "level": 6,
+  "title": "Standard 6",
+  "titleAlt": "Tahun 6",
+  "version": 1,
+  "subjects": [
+    {
+      "id": "math",
+      "name": "Mathematics",
+      "nameAlt": "Matematik",
+      "emoji": "🔢",
+      "color": "lime",
+      "topics": [
+        {
+          "id": "s6-math-mixed",
+          "title": "UPSR-style mixed practice",
+          "titleAlt": "Latihan campuran",
+          "emoji": "🎯",
+          "quizzes": [
+            { "id": "s6-math-mixed-q1", "title": "Mixed division", "count": 10, "generator": { "kind": "division", "tables": [6, 7, 8, 9, 11, 12], "maxFactor": 12 } },
+            { "id": "s6-math-mixed-q2", "title": "Money problems", "count": 8, "generator": { "kind": "money", "maxRinggit": 10000 } }
+          ]
+        }
+      ]
+    }
+  ],
+  "arcade": []
+}

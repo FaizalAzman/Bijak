@@ -1,0 +1,74 @@
+{
+  "id": "std2",
+  "level": 2,
+  "title": "Standard 2",
+  "titleAlt": "Tahun 2",
+  "version": 1,
+  "subjects": [
+    {
+      "id": "math",
+      "name": "Mathematics",
+      "nameAlt": "Matematik",
+      "emoji": "🔢",
+      "color": "lime",
+      "topics": [
+        {
+          "id": "s2-math-times",
+          "title": "Times Tables 2, 3, 4, 5, 10",
+          "titleAlt": "Sifir",
+          "emoji": "✖️",
+          "objectives": [{ "code": "2.3", "text": "Multiply using the 2, 3, 4, 5 and 10 times tables" }],
+          "offlineActivity": "Sing the times tables in the car. Count shoes in pairs: 2, 4, 6…",
+          "lesson": [
+            { "type": "emojiGrid", "emoji": "🧦", "rows": 4, "cols": 2, "caption": "4 pairs of socks = 4 × 2 = 8" },
+            { "type": "callout", "emoji": "🖐️", "tone": "tip", "text": "The **5** times table always ends in **0** or **5**." }
+          ],
+          "quizzes": [{ "id": "s2-math-times-q1", "title": "Times tables", "count": 10, "generator": { "kind": "multiplication", "tables": [2, 3, 4, 5, 10] } }]
+        },
+        {
+          "id": "s2-math-numbers",
+          "title": "Numbers up to 1 000",
+          "titleAlt": "Nombor hingga 1 000",
+          "emoji": "💯",
+          "lesson": [{ "type": "placeValue", "number": 368 }],
+          "quizzes": [{ "id": "s2-math-numbers-q1", "title": "Place value", "count": 8, "generator": { "kind": "placeValue", "max": 999 } }]
+        }
+      ]
+    },
+    {
+      "id": "science",
+      "name": "Science",
+      "nameAlt": "Sains",
+      "emoji": "🔬",
+      "color": "mint",
+      "topics": [
+        {
+          "id": "s2-sci-living",
+          "title": "Living & Non-living Things",
+          "titleAlt": "Benda Hidup dan Bukan Hidup",
+          "emoji": "🌳",
+          "lesson": [{ "type": "list", "items": ["Living things **breathe**, **eat**, **grow** and **move**.", "Non-living things do not."] }],
+          "quizzes": [
+            {
+              "id": "s2-sci-living-q1",
+              "title": "Alive or not?",
+              "questions": [
+                { "id": "q1", "type": "sort", "prompt": "Living or non-living?", "buckets": [{ "id": "l", "label": "Living", "emoji": "💚" }, { "id": "n", "label": "Non-living", "emoji": "🪨" }], "items": [{ "text": "🐈 cat", "bucket": "l" }, { "text": "🪨 rock", "bucket": "n" }, { "text": "🌻 flower", "bucket": "l" }, { "text": "🚗 car", "bucket": "n" }] }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "arcade": [
+    {
+      "id": "s2-arcade-times",
+      "title": "Sifir Sprint",
+      "emoji": "⚡",
+      "color": "sun",
+      "subjectId": "math",
+      "quiz": { "id": "s2-arcade-times-quiz", "title": "Sifir Sprint", "mode": "timeAttack", "seconds": 60, "generator": { "kind": "multiplication", "tables": [2, 3, 4, 5, 10] } }
+    }
+  ]
+}

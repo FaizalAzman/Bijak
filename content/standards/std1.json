@@ -1,0 +1,111 @@
+{
+  "id": "std1",
+  "level": 1,
+  "title": "Standard 1",
+  "titleAlt": "Tahun 1",
+  "version": 1,
+  "subjects": [
+    {
+      "id": "math",
+      "name": "Mathematics",
+      "nameAlt": "Matematik",
+      "emoji": "🔢",
+      "color": "lime",
+      "topics": [
+        {
+          "id": "s1-math-numbers",
+          "title": "Numbers up to 100",
+          "titleAlt": "Nombor hingga 100",
+          "emoji": "🔟",
+          "objectives": [{ "code": "1.1", "text": "Count and name numbers up to 100" }],
+          "offlineActivity": "Count stairs, buttons or grapes together, in tens.",
+          "lesson": [
+            { "type": "heading", "text": "Counting in tens" },
+            { "type": "emojiGrid", "emoji": "🟡", "rows": 3, "cols": 10, "caption": "3 tens = 30" },
+            { "type": "numberLine", "from": 0, "to": 100, "step": 10, "highlight": [30] }
+          ],
+          "quizzes": [
+            {
+              "id": "s1-math-numbers-q1",
+              "title": "Count with me",
+              "questions": [
+                { "id": "q1", "type": "numpad", "prompt": "How many stars? ⭐⭐⭐⭐⭐⭐⭐", "answer": "7" },
+                { "id": "q2", "type": "mcq", "prompt": "What comes after 19?", "options": [{ "id": "a", "text": "18" }, { "id": "b", "text": "20" }, { "id": "c", "text": "91" }], "answer": "b" },
+                { "id": "q3", "type": "order", "prompt": "Smallest to biggest.", "tokens": ["3", "12", "25", "40"] }
+              ]
+            },
+            { "id": "s1-math-numbers-q2", "title": "Add within 20", "count": 8, "generator": { "kind": "addition", "max": 20 } }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "english",
+      "name": "English",
+      "nameAlt": "Bahasa Inggeris",
+      "emoji": "🔤",
+      "color": "grape",
+      "topics": [
+        {
+          "id": "s1-eng-colours",
+          "title": "Colours",
+          "emoji": "🎨",
+          "lesson": [
+            { "type": "vocab", "lang": "en", "items": [{ "word": "red", "meaning": "merah", "emoji": "🔴" }, { "word": "blue", "meaning": "biru", "emoji": "🔵" }, { "word": "yellow", "meaning": "kuning", "emoji": "🟡" }, { "word": "green", "meaning": "hijau", "emoji": "🟢" }] }
+          ],
+          "quizzes": [
+            {
+              "id": "s1-eng-colours-q1",
+              "title": "Rainbow",
+              "questions": [
+                { "id": "q1", "type": "match", "prompt": "Match the colour.", "pairs": [{ "left": "🔴", "right": "red" }, { "left": "🔵", "right": "blue" }, { "left": "🟡", "right": "yellow" }] },
+                { "id": "q2", "type": "mcq", "prompt": "What colour is a banana?", "visual": "🍌", "options": [{ "id": "a", "text": "yellow" }, { "id": "b", "text": "blue" }, { "id": "c", "text": "red" }], "answer": "a" }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "bm",
+      "name": "Bahasa Melayu",
+      "nameAlt": "Malay",
+      "emoji": "📖",
+      "color": "tangerine",
+      "lang": "ms",
+      "topics": [
+        {
+          "id": "s1-bm-sukukata",
+          "title": "Suku Kata",
+          "titleAlt": "Syllables",
+          "emoji": "🔡",
+          "lesson": [
+            { "type": "text", "text": "Perkataan dibina daripada **suku kata**." },
+            { "type": "example", "lines": ["bu + ku = buku", "ma + ta = mata", "ka + ki = kaki"] },
+            { "type": "say", "text": "buku, mata, kaki", "lang": "ms" }
+          ],
+          "quizzes": [
+            {
+              "id": "s1-bm-sukukata-q1",
+              "title": "Gabung suku kata",
+              "questions": [
+                { "id": "q1", "type": "order", "lang": "ms", "prompt": "Susun menjadi 'bola'.", "tokens": ["bo", "la"], "distractors": ["ku"] },
+                { "id": "q2", "type": "mcq", "lang": "ms", "prompt": "ba + ju = ?", "visual": "👕", "options": [{ "id": "a", "text": "baju" }, { "id": "b", "text": "buju" }, { "id": "c", "text": "jaba" }], "answer": "a" }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "arcade": [
+    {
+      "id": "s1-arcade-add",
+      "title": "Tiny Sums",
+      "emoji": "🐣",
+      "color": "sun",
+      "subjectId": "math",
+      "quiz": { "id": "s1-arcade-add-quiz", "title": "Tiny Sums", "mode": "timeAttack", "seconds": 60, "generator": { "kind": "addition", "max": 10 } }
+    }
+  ]
+}

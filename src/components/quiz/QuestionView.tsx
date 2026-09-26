@@ -1,0 +1,113 @@
+import { Volume2 } from 'lucide-react-native';
+import { Pressable, View } from 'react-native';
+import Animated, { FadeInDown } from 'react-native-reanimated';
+import { Txt } from '@/components/ui';
+import type { Question } from '@/features/content/schema';
+import { fx, speak } from '@/lib/feedback';
+import { colors } from '@/theme';
+import { FillBlank } from './FillBlank';
+import { Match } from './Match';
+import { MCQ } from './MCQ';
+import { Numpad } from './Numpad';
+import { Order } from './Order';
+import { Sort } from './Sort';
+import { TrueFalse } from './TrueFalse';
+
+const KIND_LABEL: Record<Question['type'], string> = {
+  mcq: 'Choose the answer',
+  trueFalse: 'True or false?',
+  match: 'Draw lines to match',
+  order: 'Put in order',
+  sort: 'Drag into groups',
+  fillBlank: 'Fill in the blanks',
+  numpad: 'Type the answer',
+};
+const KIND_LABEL_MS: Record<Question['type'], string> = {
+  mcq: 'Pilih jawapan',
+  trueFalse: 'Betul atau salah?',
+  match: 'Lukis garisan untuk padankan',
+  order: 'Susun mengikut urutan',
+  sort: 'Seret ke kumpulan',
+  fillBlank: 'Isi tempat kosong',
+  numpad: 'Taip jawapan',
+};
+
+export function QuestionView({ q, onAnswer, locked, fast }: { q: Question; onAnswer: (ok: boolean) => void; locked: boolean; fast?: boolean }) {
+  const body = (() => {
+    switch (q.type) {
+      case 'mcq':
+        return <MCQ q={q} onAnswer={onAnswer} locked={locked} fast={fast} />;
+      case 'trueFalse':
+        return <TrueFalse q={q} onAnswer={onAnswer} locked={locked} />;
+      case 'match':
+        return <Match q={q} onAnswer={onAnswer} locked={locked} />;
+      case 'order':
+        return <Order q={q} onAnswer={onAnswer} locked={locked} />;
+      case 'sort':
+        return <Sort q={q} onAnswer={onAnswer} locked={locked} />;
+      case 'fillBlank':
+        return <FillBlank q={q} onAnswer={onAnswer} locked={locked} />;
+      case 'numpad':
+        return <Numpad q={q} onAnswer={onAnswer} locked={locked} />;
+    }
+  })();
+  const bigPrompt = q.prompt.length < 26 && fast;
+  return (
+    <View style={{ gap: 18 }}>
+      <Animated.View entering={FadeInDown.springify().damping(16)} style={{ gap: 10 }}>
+        {!fast && <Txt variant="label">{(q.lang === 'ms' ? KIND_LABEL_MS : KIND_LABEL)[q.type]}</Txt>}
+        <View style={{ flexDirection: 'row', alignItems: 'flex-start', gap: 12 }}>
+          {q.visual ? (
+            <View
+              style={{
+                width: 64,
+                height: 64,
+                borderRadius: 20,
+                backgroundColor: colors['sun-soft'],
+                borderWidth: 2,
+                borderColor: colors.ink,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <Txt style={{ fontSize: 34 }}>{q.visual}</Txt>
+            </View>
+          ) : null}
+          <Txt
+            variant={bigPrompt ? 'hero' : 'display'}
+            style={{
+              flex: 1,
+              fontSize: bigPrompt ? 40 : q.prompt.length > 70 ? 20 : 24,
+              lineHeight: bigPrompt ? 48 : q.prompt.length > 70 ? 27 : 31,
+              textAlign: bigPrompt ? 'center' : 'left',
+            }}
+          >
+            {q.prompt}
+          </Txt>
+          {!fast && (
+            <Pressable
+              accessibilityLabel="Read question aloud"
+              onPress={() => {
+                fx.tap();
+                speak(q.prompt, q.lang);
+              }}
+              style={{
+                width: 42,
+                height: 42,
+                borderRadius: 21,
+                backgroundColor: colors.sky,
+                borderWidth: 2,
+                borderColor: colors.ink,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <Volume2 size={20} color={colors.ink} strokeWidth={2.5} />
+            </Pressable>
+          )}
+        </View>
+      </Animated.View>
+      {body}
+    </View>
+  );
+}

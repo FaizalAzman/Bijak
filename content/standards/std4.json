@@ -1,0 +1,94 @@
+{
+  "id": "std4",
+  "level": 4,
+  "title": "Standard 4",
+  "titleAlt": "Tahun 4",
+  "version": 1,
+  "subjects": [
+    {
+      "id": "math",
+      "name": "Mathematics",
+      "nameAlt": "Matematik",
+      "emoji": "🔢",
+      "color": "lime",
+      "topics": [
+        {
+          "id": "s4-math-numbers",
+          "title": "Numbers up to 100 000",
+          "titleAlt": "Nombor hingga 100 000",
+          "emoji": "🧮",
+          "objectives": [{ "code": "1.1", "text": "Read, write and determine place value up to 100 000" }],
+          "lesson": [
+            { "type": "placeValue", "number": 52408 },
+            { "type": "text", "text": "The **ten thousands** place comes before thousands." }
+          ],
+          "quizzes": [{ "id": "s4-math-numbers-q1", "title": "Big numbers", "count": 8, "generator": { "kind": "placeValue", "max": 99999 } }]
+        },
+        {
+          "id": "s4-math-mul",
+          "title": "Multiplication practice",
+          "titleAlt": "Darab",
+          "emoji": "✖️",
+          "quizzes": [{ "id": "s4-math-mul-q1", "title": "All tables", "count": 12, "generator": { "kind": "multiplication", "tables": [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12], "maxFactor": 12 } }]
+        }
+      ]
+    },
+    {
+      "id": "science",
+      "name": "Science",
+      "nameAlt": "Sains",
+      "emoji": "🔬",
+      "color": "mint",
+      "topics": [
+        {
+          "id": "s4-sci-breathing",
+          "title": "Humans: Breathing",
+          "titleAlt": "Manusia: Pernafasan",
+          "emoji": "🫁",
+          "lesson": [{ "type": "list", "ordered": true, "items": ["Air enters through the **nose**", "It travels down the **windpipe**", "It fills the **lungs**"] }],
+          "quizzes": [
+            {
+              "id": "s4-sci-breathing-q1",
+              "title": "Deep breath",
+              "questions": [{ "id": "q1", "type": "order", "prompt": "Order the path of air.", "tokens": ["nose", "windpipe", "lungs"] }]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sejarah",
+      "name": "Sejarah",
+      "nameAlt": "History",
+      "emoji": "🏛️",
+      "color": "sky",
+      "lang": "ms",
+      "topics": [
+        {
+          "id": "s4-sej-diri",
+          "title": "Mengenali Sejarah",
+          "titleAlt": "Getting to know History",
+          "emoji": "📜",
+          "lesson": [{ "type": "text", "text": "**Sejarah** ialah kajian tentang peristiwa yang telah berlaku pada masa lalu." }],
+          "quizzes": [
+            {
+              "id": "s4-sej-diri-q1",
+              "title": "Masa lalu",
+              "questions": [{ "id": "q1", "type": "trueFalse", "lang": "ms", "prompt": "Sejarah mengkaji peristiwa masa lalu.", "answer": true }]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "arcade": [
+    {
+      "id": "s4-arcade-times",
+      "title": "Times 12 Blitz",
+      "emoji": "⚡",
+      "color": "sun",
+      "subjectId": "math",
+      "quiz": { "id": "s4-arcade-times-quiz", "title": "Times 12 Blitz", "mode": "timeAttack", "seconds": 60, "generator": { "kind": "multiplication", "tables": [6, 7, 8, 9, 11, 12], "maxFactor": 12 } }
+    }
+  ]
+}
