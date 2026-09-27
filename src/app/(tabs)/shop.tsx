@@ -8,9 +8,10 @@ import { TAB_BAR_SPACE } from '@/components/gamify/TabBar';
 import { toast } from '@/components/gamify/Toaster';
 import { Button, Chip, Chunky, Grid, HScroll, PressChunky, Screen, Txt } from '@/components/ui';
 import { useChildContent } from '@/hooks/useChildContent';
-import { SHOP, SLOT_LABEL, type ShopItem, type Slot } from '@/features/gamify/shop';
+import { itemName, SHOP, SLOT_KEY, type ShopItem, type Slot } from '@/features/gamify/shop';
 import { levelFromXp } from '@/features/gamify/xp';
 import { useLayout } from '@/hooks/useLayout';
+import { standardName, useT } from '@/i18n';
 import { fx } from '@/lib/feedback';
 import { useActiveProfile, useApp, useProgress } from '@/store/app';
 import { accent, colors } from '@/theme';
@@ -30,6 +31,7 @@ export default function Shop() {
   const [preview, setPreview] = useState<ShopItem | null>(null);
   const level = levelFromXp(p.xp);
   const layout = useLayout('wide');
+  const t = useT();
   const games = useMemo(() => index.standards.flatMap((s) => s.arcade.filter((g) => g.price > 0).map((g) => ({ g, std: s }))), [index]);
 
   if (!profile) return null;
@@ -54,7 +56,7 @@ export default function Shop() {
     if (buy(item.id)) {
       fx.coin();
       equip(item.slot, item.id);
-      toast({ emoji: item.emoji ?? '🛍️', title: `${item.name} unlocked!`, subtitle: 'Equipped on your avatar' });
+      toast({ emoji: item.emoji ?? '🛍️', title: t('shop.unlocked', itemName(item, t.lang)), subtitle: t('shop.equippedOnAvatar') });
       setPreview(null);
     } else fx.wrong();
   };
@@ -65,7 +67,7 @@ export default function Shop() {
     <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, width: '100%', maxWidth: 440, marginTop: wide ? 6 : 0 }}>
       <View style={{ flex: 1 }}>
         <Button
-          label={previewLocked ? `Level ${preview.minLevel} needed` : `Buy · ${preview.price} 🪙`}
+          label={previewLocked ? t('shop.levelNeeded', preview.minLevel ?? 0) : t('common.buyFor', preview.price)}
           tone="lime"
           full
           disabled={previewLocked || !canAfford}
@@ -73,32 +75,32 @@ export default function Shop() {
           testID="buy"
         />
       </View>
-      <Button label="Cancel" tone="paper" align="center" onPress={() => setPreview(null)} testID="cancel-preview" />
+      <Button label={t('common.cancel')} tone="paper" align="center" onPress={() => setPreview(null)} testID="cancel-preview" />
     </View>
   );
 
   return (
-    <Screen frame="wide" header={<KidHeader title="Shop" />} bottomInset={TAB_BAR_SPACE}>
+    <Screen frame="wide" header={<KidHeader title={t('tabs.shop')} />} bottomInset={TAB_BAR_SPACE}>
       <Chunky bg={colors['grape-soft']} innerStyle={{ padding: 16, gap: 14 }}>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
           <Avatar config={previewConfig} size={layout.isTablet ? 140 : layout.small ? 88 : 110} mood={preview ? 'excited' : 'happy'} />
           <View style={{ flex: 1, gap: 6 }}>
             {preview ? (
               <>
-                <Txt variant="label">Trying on</Txt>
+                <Txt variant="label">{t('shop.tryingOn')}</Txt>
                 <Txt variant="title" numberOfLines={2}>
-                  {preview.name}
+                  {itemName(preview, t.lang)}
                 </Txt>
                 <Txt variant="small" testID="preview-status">
-                  {previewLocked ? `🔒 Unlocks at level ${preview.minLevel}` : canAfford ? `🪙 ${preview.price} coins` : `Need ${preview.price - p.coins} more coins`}
+                  {previewLocked ? t('shop.unlocksAt', preview.minLevel ?? 0) : canAfford ? t('shop.price', preview.price) : t('shop.needMore', preview.price - p.coins)}
                 </Txt>
                 {wide && actions}
               </>
             ) : (
               <>
-                <Txt variant="label">Your coins</Txt>
+                <Txt variant="label">{t('shop.yourCoins')}</Txt>
                 <Txt variant="hero">🪙 {p.coins}</Txt>
-                <Txt variant="small">Tap an item to try it on!</Txt>
+                <Txt variant="small">{t('shop.tapToTry')}</Txt>
               </>
             )}
           </View>
@@ -108,14 +110,14 @@ export default function Shop() {
       </Chunky>
 
       <HScroll paddingVertical={16}>
-        {TABS.map((t) => (
-          <Chip key={t} label={t === 'games' ? 'Games' : SLOT_LABEL[t]} selected={tab === t} onPress={() => (setTab(t), setPreview(null))} />
+        {TABS.map((id) => (
+          <Chip key={id} label={id === 'games' ? t('shop.games') : t(SLOT_KEY[id])} selected={tab === id} onPress={() => (setTab(id), setPreview(null))} />
         ))}
       </HScroll>
 
       {tab === 'games' ? (
         <Grid minItemWidth={300} maxColumns={2}>
-          {games.length === 0 && <Txt variant="small">No games to unlock yet.</Txt>}
+          {games.length === 0 && <Txt variant="small">{t('shop.noGames')}</Txt>}
           {games.map(({ g, std }) => {
             const owned = p.inventory.includes(`arcade:${g.id}`);
             const a = accent(g.color);
@@ -138,12 +140,12 @@ export default function Shop() {
                 <View style={{ flex: 1 }}>
                   <Txt variant="subtitle">{g.title}</Txt>
                   <Txt variant="small">
-                    {std.title} · {g.quiz.seconds}s time attack
+                    {t('shop.gameSub', standardName(std, t.lang), g.quiz.seconds)}
                   </Txt>
                 </View>
                 {owned ? (
                   <Txt variant="small" style={{ color: colors.ink }}>
-                    Unlocked ✓
+                    {t('shop.gameUnlocked')}
                   </Txt>
                 ) : (
                   <Button
@@ -156,7 +158,7 @@ export default function Shop() {
                     onPress={() => {
                       if (unlockArcade(g.id)) {
                         fx.coin();
-                        toast({ emoji: g.emoji, title: `${g.title} unlocked!`, subtitle: 'Find it in the Arcade on Home' });
+                        toast({ emoji: g.emoji, title: t('shop.unlocked', g.title), subtitle: t('shop.gameWhere') });
                       }
                     }}
                   />
@@ -177,7 +179,7 @@ export default function Shop() {
                   onPress={() => onItem(item)}
                   bg={equipped ? colors.lime : preview?.id === item.id ? colors['sun-soft'] : colors.paper}
                   innerStyle={{ padding: 12, alignItems: 'center', gap: 6, minHeight: 140 }}
-                  accessibilityLabel={item.name}
+                  accessibilityLabel={itemName(item, t.lang)}
                 >
                   <View
                     style={{
@@ -195,18 +197,18 @@ export default function Shop() {
                     <Txt style={{ fontSize: 32 }}>{item.emoji}</Txt>
                   </View>
                   <Txt variant="subtitle" numberOfLines={1} style={{ fontSize: 14 }}>
-                    {item.name}
+                    {itemName(item, t.lang)}
                   </Txt>
                   {equipped ? (
                     <Txt variant="small" style={{ color: colors.ink }}>
-                      Equipped ✓
+                      {t('shop.equipped')}
                     </Txt>
                   ) : owned ? (
-                    <Txt variant="small">Tap to wear</Txt>
+                    <Txt variant="small">{t('shop.tapToWear')}</Txt>
                   ) : locked ? (
                     <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
                       <Lock size={12} color={colors.muted} />
-                      <Txt variant="small">Level {item.minLevel}</Txt>
+                      <Txt variant="small">{t('common.level', item.minLevel ?? 0)}</Txt>
                     </View>
                   ) : (
                     <Txt variant="subtitle" style={{ fontSize: 14 }}>

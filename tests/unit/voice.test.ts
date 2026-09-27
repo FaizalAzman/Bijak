@@ -72,6 +72,13 @@ describe('choosing the voice', () => {
     expect(voiceLabel({ identifier: 'en-au-x-aua-network', name: 'en-au-x-aua-network', language: 'en-AU', quality: 'Default' })).toBe('Australian English · aua (needs internet)');
   });
 
+  it('voice names follow the app language', () => {
+    expect(voiceLabel(IOS[5], 'ms')).toBe('Malcolm · Bahasa Inggeris British (premium)');
+    expect(voiceLabel(IOS[4], 'ms')).toBe('Daniel · Bahasa Inggeris British (dipertingkat)');
+    expect(voiceLabel(ANDROID[2], 'ms')).toBe('Bahasa Inggeris British · gba (dipertingkat, perlu internet)');
+    expect(voiceLabel(ANDROID[5], 'ms')).toBe('Bahasa Melayu · mfm (dipertingkat)');
+  });
+
   it('the picker hides online twins of on-device voices', () => {
     expect(ids(withoutOnlineTwins(ANDROID))).toEqual(['en-us-x-sfg-local', 'en-gb-x-gba-local', 'id-id-x-idc-local', 'ms-my-x-mfm-local', 'com.svox.pico.en_GB']);
     const online = [{ identifier: 'en-in-x-ahp-network', name: 'en-in-x-ahp-network', language: 'en-IN', quality: 'Default' }];

@@ -162,7 +162,7 @@ describe('fill in the blanks', () => {
   it('a filled blank can be cleared and refilled', async () => {
     const onAnswer = await view(FB);
     await activate(button(/^makan$/));
-    await press('Blank 1');
+    await press('Tempat kosong 1');
     await activate(button(/^pergi$/));
     await activate(button(/^naik$/));
     await press('Semak');

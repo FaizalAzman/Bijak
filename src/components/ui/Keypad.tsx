@@ -1,5 +1,6 @@
 import { Delete } from 'lucide-react-native';
 import { View } from 'react-native';
+import { useT } from '@/i18n';
 import { colors } from '@/theme';
 import { PressChunky } from './Chunky';
 import { useFrame } from './Frame';
@@ -14,6 +15,7 @@ export function Keypad({ onKey, extraKey, disabled, compact }: { onKey: (k: stri
     [extraKey ?? '', '0', 'del'],
   ];
   const { small, isTablet } = useFrame();
+  const t = useT();
   const h = isTablet ? 64 : small ? (compact ? 44 : 52) : compact ? 50 : 60;
   return (
     <View style={{ gap: compact ? 8 : 10, width: '100%', maxWidth: 440, alignSelf: 'center' }}>
@@ -26,7 +28,7 @@ export function Keypad({ onKey, extraKey, disabled, compact }: { onKey: (k: stri
               <PressChunky
                 key={j}
                 disabled={disabled}
-                accessibilityLabel={k === 'del' ? 'Delete' : k}
+                accessibilityLabel={k === 'del' ? t('common.delete') : k}
                 onPress={() => onKey(k)}
                 style={{ flex: 1 }}
                 depth={3}

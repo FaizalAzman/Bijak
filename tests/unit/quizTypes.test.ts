@@ -1,4 +1,4 @@
-import { correctAnswerText, LABELS, numericEqual } from '@/components/quiz/types';
+import { answerLines, correctAnswerText, LABELS, numericEqual } from '@/components/quiz/types';
 import type { Question } from '@/features/content/schema';
 
 const base = { id: 'q', prompt: 'p', lang: 'en' as const, difficulty: 1 };
@@ -30,6 +30,37 @@ describe('correctAnswerText', () => {
     expect(
       correctAnswerText({ ...base, type: 'sort', buckets: [{ id: 'x', label: 'X' }, { id: 'y', label: 'Y' }], items: [{ text: 'a', bucket: 'x' }, { text: 'b', bucket: 'y' }] } as Question),
     ).toBeNull();
+  });
+});
+
+describe('answerLines', () => {
+  it('spells out the whole answer for every question type, including match and sort', () => {
+    expect(answerLines({ ...base, type: 'mcq', options: [{ id: 'a', text: 'Cat' }, { id: 'b', text: 'Dog' }], answer: 'b' })).toEqual(['Dog']);
+    expect(answerLines({ ...base, type: 'trueFalse', answer: false })).toEqual(['False']);
+    expect(answerLines({ ...base, type: 'numpad', answer: '7' })).toEqual(['7']);
+    expect(answerLines({ ...base, type: 'order', tokens: ['I', 'like', 'rice'], distractors: ['you'] })).toEqual(['I like rice']);
+    expect(answerLines({ ...base, type: 'fillBlank', text: 'A ___ says moo.', blanks: ['cow'], bank: ['cow', 'cat'] })).toEqual(['A cow says moo.']);
+    expect(answerLines({ ...base, type: 'match', pairs: [{ left: '🐟', right: 'Water' }, { left: '🐦', right: 'Air' }] } as Question)).toEqual(['🐟 → Water', '🐦 → Air']);
+    expect(
+      answerLines({
+        ...base,
+        type: 'sort',
+        buckets: [
+          { id: 'x', label: 'Hot', emoji: '🔥' },
+          { id: 'y', label: 'Cold' },
+          { id: 'z', label: 'Empty' },
+        ],
+        items: [
+          { text: 'Sun', bucket: 'x' },
+          { text: 'Ice', bucket: 'y' },
+          { text: 'Fire', bucket: 'x' },
+        ],
+      } as Question),
+    ).toEqual(['🔥 Hot: Sun, Fire', 'Cold: Ice']);
+  });
+
+  it('an mcq with an unknown answer id has nothing to show', () => {
+    expect(answerLines({ ...base, type: 'mcq', options: [{ id: 'a', text: 'Cat' }, { id: 'b', text: 'Dog' }], answer: 'zz' })).toEqual([]);
   });
 });
 

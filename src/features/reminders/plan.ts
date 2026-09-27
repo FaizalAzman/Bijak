@@ -11,6 +11,7 @@
  * changes — so a family that stops using Bijak stops hearing from it within a week.
  */
 import { isRestDay, liveStreak, streakStatus, weekday, type StreakState } from '@/features/gamify/streak';
+import { joinNames, translate, type UiLang } from '@/i18n/core';
 import { addDays, dayKey } from '@/lib/date';
 
 export interface Reminders {
@@ -38,12 +39,6 @@ export function cleanReminders(value: unknown, base: Reminders = DEFAULT_REMINDE
   return { daily: flag('daily'), time: typeof r.time === 'string' && TIME.test(r.time) ? r.time : base.time, streak: flag('streak'), weekly: flag('weekly') };
 }
 
-/** "17:00" → "5:00 pm". */
-export function timeLabel(time: string): string {
-  const [h, m] = time.split(':').map(Number);
-  return `${h % 12 || 12}:${String(m).padStart(2, '0')} ${h < 12 ? 'am' : 'pm'}`;
-}
-
 export interface ChildState {
   name: string;
   streak: StreakState;
@@ -54,6 +49,8 @@ export interface PlanInput {
   reminders: Reminders;
   restDays: readonly number[];
   children: ChildState[];
+  /** The app language the reminders are written in. */
+  lang: UiLang;
 }
 
 export interface PlannedReminder {
@@ -69,14 +66,10 @@ export interface PlannedReminder {
 
 const at = (day: string, time: string) => new Date(`${day}T${time}:00`);
 
-/** "Adam", "Adam and Aina", "Adam, Aina and Ali". */
-export function joinNames(names: string[]): string {
-  return names.length <= 1 ? (names[0] ?? '') : `${names.slice(0, -1).join(', ')} and ${names.at(-1)}`;
-}
-
 /** Everything Bijak should have scheduled right now, earliest first. */
-export function planReminders({ now, reminders, restDays, children }: PlanInput): PlannedReminder[] {
+export function planReminders({ now, reminders, restDays, children, lang }: PlanInput): PlannedReminder[] {
   if (!children.length) return [];
+  const names = (list: string[]) => joinNames(list, lang);
   const today = dayKey(now);
   const plan: PlannedReminder[] = [];
   const playedToday = (c: ChildState) => c.streak.lastDay === today;
@@ -93,11 +86,11 @@ export function planReminders({ now, reminders, restDays, children }: PlanInput)
       let body: string;
       if (waiting.length === 1) {
         const [c] = waiting;
-        body = atRisk.length ? `${c.name}’s quests are ready, and a ${liveStreak(c.streak, today, restDays)}-day streak to keep going!` : `${c.name}’s quests are ready. Ten minutes is plenty!`;
+        body = atRisk.length ? translate(lang, 'notify.daily.oneStreak', c.name, liveStreak(c.streak, today, restDays)) : translate(lang, 'notify.daily.one', c.name);
       } else {
-        body = `Quests are ready for ${joinNames(waiting.map((c) => c.name))}.${atRisk.length ? ' Keep those streaks going!' : ' Ten minutes each is plenty!'}`;
+        body = translate(lang, 'notify.daily.many', names(waiting.map((c) => c.name)), atRisk.length > 0);
       }
-      plan.push({ id: `bijak-daily-${day}`, kind: 'daily', at: when, title: 'Time for Bijak 📚', body, url: '/' });
+      plan.push({ id: `bijak-daily-${day}`, kind: 'daily', at: when, title: translate(lang, 'notify.daily.title'), body, url: '/' });
     }
   }
 
@@ -110,13 +103,20 @@ export function planReminders({ now, reminders, restDays, children }: PlanInput)
       const days = (c: ChildState) => liveStreak(c.streak, today, restDays);
       plan.push(
         atRisk.length === 1
-          ? { id: `bijak-streak-${today}`, kind: 'streak', at: when, title: `🔥 Keep ${atRisk[0].name}’s ${days(atRisk[0])}-day streak`, body: 'One quick quiz before bed keeps it going.', url: '/' }
+          ? {
+              id: `bijak-streak-${today}`,
+              kind: 'streak',
+              at: when,
+              title: translate(lang, 'notify.streak.oneTitle', atRisk[0].name, days(atRisk[0])),
+              body: translate(lang, 'notify.streak.oneBody'),
+              url: '/',
+            }
           : {
               id: `bijak-streak-${today}`,
               kind: 'streak',
               at: when,
-              title: '🔥 Keep the streaks going',
-              body: `${joinNames(atRisk.map((c) => `${c.name} (${days(c)} days)`))} haven’t played today. One quick quiz each keeps them going.`,
+              title: translate(lang, 'notify.streak.manyTitle'),
+              body: translate(lang, 'notify.streak.manyBody', names(atRisk.map((c) => translate(lang, 'notify.streak.childDays', c.name, days(c))))),
               url: '/',
             },
       );
@@ -134,8 +134,8 @@ export function planReminders({ now, reminders, restDays, children }: PlanInput)
         id: `bijak-weekly-${day}`,
         kind: 'weekly',
         at: when,
-        title: '📊 Your weekly Bijak report',
-        body: `See what ${joinNames(children.map((c) => c.name))} learned this week, and what to practise next.`,
+        title: translate(lang, 'notify.weekly.title'),
+        body: translate(lang, 'notify.weekly.body', names(children.map((c) => c.name))),
         url: '/parent?next=report',
       });
       break;

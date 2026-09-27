@@ -71,6 +71,10 @@ describe('format', () => {
     expect(formatDuration(s)).toBe(expected);
   });
 
+  it('formatDuration writes hours as "j" (jam) in Bahasa Melayu', () => {
+    expect([formatDuration(45, 'ms'), formatDuration(600, 'ms'), formatDuration(5400, 'ms')]).toEqual(['45s', '10m', '1j 30m']);
+  });
+
   it('pct rounds and never divides by zero', () => {
     expect(pct(1, 3)).toBe(33);
     expect(pct(2, 3)).toBe(67);

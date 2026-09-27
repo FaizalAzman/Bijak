@@ -1,4 +1,5 @@
-import { DEFAULT_AVATAR, EYES, FREE_ITEMS, HAIR_COLORS, HAIR_STYLES, itemById, SHOP, SKIN_TONES, SLOT_LABEL, type Slot } from '@/features/gamify/shop';
+import { translate } from '@/i18n';
+import { DEFAULT_AVATAR, EYES, FREE_ITEMS, HAIR_COLORS, HAIR_STYLES, itemById, itemName, SHOP, SKIN_TONES, SLOT_KEY, type Slot } from '@/features/gamify/shop';
 
 const SLOTS: Slot[] = ['outfit', 'hat', 'glasses', 'bg', 'pet'];
 const HEX = /^#[0-9A-F]{6}$/i;
@@ -36,9 +37,19 @@ describe('shop catalogue', () => {
 
   it('every slot has something to buy, with a label', () => {
     for (const s of SLOTS) {
-      expect(SLOT_LABEL[s]).toBeTruthy();
+      expect(translate('en', SLOT_KEY[s])).toBeTruthy();
+      expect(translate('ms', SLOT_KEY[s])).not.toBe(translate('en', SLOT_KEY[s]));
       expect(SHOP.some((i) => i.slot === s && i.price > 0)).toBe(true);
     }
+  });
+
+  it('every item has a Malay name', () => {
+    const same = new Set(['songkok', 'pet-cat', 'pet-turtle']); // Malay names in both languages
+    for (const item of SHOP) {
+      expect(itemName(item, 'en')).toBe(item.name);
+      if (!same.has(item.id)) expect(itemName(item, 'ms')).not.toBe(item.name);
+    }
+    expect(itemName({ id: 'new-thing', name: 'New Thing' }, 'ms')).toBe('New Thing');
   });
 
   it('free items are exactly the price-0 items and cover the default outfit and background', () => {

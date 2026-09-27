@@ -71,7 +71,7 @@ export function Order({ q, onAnswer, locked }: QuestionProps<'order'>) {
                 </Txt>
               )}
               {answer.map((t) => (
-                <Pressable key={t.id} onPress={() => remove(t)} accessibilityRole="button" accessibilityLabel={`Remove ${t.text}`}>
+                <Pressable key={t.id} onPress={() => remove(t)} accessibilityRole="button" accessibilityLabel={`${LABELS[q.lang].remove} ${t.text}`}>
                   <WordChip text={t.text} bg={colors.lime} />
                 </Pressable>
               ))}

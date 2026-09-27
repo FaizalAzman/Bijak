@@ -7,7 +7,7 @@ import { Avatar } from '@/components/avatar/Avatar';
 import { LessonBlockView, toSlides } from '@/components/lesson/LessonBlocks';
 import { Kancil, type KancilMood } from '@/components/mascot/Kancil';
 import { QuestionView } from '@/components/quiz/QuestionView';
-import { correctAnswerText } from '@/components/quiz/types';
+import { correctAnswerText, LABELS } from '@/components/quiz/types';
 import { getContentIndex } from '@/features/content/registry';
 import { LessonBlock, Question } from '@/features/content/schema';
 import { allBadges } from '@/features/gamify/badges';
@@ -86,7 +86,7 @@ describe('question types', () => {
       const q = Question.parse({ ...(raw as object), lang });
       const view = await render(<QuestionView q={q} onAnswer={jest.fn()} locked={false} />);
       expect(screen.getByText(q.prompt)).toBeOnTheScreen();
-      expect(screen.getByRole('button', { name: 'Read question aloud' })).toBeOnTheScreen();
+      expect(screen.getByRole('button', { name: LABELS[lang].readAloud })).toBeOnTheScreen();
       await view.unmount();
       const text = correctAnswerText(q);
       expect(text === null || text.trim().length > 0).toBe(true);

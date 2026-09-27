@@ -1,4 +1,7 @@
 /** Module 16 — Daily Quests. Three missions per child per day, seeded so they are stable across restarts. */
+import type { Lang } from '@/features/content/schema';
+import { translate, type UiLang } from '@/i18n/core';
+import { subjectName } from '@/i18n/names';
 import { hashString, pick, seeded, shuffle } from '@/lib/random';
 
 export type QuestKind = 'quizzesInSubject' | 'correct' | 'combo' | 'lesson' | 'timeAttack' | 'review' | 'perfect' | 'xp';
@@ -12,6 +15,11 @@ export interface Quest {
   progress: number;
   reward: number;
   subjectId?: string;
+  /** The subject's name when the quest was set (in the child's teaching language)… */
+  subjectName?: string;
+  /** …its name in the other language, and the teaching language (to name it in the app language). */
+  subjectNameAlt?: string;
+  subjectLang?: Lang;
   claimed: boolean;
   /** The child has been told this quest is complete (so the toast shows once). */
   notified?: boolean;
@@ -28,6 +36,8 @@ export type QuestEvent =
 interface SubjectLite {
   id: string;
   name: string;
+  nameAlt?: string;
+  lang?: Lang;
   emoji: string;
 }
 
@@ -37,7 +47,17 @@ export function generateDailyQuests(profileId: string, day: string, subjects: Su
     () => {
       const s = subjects.length ? pick(rng, subjects) : { id: 'math', name: 'Mathematics', emoji: '🔢' };
       const n = pick(rng, [1, 2]);
-      return { kind: 'quizzesInSubject', subjectId: s.id, title: `Complete ${n} ${s.name} quiz${n > 1 ? 'zes' : ''}`, emoji: s.emoji, target: n, reward: 20 + n * 10 };
+      return {
+        kind: 'quizzesInSubject',
+        subjectId: s.id,
+        subjectName: s.name,
+        ...('nameAlt' in s && s.nameAlt ? { subjectNameAlt: s.nameAlt } : {}),
+        ...('lang' in s && s.lang ? { subjectLang: s.lang } : {}),
+        title: `Complete ${n} ${s.name} quiz${n > 1 ? 'zes' : ''}`,
+        emoji: s.emoji,
+        target: n,
+        reward: 20 + n * 10,
+      };
     },
     () => {
       const n = pick(rng, [15, 20, 25]);
@@ -59,6 +79,30 @@ export function generateDailyQuests(profileId: string, day: string, subjects: Su
   return shuffle(makers, rng)
     .slice(0, 3)
     .map((m, i) => ({ ...m(), id: `${day}-${i}`, progress: 0, claimed: false }));
+}
+
+/** What the quest asks, in the app language (`title` keeps the English text it was saved with). */
+export function questText(q: Quest, lang: UiLang): string {
+  switch (q.kind) {
+    case 'quizzesInSubject':
+      return q.subjectName
+        ? translate(lang, 'quest.quizzesInSubject', q.target, subjectName({ name: q.subjectName, nameAlt: q.subjectNameAlt, lang: q.subjectLang ?? 'en' }, lang))
+        : q.title;
+    case 'correct':
+      return translate(lang, 'quest.correct', q.target);
+    case 'combo':
+      return translate(lang, 'quest.combo', q.target);
+    case 'lesson':
+      return translate(lang, 'quest.lesson');
+    case 'timeAttack':
+      return translate(lang, 'quest.timeAttack');
+    case 'perfect':
+      return translate(lang, 'quest.perfect');
+    case 'xp':
+      return translate(lang, 'quest.xp', q.target);
+    case 'review':
+      return translate(lang, 'quest.review', q.target);
+  }
 }
 
 function delta(q: Quest, e: QuestEvent): number | 'set' {

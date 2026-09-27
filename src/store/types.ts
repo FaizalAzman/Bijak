@@ -1,4 +1,5 @@
 import type { Lang } from '@/features/content/schema';
+import type { UiLang } from '@/i18n/define';
 import type { Reminders } from '@/features/reminders/plan';
 import type { Quest } from '@/features/gamify/quests';
 import type { AvatarConfig, Slot } from '@/features/gamify/shop';
@@ -31,6 +32,8 @@ export interface Attempt {
   total: number;
   seconds: number;
   at: number;
+  /** Right answers that needed a hint (each counts half in the score). */
+  hinted?: number;
 }
 
 export interface TopicStat {
@@ -88,6 +91,8 @@ export interface Progress {
 }
 
 export interface Settings {
+  /** Language of the app's buttons, messages and reports (content follows each child's teaching language). */
+  uiLang: UiLang;
   sound: boolean;
   haptics: boolean;
   voice: boolean;

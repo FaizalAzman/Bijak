@@ -12,6 +12,7 @@ import * as Crypto from 'expo-crypto';
 import * as Network from 'expo-network';
 import * as Updates from 'expo-updates';
 import { useContent } from '@/features/content/registry';
+import { translate, type UiLang } from '@/i18n/core';
 import { secureGet, secureSet } from '@/lib/secure';
 import { telemetry } from '@/lib/telemetry';
 import { useApp } from '@/store/app';
@@ -33,17 +34,39 @@ async function familyKey(): Promise<string> {
 
 let syncing = false;
 
-export async function syncNow(): Promise<{ ok: boolean; message: string }> {
-  if (!cloudSyncConfigured()) return { ok: false, message: 'Cloud sync is not configured' };
+export type SyncCode = 'notConfigured' | 'noFamily' | 'upToDate' | 'busy' | 'offline' | 'synced' | 'failed';
+export interface SyncResult {
+  ok: boolean;
+  code: SyncCode;
+  /** Why it failed (set with `failed`). */
+  detail?: string;
+}
+
+const SYNC_KEY = {
+  notConfigured: 'sync.notConfigured',
+  noFamily: 'sync.noFamily',
+  upToDate: 'sync.upToDate',
+  busy: 'sync.busy',
+  offline: 'sync.offline',
+  synced: 'sync.synced',
+} as const satisfies Record<Exclude<SyncCode, 'failed'>, string>;
+
+/** What to tell the parent about a backup, in the app language. */
+export function syncMessage(r: SyncResult, lang: UiLang): string {
+  return r.code === 'failed' ? translate(lang, 'sync.failed', r.detail ?? '') : translate(lang, SYNC_KEY[r.code]);
+}
+
+export async function syncNow(): Promise<SyncResult> {
+  if (!cloudSyncConfigured()) return { ok: false, code: 'notConfigured' };
   // Snapshot first: anything changed while uploading has a higher revision and syncs next time.
   const { parent, profiles, progress, dirtyAt, syncedRevision, markSynced } = useApp.getState();
-  if (!parent) return { ok: false, message: 'No family yet' };
-  if (syncedRevision != null && syncedRevision >= dirtyAt) return { ok: true, message: 'Already up to date' };
-  if (syncing) return { ok: false, message: 'Sync in progress' };
+  if (!parent) return { ok: false, code: 'noFamily' };
+  if (syncedRevision != null && syncedRevision >= dirtyAt) return { ok: true, code: 'upToDate' };
+  if (syncing) return { ok: false, code: 'busy' };
   syncing = true;
   try {
     const state = await Network.getNetworkStateAsync();
-    if (!state.isConnected || state.isInternetReachable === false) return { ok: false, message: 'Offline — will sync later' };
+    if (!state.isConnected || state.isInternetReachable === false) return { ok: false, code: 'offline' };
     const key = await familyKey();
     const rows = profiles.map((p) => ({
       family_id: parent.familyId,
@@ -69,10 +92,10 @@ export async function syncNow(): Promise<{ ok: boolean; message: string }> {
     if (!res.ok) throw new Error(`Supabase HTTP ${res.status}`);
     markSynced(Date.now(), dirtyAt);
     telemetry.event('sync_ok', { profiles: rows.length });
-    return { ok: true, message: 'Synced' };
+    return { ok: true, code: 'synced' };
   } catch (e) {
     telemetry.event('sync_failed', { error: e instanceof Error ? e.message : String(e) });
-    return { ok: false, message: e instanceof Error ? e.message : 'Sync failed' };
+    return { ok: false, code: 'failed', detail: e instanceof Error ? e.message : String(e) };
   } finally {
     syncing = false;
   }

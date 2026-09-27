@@ -1,6 +1,7 @@
 import { Pressable, View } from 'react-native';
 import { Txt } from '@/components/ui';
 import { EYES, HAIR_COLORS, HAIR_STYLES, SKIN_TONES, type AvatarConfig } from '@/features/gamify/shop';
+import { useT } from '@/i18n';
 import { fx } from '@/lib/feedback';
 import { colors } from '@/theme';
 
@@ -45,41 +46,42 @@ function Option({ label, selected, onPress }: { label: string; selected: boolean
   );
 }
 
-const HAIR_LABEL: Record<AvatarConfig['hair'], string> = { short: 'Short', spiky: 'Spiky', curly: 'Curly', long: 'Long', bun: 'Bun', tudung: 'Tudung' };
-const EYE_LABEL: Record<AvatarConfig['eyes'], string> = { round: 'Bright', happy: 'Smiley', wink: 'Wink' };
+const HAIR_LABEL = { short: 'hair.short', spiky: 'hair.spiky', curly: 'hair.curly', long: 'hair.long', bun: 'hair.bun', tudung: 'hair.tudung' } as const satisfies Record<AvatarConfig['hair'], string>;
+const EYE_LABEL = { round: 'eyes.round', happy: 'eyes.happy', wink: 'eyes.wink' } as const satisfies Record<AvatarConfig['eyes'], string>;
 /** Spoken names for the swatches (screen readers would otherwise read hex codes). */
-const HAIR_COLOUR_LABEL = ['Black', 'Dark brown', 'Brown', 'Golden', 'Purple'];
+const HAIR_COLOUR_LABEL = ['hairColour.0', 'hairColour.1', 'hairColour.2', 'hairColour.3', 'hairColour.4'] as const;
 
 /** Free, always-available look options (skin, hair, eyes). */
 export function AvatarBasics({ value, onChange }: { value: AvatarConfig; onChange: (patch: Partial<AvatarConfig>) => void }) {
+  const t = useT();
   return (
     <View style={{ gap: 16 }}>
       <View style={{ gap: 8 }}>
-        <Txt variant="label">Skin</Txt>
+        <Txt variant="label">{t('avatar.skin')}</Txt>
         <View style={{ flexDirection: 'row', gap: 10, flexWrap: 'wrap' }}>
           {SKIN_TONES.map((c, i) => (
-            <Swatch key={c} label={`Skin tone ${i + 1}`} color={c} selected={value.skin === c} onPress={() => onChange({ skin: c })} />
+            <Swatch key={c} label={t('avatar.skinTone', i + 1)} color={c} selected={value.skin === c} onPress={() => onChange({ skin: c })} />
           ))}
         </View>
       </View>
       <View style={{ gap: 8 }}>
-        <Txt variant="label">Hair</Txt>
+        <Txt variant="label">{t('avatar.hair')}</Txt>
         <View style={{ flexDirection: 'row', gap: 8, flexWrap: 'wrap' }}>
           {HAIR_STYLES.map((h) => (
-            <Option key={h} label={HAIR_LABEL[h]} selected={value.hair === h} onPress={() => onChange({ hair: h })} />
+            <Option key={h} label={t(HAIR_LABEL[h])} selected={value.hair === h} onPress={() => onChange({ hair: h })} />
           ))}
         </View>
         <View style={{ flexDirection: 'row', gap: 10, flexWrap: 'wrap', marginTop: 4 }}>
           {HAIR_COLORS.map((c, i) => (
-            <Swatch key={c} label={`${HAIR_COLOUR_LABEL[i] ?? `Colour ${i + 1}`} hair`} color={c} selected={value.hairColor === c} onPress={() => onChange({ hairColor: c })} />
+            <Swatch key={c} label={t('avatar.hairColour', HAIR_COLOUR_LABEL[i] ? t(HAIR_COLOUR_LABEL[i]) : t('avatar.colour', i + 1))} color={c} selected={value.hairColor === c} onPress={() => onChange({ hairColor: c })} />
           ))}
         </View>
       </View>
       <View style={{ gap: 8 }}>
-        <Txt variant="label">Eyes</Txt>
+        <Txt variant="label">{t('avatar.eyes')}</Txt>
         <View style={{ flexDirection: 'row', gap: 8, flexWrap: 'wrap' }}>
           {EYES.map((e) => (
-            <Option key={e} label={EYE_LABEL[e]} selected={value.eyes === e} onPress={() => onChange({ eyes: e })} />
+            <Option key={e} label={t(EYE_LABEL[e])} selected={value.eyes === e} onPress={() => onChange({ eyes: e })} />
           ))}
         </View>
       </View>

@@ -89,7 +89,7 @@ export function FillBlank({ q, onAnswer, locked }: QuestionProps<'fillBlank'>) {
               <DropZone key={k} id={`blank-${p.blank}`}>
                 <Pressable
                   accessibilityRole="button"
-                  accessibilityLabel={`Blank ${p.blank + 1}`}
+                  accessibilityLabel={`${LABELS[q.lang].blank} ${p.blank + 1}`}
                   onPress={() => (filled[p.blank] != null ? clear(p.blank) : setFocus(p.blank))}
                   style={{
                     minWidth: 86,

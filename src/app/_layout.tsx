@@ -19,6 +19,7 @@ import { Toaster } from '@/components/gamify/Toaster';
 import { Kancil } from '@/components/mascot/Kancil';
 import { Button, Txt } from '@/components/ui';
 import { startReminders } from '@/features/reminders/service';
+import { useT } from '@/i18n';
 import { startBackgroundServices } from '@/features/sync/services';
 import { loadVoices } from '@/lib/feedback';
 import { lockPhonesToPortrait } from '@/lib/orientation';
@@ -31,6 +32,7 @@ installCrashHandler();
 lockPhonesToPortrait();
 
 export function ErrorBoundary({ error, retry }: ErrorBoundaryProps) {
+  const t = useT();
   useEffect(() => {
     telemetry.error(error, { where: 'boundary' });
   }, [error]);
@@ -38,12 +40,12 @@ export function ErrorBoundary({ error, retry }: ErrorBoundaryProps) {
     <View style={{ flex: 1, backgroundColor: colors.cream, alignItems: 'center', justifyContent: 'center', padding: 24, gap: 16 }}>
       <Kancil mood="sad" size={150} />
       <Txt variant="display" style={{ textAlign: 'center' }}>
-        Oops! Something tripped.
+        {t('error.title')}
       </Txt>
       <Txt variant="body" style={{ textAlign: 'center', color: colors.muted }}>
-        Sang Kancil has told the grown-ups. Let’s try again.
+        {t('error.body')}
       </Txt>
-      <Button label="Try again" tone="lime" onPress={retry} />
+      <Button label={t('error.retry')} tone="lime" onPress={retry} />
     </View>
   );
 }

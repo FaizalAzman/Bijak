@@ -1,11 +1,13 @@
 import { Check } from 'lucide-react-native';
 import { View } from 'react-native';
 import { Button, Chunky, ProgressBar, Txt } from '@/components/ui';
-import type { Quest } from '@/features/gamify/quests';
+import { questText, type Quest } from '@/features/gamify/quests';
+import { useUiLang } from '@/i18n';
 import { colors } from '@/theme';
 
 export function QuestRow({ quest, onClaim, compact }: { quest: Quest; onClaim?: () => void; compact?: boolean }) {
   const done = quest.progress >= quest.target;
+  const lang = useUiLang();
   return (
     <Chunky
       bg={quest.claimed ? colors['mint-soft'] : colors.paper}
@@ -28,7 +30,7 @@ export function QuestRow({ quest, onClaim, compact }: { quest: Quest; onClaim?: 
       </View>
       <View style={{ flex: 1, gap: 6 }}>
         <Txt variant="subtitle" style={{ fontSize: 15 }}>
-          {quest.title}
+          {questText(quest, lang)}
         </Txt>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
           <View style={{ flex: 1 }}>

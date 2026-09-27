@@ -29,15 +29,22 @@ afterEach(() => {
 });
 
 describe('syncNow', () => {
+  it('tells the parent what happened, in the app language', () => {
+    const s = load(false);
+    expect(s.syncMessage({ ok: true, code: 'synced' }, 'en')).toBe('Synced');
+    expect(s.syncMessage({ ok: false, code: 'offline' }, 'ms')).toBe('Luar talian — akan disegerakkan kemudian');
+    expect(s.syncMessage({ ok: false, code: 'failed', detail: 'Supabase HTTP 503' }, 'en')).toBe('Sync failed: Supabase HTTP 503');
+  });
+
   it('reports when cloud sync is not configured', async () => {
     const s = load(false);
     expect(s.cloudSyncConfigured()).toBe(false);
-    expect(await s.syncNow()).toEqual({ ok: false, message: 'Cloud sync is not configured' });
+    expect(await s.syncNow()).toEqual({ ok: false, code: 'notConfigured' });
   });
 
   it('needs a family first', async () => {
     const s = load(true);
-    expect(await s.syncNow()).toEqual({ ok: false, message: 'No family yet' });
+    expect(await s.syncNow()).toEqual({ ok: false, code: 'noFamily' });
   });
 
   it('uploads every child with the family key, then marks that snapshot synced', async () => {
@@ -47,7 +54,7 @@ describe('syncNow', () => {
     const a = s.useApp.getState().addProfile({ name: 'Adam', level: 3 });
     s.useApp.getState().addProfile({ name: 'Aisyah', level: 1 });
     const res = await s.syncNow();
-    expect(res).toEqual({ ok: true, message: 'Synced' });
+    expect(res).toEqual({ ok: true, code: 'synced' });
     const [url, init] = (global.fetch as jest.Mock).mock.calls[0];
     expect(url).toBe('https://proj.supabase.co/rest/v1/bijak_progress?on_conflict=profile_id');
     const rows = JSON.parse(init.body);
@@ -58,7 +65,7 @@ describe('syncNow', () => {
     const st = s.useApp.getState();
     expect(st.syncedRevision).toBe(st.dirtyAt);
     // Nothing changed since: no second upload.
-    expect(await s.syncNow()).toEqual({ ok: true, message: 'Already up to date' });
+    expect(await s.syncNow()).toEqual({ ok: true, code: 'upToDate' });
     expect(global.fetch).toHaveBeenCalledTimes(1);
   });
 
@@ -94,11 +101,11 @@ describe('syncNow', () => {
     // The child keeps playing during the upload.
     s.useApp.getState().resetProgress(id);
     finish();
-    expect(await inFlight).toEqual({ ok: true, message: 'Synced' });
+    expect(await inFlight).toEqual({ ok: true, code: 'synced' });
     const st = s.useApp.getState();
     expect(st.dirtyAt).toBeGreaterThan(st.syncedRevision!);
     global.fetch = okFetch() as unknown as typeof fetch;
-    expect(await s.syncNow()).toEqual({ ok: true, message: 'Synced' });
+    expect(await s.syncNow()).toEqual({ ok: true, code: 'synced' });
   });
 
   it('stays dirty when offline or when the server fails', async () => {
@@ -106,10 +113,10 @@ describe('syncNow', () => {
     s.useApp.getState().setupFamily('Mum');
     (Network.getNetworkStateAsync as jest.Mock).mockResolvedValueOnce({ isConnected: false, isInternetReachable: false });
     global.fetch = okFetch() as unknown as typeof fetch;
-    expect(await s.syncNow()).toEqual({ ok: false, message: 'Offline — will sync later' });
+    expect(await s.syncNow()).toEqual({ ok: false, code: 'offline' });
     expect(global.fetch).not.toHaveBeenCalled();
     global.fetch = jest.fn(async () => ({ ok: false, status: 503 })) as unknown as typeof fetch;
-    expect(await s.syncNow()).toEqual({ ok: false, message: 'Supabase HTTP 503' });
+    expect(await s.syncNow()).toEqual({ ok: false, code: 'failed', detail: 'Supabase HTTP 503' });
     expect(s.useApp.getState().syncedRevision).toBeNull();
   });
 
@@ -120,7 +127,7 @@ describe('syncNow', () => {
     global.fetch = jest.fn(() => new Promise((resolve) => (finish = () => resolve({ ok: true, status: 201 } as Response)))) as unknown as typeof fetch;
     const first = s.syncNow();
     await new Promise((r) => setImmediate(r));
-    expect(await s.syncNow()).toEqual({ ok: false, message: 'Sync in progress' });
+    expect(await s.syncNow()).toEqual({ ok: false, code: 'busy' });
     finish();
     await first;
   });

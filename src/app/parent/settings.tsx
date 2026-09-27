@@ -2,11 +2,13 @@ import { router } from 'expo-router';
 import { useState } from 'react';
 import { View } from 'react-native';
 import { toast } from '@/components/gamify/Toaster';
+import { LanguagePicker } from '@/components/LanguagePicker';
 import { ReminderSettings } from '@/components/parent/ReminderSettings';
 import { VoicePicker } from '@/components/parent/VoicePicker';
 import { Button, Chip, Chunky, Keypad, PinDots, Screen, SectionLabel, TopBar, Txt } from '@/components/ui';
 import { REST_DAY_PRESETS, restDayPreset, type RestDayPreset } from '@/features/gamify/streak';
 import { useParentSession, useRequireParent } from '@/features/profile/parentSession';
+import { useT } from '@/i18n';
 import { fx } from '@/lib/feedback';
 import { setParentPin } from '@/lib/secure';
 import { useApp } from '@/store/app';
@@ -14,7 +16,7 @@ import { colors } from '@/theme';
 
 type PinStep = 'idle' | 'new' | 'confirm';
 
-const REST_LABEL: Record<RestDayPreset, string> = { none: 'None', satSun: 'Sat & Sun', friSat: 'Fri & Sat' };
+const REST_KEY = { none: 'settings.rest.none', satSun: 'settings.rest.satSun', friSat: 'settings.rest.friSat' } as const satisfies Record<RestDayPreset, string>;
 
 export default function ParentSettings() {
   const ok = useRequireParent();
@@ -26,6 +28,7 @@ export default function ParentSettings() {
   const [first, setFirst] = useState('');
   const [pin, setPin] = useState('');
   const [mismatch, setMismatch] = useState(false);
+  const t = useT();
   if (!ok) return null;
 
   const cancel = () => {
@@ -48,7 +51,7 @@ export default function ParentSettings() {
     } else if (next === first) {
       await setParentPin(next);
       fx.correct();
-      toast({ emoji: '🔒', title: 'PIN updated' });
+      toast({ emoji: '🔒', title: t('settings.pinUpdated') });
       cancel();
     } else {
       fx.wrong();
@@ -57,55 +60,60 @@ export default function ParentSettings() {
     }
   };
   return (
-    <Screen header={<TopBar title="Settings" />}>
-      <SectionLabel>Reminders</SectionLabel>
+    <Screen header={<TopBar title={t('dash.settings')} />}>
+      <SectionLabel>{t('settings.language')}</SectionLabel>
+      <Chunky depth={3} innerStyle={{ padding: 14 }}>
+        <LanguagePicker hint title={false} />
+      </Chunky>
+
+      <SectionLabel>{t('settings.reminders')}</SectionLabel>
       <Chunky depth={3} innerStyle={{ padding: 14 }}>
         <ReminderSettings />
       </Chunky>
 
-      <SectionLabel>Streak rest days</SectionLabel>
+      <SectionLabel>{t('settings.restDays')}</SectionLabel>
       <Chunky depth={3} innerStyle={{ padding: 14, gap: 12 }}>
-        <Txt variant="small">Days that never break a streak (playing on them still counts). Pick your family’s weekend.</Txt>
+        <Txt variant="small">{t('settings.restDaysHint')}</Txt>
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
           {(Object.keys(REST_DAY_PRESETS) as RestDayPreset[]).map((key) => (
-            <Chip key={key} label={REST_LABEL[key]} selected={restDayPreset(restDays) === key} onPress={() => updateSettings({ restDays: [...REST_DAY_PRESETS[key]] })} />
+            <Chip key={key} label={t(REST_KEY[key])} selected={restDayPreset(restDays) === key} onPress={() => updateSettings({ restDays: [...REST_DAY_PRESETS[key]] })} />
           ))}
         </View>
       </Chunky>
 
-      <SectionLabel>Read-aloud voice</SectionLabel>
+      <SectionLabel>{t('settings.voice')}</SectionLabel>
       <Chunky depth={3} innerStyle={{ padding: 14 }}>
         <VoicePicker />
       </Chunky>
 
-      <SectionLabel>Parent PIN</SectionLabel>
+      <SectionLabel>{t('settings.pin')}</SectionLabel>
       <Chunky depth={3} innerStyle={{ padding: 14, gap: 16 }}>
         {step !== 'idle' ? (
           <>
-            <Txt variant="subtitle">{step === 'new' ? 'Enter a new 4-digit PIN' : 'Type the new PIN again'}</Txt>
+            <Txt variant="subtitle">{step === 'new' ? t('settings.newPin') : t('settings.againPin')}</Txt>
             <PinDots length={4} filled={pin.length} error={mismatch} />
             {mismatch && (
               <Txt variant="small" style={{ color: colors.berry }} testID="pin-mismatch">
-                PINs don’t match. Type the new PIN again.
+                {t('settings.pinMismatch')}
               </Txt>
             )}
             <Keypad compact onKey={onKey} />
-            <Button label="Cancel" tone="paper" size="sm" onPress={cancel} />
+            <Button label={t('common.cancel')} tone="paper" size="sm" onPress={cancel} />
           </>
         ) : (
-          <Button label="Change PIN" tone="paper" onPress={() => setStep('new')} testID="change-pin" />
+          <Button label={t('settings.changePin')} tone="paper" onPress={() => setStep('new')} testID="change-pin" />
         )}
       </Chunky>
-      <SectionLabel>Family</SectionLabel>
+      <SectionLabel>{t('settings.family')}</SectionLabel>
       <Chunky depth={3} innerStyle={{ padding: 14, gap: 6 }}>
         <Txt variant="subtitle">{parent?.name}</Txt>
         <Txt variant="mono" style={{ fontSize: 11 }}>
-          Family ID {parent?.familyId}
+          {t('settings.familyId', parent?.familyId ?? '')}
         </Txt>
       </Chunky>
       <View style={{ marginTop: 24 }}>
         <Button
-          label="Lock parent zone"
+          label={t('settings.lock')}
           tone="ink"
           full
           onPress={() => {

@@ -1,5 +1,5 @@
 import { router } from 'expo-router';
-import { Activity, BarChart3, ChevronRight, Download, School, Settings, Users } from 'lucide-react-native';
+import { Activity, BarChart3, ChevronRight, Download, Printer, School, Settings, Users } from 'lucide-react-native';
 import { useMemo, useState } from 'react';
 import { View } from 'react-native';
 import { Avatar } from '@/components/avatar/Avatar';
@@ -10,7 +10,8 @@ import { levelFromXp } from '@/features/gamify/xp';
 import { accuracyPerSubject, minutesPerDay, timePerSubject, weakTopics } from '@/features/insights/insights';
 import { useRequireParent } from '@/features/profile/parentSession';
 import { dueCards } from '@/features/srs/srs';
-import { formatDuration, pct, plural } from '@/lib/format';
+import { useT } from '@/i18n';
+import { formatDuration, pct } from '@/lib/format';
 import { dayKey } from '@/lib/date';
 import { emptyProgress, liveStreak, useApp, useRestDays } from '@/store/app';
 import { colors } from '@/theme';
@@ -54,17 +55,19 @@ export default function ParentDashboard() {
   const child = profiles.find((p) => p.id === childId) ?? profiles[0];
   const index = useContentIndex(child?.medium);
   const p = (child && progressMap[child.id]) || emptyProgress();
+  const t = useT();
+  const lang = t.lang;
 
-  const perDay = useMemo(() => minutesPerDay(p), [p]);
-  const perSubject = useMemo(() => timePerSubject(p, index), [p, index]);
-  const accuracy = useMemo(() => accuracyPerSubject(p, index), [p, index]);
-  const weak = useMemo(() => weakTopics(p, index), [p, index]);
+  const perDay = useMemo(() => minutesPerDay(p, lang), [p, lang]);
+  const perSubject = useMemo(() => timePerSubject(p, index, lang), [p, index, lang]);
+  const accuracy = useMemo(() => accuracyPerSubject(p, index, lang), [p, index, lang]);
+  const weak = useMemo(() => weakTopics(p, index, 5, lang), [p, index, lang]);
   const weekMinutes = perDay.reduce((a, d) => a + d.value, 0);
   const tricky = dueCards(p.srs, Number.MAX_SAFE_INTEGER, 999).length;
 
   if (!ok) return null;
   return (
-    <Screen frame="wide" header={<TopBar title={`Hi, ${parent?.name ?? 'Parent'}`} close onBack={() => router.replace('/')} />}>
+    <Screen frame="wide" header={<TopBar title={t('dash.hi', parent?.name ?? t('onboarding.defaultParent'))} close onBack={() => router.replace('/')} />}>
       {profiles.length > 1 && (
         <View style={{ paddingBottom: 14 }}>
           <HScroll>
@@ -84,7 +87,7 @@ export default function ParentDashboard() {
                 {child.name}
               </Txt>
               <Txt variant="small" style={{ color: '#BDB6A6' }}>
-                Standard {child.level} · Level {levelFromXp(p.xp)} · {plural(p.totals.quizzes, 'quiz', 'quizzes')}
+                {t('common.standard', child.level)} · {t('common.level', levelFromXp(p.xp))} · {t('common.quizzes', p.totals.quizzes)}
               </Txt>
             </View>
           </Chunky>
@@ -93,43 +96,43 @@ export default function ParentDashboard() {
 
       <View style={{ height: 16 }} />
       <Grid minItemWidth={140} maxColumns={4} gap={10}>
-        <Tile key="week" label="This week" value={formatDuration(weekMinutes * 60)} sub="learning time" bg={colors['grape-soft']} />
-        <Tile key="accuracy" label="Accuracy" value={`${pct(p.totals.correct, p.totals.answered)}%`} sub={plural(p.totals.answered, 'answer')} bg={colors['mint-soft']} />
-        <Tile key="streak" label="Streak" value={`🔥 ${liveStreak(p, dayKey(), restDays)}`} sub={`best ${plural(p.streak.best, 'day')}`} bg={colors['tangerine-soft']} />
-        <Tile key="review" label="To review" value={`🧠 ${tricky}`} sub="tricky questions" bg={colors['sun-soft']} />
+        <Tile key="week" label={t('dash.thisWeek')} value={formatDuration(weekMinutes * 60, lang)} sub={t('dash.learningTime')} bg={colors['grape-soft']} />
+        <Tile key="accuracy" label={t('dash.accuracy')} value={`${pct(p.totals.correct, p.totals.answered)}%`} sub={t('common.answers', p.totals.answered)} bg={colors['mint-soft']} />
+        <Tile key="streak" label={t('dash.streak')} value={`🔥 ${liveStreak(p, dayKey(), restDays)}`} sub={t('dash.best', t('common.days', p.streak.best))} bg={colors['tangerine-soft']} />
+        <Tile key="review" label={t('dash.toReview')} value={`🧠 ${tricky}`} sub={t('dash.tricky')} bg={colors['sun-soft']} />
       </Grid>
 
       <Grid minItemWidth={420} maxColumns={2} gap={16}>
         <View key="minutes">
-          <SectionLabel>Minutes learning · last 7 days</SectionLabel>
+          <SectionLabel>{t('dash.minutes')}</SectionLabel>
           <Chunky depth={3} innerStyle={{ padding: 14 }}>
             <ColumnChart data={perDay} unit="m" />
             <Txt variant="small" style={{ marginTop: 8 }}>
-              Tap a bar to see minutes.
+              {t('dash.tapBar')}
             </Txt>
           </Chunky>
         </View>
 
         <View key="time">
-          <SectionLabel>Time per subject · this week</SectionLabel>
+          <SectionLabel>{t('dash.timePerSubject')}</SectionLabel>
           <Chunky depth={3} innerStyle={{ padding: 14 }}>
-            {perSubject.length ? <BarList rows={perSubject} format={(v) => `${v} min`} /> : <Txt variant="small">No learning time recorded this week yet.</Txt>}
+            {perSubject.length ? <BarList rows={perSubject} format={(v) => t('common.minutes', v)} /> : <Txt variant="small">{t('dash.noTime')}</Txt>}
           </Chunky>
         </View>
 
         <View key="accuracy">
-          <SectionLabel>Accuracy by subject</SectionLabel>
+          <SectionLabel>{t('dash.accuracyBySubject')}</SectionLabel>
           <Chunky depth={3} innerStyle={{ padding: 14 }}>
-            {accuracy.length ? <BarList rows={accuracy} max={100} format={(v) => `${v}%`} /> : <Txt variant="small">No answers yet.</Txt>}
+            {accuracy.length ? <BarList rows={accuracy} max={100} format={(v) => `${v}%`} /> : <Txt variant="small">{t('dash.noAnswers')}</Txt>}
           </Chunky>
         </View>
       </Grid>
 
-      <SectionLabel>Needs attention · KSSR topics</SectionLabel>
+      <SectionLabel>{t('dash.needsAttention')}</SectionLabel>
       {weak.length === 0 ? (
         <Chunky depth={3} bg={colors['mint-soft']} innerStyle={{ padding: 14 }}>
-          <Txt variant="subtitle">No weak topics yet 🎉</Txt>
-          <Txt variant="small">Topics appear here when accuracy drops below 80% or questions keep coming back in review.</Txt>
+          <Txt variant="subtitle">{t('dash.noWeak')}</Txt>
+          <Txt variant="small">{t('dash.noWeakHint')}</Txt>
         </Chunky>
       ) : (
         <View style={{ gap: 12 }}>
@@ -139,9 +142,7 @@ export default function ParentDashboard() {
                 <Txt style={{ fontSize: 24 }}>{w.subjectEmoji}</Txt>
                 <View style={{ flex: 1 }}>
                   <Txt variant="subtitle">{w.title}</Txt>
-                  <Txt variant="small">
-                    {w.subject} · {w.answered} answers{w.lapses ? ` · ${w.lapses} repeat mistakes` : ''}
-                  </Txt>
+                  <Txt variant="small">{t('dash.weakMeta', w.subject, w.answered, w.lapses)}</Txt>
                 </View>
                 <Tag label={`${w.accuracy}%`} bg={w.accuracy < 50 ? colors['berry-soft'] : colors['sun-soft']} />
               </View>
@@ -160,7 +161,7 @@ export default function ParentDashboard() {
               {w.activity ? (
                 <View style={{ backgroundColor: colors['sky-soft'], borderRadius: 12, borderWidth: 1.5, borderColor: colors.ink, padding: 10 }}>
                   <Txt variant="label" style={{ color: colors.ink }}>
-                    Try at home
+                    {t('dash.tryAtHome')}
                   </Txt>
                   <Txt variant="body" style={{ fontSize: 14 }}>
                     {w.activity}
@@ -172,11 +173,11 @@ export default function ParentDashboard() {
         </View>
       )}
 
-      <SectionLabel>Recent activity</SectionLabel>
+      <SectionLabel>{t('dash.recent')}</SectionLabel>
       <Chunky depth={3} innerStyle={{ paddingHorizontal: 14, paddingVertical: 6 }}>
         {p.attempts.length === 0 && (
           <Txt variant="small" style={{ paddingVertical: 8 }}>
-            No quizzes yet.
+            {t('dash.noQuizzes')}
           </Txt>
         )}
         {p.attempts.slice(0, 8).map((a, i) => (
@@ -186,38 +187,46 @@ export default function ParentDashboard() {
                 {a.title}
               </Txt>
               <Txt variant="small" style={{ fontSize: 12 }}>
-                {new Date(a.at).toLocaleString([], { weekday: 'short', hour: '2-digit', minute: '2-digit' })} · {formatDuration(a.seconds)}
+                {new Date(a.at).toLocaleString(t('date.locale'), { weekday: 'short', hour: '2-digit', minute: '2-digit' })} · {formatDuration(a.seconds, lang)}
               </Txt>
             </View>
             <Txt variant="mono" style={{ fontSize: 13 }}>
-              {a.mode === 'timeAttack' ? `⚡${a.correct}` : `${a.correct}/${a.total}`}
+              {a.mode === 'timeAttack' ? `⚡${a.correct}` : `${a.correct}/${a.total}${a.hinted ? ` · 💡${a.hinted}` : ''}`}
             </Txt>
           </View>
         ))}
       </Chunky>
 
-      <SectionLabel>Manage</SectionLabel>
+      <SectionLabel>{t('dash.manage')}</SectionLabel>
       <View style={{ gap: 10 }}>
         {child && (
           <NavRow
             icon={<BarChart3 size={22} color={colors.ink} />}
-            label="Weekly report"
-            sub={`${child.name}'s week, ready to share on WhatsApp`}
+            label={t('dash.report')}
+            sub={t('dash.report.sub', child.name)}
             onPress={() => router.push(`/parent/report?child=${child.id}`)}
           />
         )}
         {child && (
           <NavRow
             icon={<School size={22} color={colors.ink} />}
-            label="At school now"
-            sub={`Topics ${child.name}'s class is on this week`}
+            label={t('dash.school')}
+            sub={t('dash.school.sub', child.name)}
             onPress={() => router.push(`/parent/school?child=${child.id}`)}
           />
         )}
-        <NavRow icon={<Users size={22} color={colors.ink} />} label="Children" sub="Add, edit standard, language, reset" onPress={() => router.push('/parent/children')} />
-        <NavRow icon={<Download size={22} color={colors.ink} />} label="Content & sync" sub="Syllabus updates, cloud backup" onPress={() => router.push('/parent/content')} />
-        <NavRow icon={<Activity size={22} color={colors.ink} />} label="App health" sub="Crashes & performance" onPress={() => router.push('/parent/health')} />
-        <NavRow icon={<Settings size={22} color={colors.ink} />} label="Settings" sub="Reminders, voice, rest days, PIN" onPress={() => router.push('/parent/settings')} />
+        {child && (
+          <NavRow
+            icon={<Printer size={22} color={colors.ink} />}
+            label={t('dash.sheets')}
+            sub={t('dash.sheets.sub')}
+            onPress={() => router.push(`/parent/worksheet?child=${child.id}`)}
+          />
+        )}
+        <NavRow icon={<Users size={22} color={colors.ink} />} label={t('dash.children')} sub={t('dash.children.sub')} onPress={() => router.push('/parent/children')} />
+        <NavRow icon={<Download size={22} color={colors.ink} />} label={t('dash.content')} sub={t('dash.content.sub')} onPress={() => router.push('/parent/content')} />
+        <NavRow icon={<Activity size={22} color={colors.ink} />} label={t('dash.health')} sub={t('dash.health.sub')} onPress={() => router.push('/parent/health')} />
+        <NavRow icon={<Settings size={22} color={colors.ink} />} label={t('dash.settings')} sub={t('dash.settings.sub')} onPress={() => router.push('/parent/settings')} />
       </View>
     </Screen>
   );

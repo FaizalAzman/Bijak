@@ -7,12 +7,14 @@ import { Avatar } from '@/components/avatar/Avatar';
 import { AvatarBasics } from '@/components/avatar/AvatarBasics';
 import { MascotSays } from '@/components/mascot/MascotSays';
 import { Kancil } from '@/components/mascot/Kancil';
+import { LanguagePicker } from '@/components/LanguagePicker';
 import { MediumPicker } from '@/components/parent/MediumPicker';
 import { Button, Chip, Chunky, Field, FrameRow, Keypad, PinDots, ProgressBar, Screen, Txt } from '@/components/ui';
 import { useContentIndex } from '@/features/content/registry';
 import type { Lang } from '@/features/content/schema';
 import { DEFAULT_AVATAR, type AvatarConfig } from '@/features/gamify/shop';
 import { useLayout } from '@/hooks/useLayout';
+import { standardName, useT } from '@/i18n';
 import { fx } from '@/lib/feedback';
 import { setParentPin } from '@/lib/secure';
 import { useApp } from '@/store/app';
@@ -36,6 +38,7 @@ export default function Onboarding() {
   const [medium, setMedium] = useState<Lang | null>(null);
   const [avatar, setAvatar] = useState<AvatarConfig>(DEFAULT_AVATAR);
   const [saving, setSaving] = useState(false);
+  const t = useT();
 
   const progress = (ORDER.indexOf(step) + 1) / ORDER.length;
 
@@ -64,7 +67,7 @@ export default function Onboarding() {
     try {
       const s = useApp.getState();
       if (!s.parent) {
-        s.setupFamily(parentName.trim() || 'Parent');
+        s.setupFamily(parentName.trim() || t('onboarding.defaultParent'));
         await setParentPin(pin);
       }
       const id = s.addProfile({ name: childName.trim(), level, avatar, medium: medium ?? 'en' });
@@ -78,12 +81,12 @@ export default function Onboarding() {
   };
 
   const mascot: Record<Step, { text: string; mood: 'wave' | 'happy' | 'think' | 'cheer' | 'idle' }> = {
-    welcome: { text: "Hai! I'm Sang Kancil. Let's make learning your superpower!", mood: 'wave' },
-    parent: { text: 'First, a grown-up please! What should I call you?', mood: 'idle' },
-    pin: { text: 'Create a 4-digit parent PIN. It protects the Parent Zone.', mood: 'think' },
-    confirm: { text: 'Type the PIN one more time.', mood: 'think' },
-    child: { text: 'Now tell me about our learner!', mood: 'happy' },
-    avatar: { text: `Looking great${childName ? `, ${childName}` : ''}! Style your character.`, mood: 'cheer' },
+    welcome: { text: t('onboarding.mascot.welcome'), mood: 'wave' },
+    parent: { text: t('onboarding.mascot.parent'), mood: 'idle' },
+    pin: { text: t('onboarding.mascot.pin'), mood: 'think' },
+    confirm: { text: t('onboarding.mascot.confirm'), mood: 'think' },
+    child: { text: t('onboarding.mascot.child'), mood: 'happy' },
+    avatar: { text: t('onboarding.mascot.avatar', childName), mood: 'cheer' },
   };
 
   return (
@@ -110,24 +113,29 @@ export default function Onboarding() {
                 <View style={{ width: 14, height: 14, borderRadius: 7, backgroundColor: colors.tangerine, borderWidth: 2, borderColor: colors.ink, marginLeft: 4 }} />
               </View>
               <Txt variant="subtitle" style={{ textAlign: 'center', color: colors.muted, maxWidth: 300 }}>
-                Fun KSSR learning for Standard 1–6. Maths, Science, English & Bahasa Melayu.
+                {t('onboarding.tagline')}
               </Txt>
             </View>
             <View style={{ width: '100%', gap: 12, marginTop: 20 }}>
-              {[
-                ['🎮', 'Quizzes that feel like games'],
-                ['🧠', 'Smart review of tricky questions'],
-                ['👨‍👩‍👧', 'Progress reports for parents'],
-              ].map(([e, t]) => (
-                <Chunky key={t} innerStyle={{ flexDirection: 'row', alignItems: 'center', gap: 12, padding: 14 }}>
+              {(
+                [
+                  ['🎮', 'onboarding.feature.games'],
+                  ['🧠', 'onboarding.feature.review'],
+                  ['👨‍👩‍👧', 'onboarding.feature.reports'],
+                ] as const
+              ).map(([e, key]) => (
+                <Chunky key={key} innerStyle={{ flexDirection: 'row', alignItems: 'center', gap: 12, padding: 14 }}>
                   <Txt style={{ fontSize: 24 }}>{e}</Txt>
-                  <Txt variant="subtitle">{t}</Txt>
+                  <Txt variant="subtitle">{t(key)}</Txt>
                 </Chunky>
               ))}
             </View>
-            <View style={{ width: '100%', marginTop: 18 }}>
+            <View style={{ width: '100%' }}>
+              <LanguagePicker />
+            </View>
+            <View style={{ width: '100%', marginTop: 8 }}>
               <Button
-                label="Let's go!"
+                label={t('onboarding.start')}
                 tone="lime"
                 size="lg"
                 full
@@ -144,15 +152,15 @@ export default function Onboarding() {
             {step === 'parent' && (
               <View style={{ gap: 16 }}>
                 <Field
-                  label="Parent's name"
-                  placeholder="e.g. Faizal"
+                  label={t('onboarding.parentName')}
+                  placeholder={t('onboarding.parentPlaceholder')}
                   value={parentName}
                   onChangeText={setParentName}
                   autoFocus
                   returnKeyType="next"
                   onSubmitEditing={() => parentName.trim() && setStep('pin')}
                 />
-                <Button label="Continue" full size="lg" disabled={!parentName.trim()} onPress={() => setStep('pin')} />
+                <Button label={t('common.continue')} full size="lg" disabled={!parentName.trim()} onPress={() => setStep('pin')} />
               </View>
             )}
 
@@ -161,13 +169,13 @@ export default function Onboarding() {
                 <PinDots length={4} filled={(step === 'pin' ? pin : confirm).length} error={pinError} />
                 {pinError && (
                   <Txt variant="small" style={{ textAlign: 'center', color: colors.berry }}>
-                    PINs don’t match. Try again.
+                    {t('onboarding.pinMismatch')}
                   </Txt>
                 )}
                 <Keypad onKey={(k) => onPinKey(k, step === 'pin' ? 'pin' : 'confirm')} />
                 {step === 'confirm' && (
                   <Button
-                    label="Start over"
+                    label={t('onboarding.startOver')}
                     tone="paper"
                     size="sm"
                     onPress={() => {
@@ -182,17 +190,17 @@ export default function Onboarding() {
 
             {step === 'child' && (
               <View style={{ gap: 18 }}>
-                <Field label="Child's name" placeholder="e.g. Adam" value={childName} onChangeText={setChildName} autoFocus={!hasParent} />
+                <Field label={t('onboarding.childName')} placeholder={t('onboarding.childPlaceholder')} value={childName} onChangeText={setChildName} autoFocus={!hasParent} />
                 <View style={{ gap: 10 }}>
-                  <Txt variant="label">Which standard?</Txt>
+                  <Txt variant="label">{t('onboarding.whichStandard')}</Txt>
                   <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
                     {index.standards.map((s) => (
-                      <Chip key={s.id} label={s.title} count={s.titleAlt} selected={level === s.level} onPress={() => setLevel(s.level)} />
+                      <Chip key={s.id} label={standardName(s, t.lang)} count={standardName(s, t.lang === 'ms' ? 'en' : 'ms')} selected={level === s.level} onPress={() => setLevel(s.level)} />
                     ))}
                   </View>
                 </View>
                 <MediumPicker value={medium} onChange={setMedium} />
-                <Button label="Continue" full size="lg" disabled={!childName.trim() || !medium} onPress={() => setStep('avatar')} />
+                <Button label={t('common.continue')} full size="lg" disabled={!childName.trim() || !medium} onPress={() => setStep('avatar')} />
               </View>
             )}
 
@@ -204,7 +212,7 @@ export default function Onboarding() {
                 <Chunky innerStyle={{ padding: 16 }}>
                   <AvatarBasics value={avatar} onChange={(p) => setAvatar((a) => ({ ...a, ...p }))} />
                 </Chunky>
-                <Button label="Start learning!" tone="lime" size="lg" full loading={saving} onPress={finish} testID="finish-onboarding" />
+                <Button label={t('onboarding.finish')} tone="lime" size="lg" full loading={saving} onPress={finish} testID="finish-onboarding" />
               </View>
             )}
           </Animated.View>

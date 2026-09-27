@@ -66,6 +66,24 @@ describe('practice quiz, end to end', () => {
     expect(progressOf().topics['s3-sci-rules'].best[QUIZ]).toBe(67);
   });
 
+  it('the results offer a look back at exactly the questions that went wrong', async () => {
+    setParams({ quizId: QUIZ, fixed: '1' });
+    await render(<QuizScreen />);
+    const qs = questions();
+    await playThrough(qs, [true, false, false]);
+    await fireEvent.press(screen.getByRole('button', { name: 'Mistakes (2)' }));
+    expect(screen.getByTestId('mistakes')).toBeOnTheScreen();
+    for (const q of [qs[1], qs[2]]) expect(screen.getByText(q.prompt)).toBeOnTheScreen();
+    expect(screen.queryByText(qs[0].prompt)).toBeNull();
+    await fireEvent.press(screen.getByRole('button', { name: 'Back to results' }));
+    // Playing again starts a fresh list.
+    await fireEvent.press(screen.getByRole('button', { name: 'Play again' }));
+    await playThrough(qs, [true, true, false]);
+    await fireEvent.press(screen.getByRole('button', { name: 'Mistakes (1)' }));
+    expect(screen.getByText(qs[2].prompt)).toBeOnTheScreen();
+    expect(screen.queryByText(qs[1].prompt)).toBeNull();
+  });
+
   it('shows a friendly message for a quiz that no longer exists', async () => {
     setParams({ quizId: 'deleted-quiz' });
     await render(<QuizScreen />);
@@ -119,6 +137,8 @@ describe('time attack, end to end', () => {
     expect(screen.getByText('New best score!')).toBeOnTheScreen();
     expect(progressOf().timeAttackBest['s3-arcade-times-quiz']).toBe(4);
     expect(progressOf().attempts[0]).toMatchObject({ mode: 'timeAttack', correct: 4, total: 5 });
+    // Time attacks are about speed: no list of mistakes at the end.
+    expect(screen.queryByTestId('see-mistakes')).toBeNull();
     spy.mockRestore();
   });
 });

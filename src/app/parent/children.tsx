@@ -6,6 +6,7 @@ import { MediumPicker } from '@/components/parent/MediumPicker';
 import { Button, Chip, Chunky, Field, Screen, SectionLabel, TopBar, Txt } from '@/components/ui';
 import { getContentIndex, useContentIndex } from '@/features/content/registry';
 import { useRequireParent } from '@/features/profile/parentSession';
+import { currentT, useT } from '@/i18n';
 import { useApp } from '@/store/app';
 import type { Profile } from '@/store/types';
 
@@ -14,9 +15,10 @@ function confirm(title: string, message: string, onYes: () => void) {
     if (globalThis.confirm?.(`${title}\n\n${message}`)) onYes();
     return;
   }
+  const t = currentT();
   Alert.alert(title, message, [
-    { text: 'Cancel', style: 'cancel' },
-    { text: 'Yes', style: 'destructive', onPress: onYes },
+    { text: t('common.cancel'), style: 'cancel' },
+    { text: t('common.yes'), style: 'destructive', onPress: onYes },
   ]);
 }
 
@@ -36,9 +38,10 @@ export default function Children() {
   const reset = useApp((s) => s.resetProgress);
   const index = useContentIndex();
   const [names, setNames] = useState<Record<string, string>>({});
+  const t = useT();
   if (!ok) return null;
   return (
-    <Screen header={<TopBar title="Children" />}>
+    <Screen header={<TopBar title={t('dash.children')} />}>
       <View style={{ gap: 16 }}>
         {profiles.map((p) => (
           <Chunky key={p.id} innerStyle={{ padding: 16, gap: 14 }}>
@@ -46,15 +49,15 @@ export default function Children() {
               <Avatar config={p.avatar} size={56} />
               <View style={{ flex: 1 }}>
                 <Field
-                  accessibilityLabel={`${p.name}'s name`}
+                  accessibilityLabel={t('children.nameA11y', p.name)}
                   value={names[p.id] ?? p.name}
-                  onChangeText={(t) => setNames((n) => ({ ...n, [p.id]: t }))}
+                  onChangeText={(name) => setNames((n) => ({ ...n, [p.id]: name }))}
                   onBlur={() => names[p.id]?.trim() && update(p.id, { name: names[p.id].trim() })}
                 />
               </View>
             </View>
             <View style={{ gap: 8 }}>
-              <Txt variant="label">Standard</Txt>
+              <Txt variant="label">{t('children.standard')}</Txt>
               <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
                 {index.standards.map((s) => (
                   <Chip key={s.id} label={String(s.level)} selected={p.level === s.level} onPress={() => update(p.id, { level: s.level })} />
@@ -63,31 +66,31 @@ export default function Children() {
             </View>
             <MediumPicker value={p.medium ?? 'en'} onChange={(lang) => update(p.id, { medium: lang })} />
             <View style={{ gap: 6 }}>
-              <Txt variant="label">At school now</Txt>
+              <Txt variant="label">{t('children.atSchool')}</Txt>
               <Txt variant="small" testID={`school-${p.id}`}>
-                {schoolSummary(p) || 'Not set yet — tell Bijak which topics the class is on.'}
+                {schoolSummary(p) || t('children.notSet')}
               </Txt>
-              <Button label="Set school topics" tone="paper" size="sm" onPress={() => router.push(`/parent/school?child=${p.id}`)} />
+              <Button label={t('children.setTopics')} tone="paper" size="sm" onPress={() => router.push(`/parent/school?child=${p.id}`)} />
             </View>
             <View style={{ flexDirection: 'row', gap: 10 }}>
               <Button
-                label="Reset progress"
+                label={t('children.reset')}
                 tone="paper"
                 size="sm"
-                onPress={() => confirm('Reset progress?', `All of ${p.name}'s XP, coins, badges and history will be cleared.`, () => reset(p.id))}
+                onPress={() => confirm(t('children.resetQ'), t('children.resetMsg', p.name), () => reset(p.id))}
               />
               <Button
-                label="Remove"
+                label={t('children.remove')}
                 tone="berry"
                 size="sm"
-                onPress={() => confirm('Remove learner?', `${p.name} and all progress will be deleted from this device.`, () => remove(p.id))}
+                onPress={() => confirm(t('children.removeQ'), t('children.removeMsg', p.name), () => remove(p.id))}
               />
             </View>
           </Chunky>
         ))}
       </View>
-      <SectionLabel>Add</SectionLabel>
-      <Button label="Add a learner" tone="lime" full onPress={() => router.push('/onboarding')} />
+      <SectionLabel>{t('children.add')}</SectionLabel>
+      <Button label={t('children.addLearner')} tone="lime" full onPress={() => router.push('/onboarding')} />
     </Screen>
   );
 }

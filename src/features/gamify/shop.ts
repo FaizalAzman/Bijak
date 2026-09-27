@@ -1,4 +1,5 @@
 /** Module 17 — Virtual currency storefront catalogue (cosmetics for Module 18's avatar). */
+import type { UiLang } from '@/i18n/define';
 
 export type Slot = 'hat' | 'glasses' | 'outfit' | 'bg' | 'pet';
 
@@ -51,13 +52,37 @@ export const itemById = (id: string | undefined) => SHOP.find((i) => i.id === id
 
 export const FREE_ITEMS = SHOP.filter((i) => i.price === 0).map((i) => i.id);
 
-export const SLOT_LABEL: Record<Slot, string> = {
-  outfit: 'Outfits',
-  hat: 'Hats',
-  glasses: 'Glasses',
-  bg: 'Backgrounds',
-  pet: 'Pets',
+/** Message keys for each slot's name ("Outfits" / "Pakaian"). */
+export const SLOT_KEY = { outfit: 'slot.outfit', hat: 'slot.hat', glasses: 'slot.glasses', bg: 'slot.bg', pet: 'slot.pet' } as const satisfies Record<Slot, string>;
+
+/** Bahasa Melayu names of the shop items. */
+const NAME_MS: Record<string, string> = {
+  'tee-lime': 'Baju-T Limau',
+  'tee-sky': 'Baju-T Langit',
+  'tee-berry': 'Baju-T Beri',
+  'hoodie-grape': 'Hoodie Anggur',
+  'jersey-stripe': 'Jersi Penyerang',
+  'suit-space': 'Sut Angkasawan',
+  'cap-red': 'Topi Merah',
+  songkok: 'Songkok',
+  headphones: 'Fon Kepala',
+  crown: 'Mahkota Emas',
+  wizard: 'Topi Ahli Sihir',
+  'round-specs': 'Cermin Mata Pintar',
+  sunnies: 'Cermin Mata Hitam',
+  'star-specs': 'Cermin Mata Bintang',
+  'bg-cream': 'Krim',
+  'bg-mint': 'Taman Pudina',
+  'bg-sunset': 'Senja',
+  'bg-ocean': 'Lautan',
+  'bg-space': 'Angkasa Lepas',
+  'pet-cat': 'Kucing',
+  'pet-chick': 'Anak Ayam',
+  'pet-turtle': 'Penyu',
+  'pet-dragon': 'Anak Naga',
 };
+
+export const itemName = (item: Pick<ShopItem, 'id' | 'name'>, lang: UiLang) => (lang === 'ms' ? (NAME_MS[item.id] ?? item.name) : item.name);
 
 export interface AvatarConfig {
   skin: string;

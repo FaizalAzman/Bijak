@@ -5,6 +5,7 @@
  */
 import * as Notifications from 'expo-notifications';
 import { AppState, Platform } from 'react-native';
+import { currentT } from '@/i18n';
 import { telemetry } from '@/lib/telemetry';
 import { useApp } from '@/store/app';
 import { DEFAULT_REMINDERS, planReminders, type PlannedReminder } from './plan';
@@ -25,14 +26,16 @@ export function currentPlan(now = new Date()): PlannedReminder[] {
     reminders: s.settings.reminders ?? DEFAULT_REMINDERS,
     restDays: s.settings.restDays ?? [],
     children: s.profiles.filter((p) => s.progress[p.id]).map((p) => ({ name: p.name, streak: s.progress[p.id].streak })),
+    lang: s.settings.uiLang,
   });
 }
 
 async function ensureChannel() {
   if (Platform.OS !== 'android') return;
+  const t = currentT();
   await Notifications.setNotificationChannelAsync(CHANNEL, {
-    name: 'Reminders',
-    description: 'Gentle study reminders and the weekly report',
+    name: t('settings.reminders'),
+    description: t('rem.channel'),
     importance: Notifications.AndroidImportance.DEFAULT,
   });
 }

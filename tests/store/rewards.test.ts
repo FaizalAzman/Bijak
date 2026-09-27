@@ -4,7 +4,7 @@
  */
 import type { Quest } from '@/features/gamify/quests';
 import { REST_DAY_PRESETS, SHIELD } from '@/features/gamify/streak';
-import { REWARDS, xpForAnswer } from '@/features/gamify/xp';
+import { hintedXp, quizPoints, REWARDS, xpForAnswer } from '@/features/gamify/xp';
 import { dayKey } from '@/lib/date';
 import { liveStreak, MAX_ATTEMPTS, MAX_DAYS_KEPT, MAX_SESSION_SECONDS, useApp } from '@/store/app';
 import { advance, advanceDays, contextFor, DAY, HOUR, index, MINUTE, patchProgress, playQuiz, progressOf, resetStores, setNow, setupChild } from '../helpers';
@@ -64,6 +64,68 @@ describe('answering', () => {
   it('negative combos from a buggy caller are treated as 0', () => {
     s().answer({ ctx: contextFor(QUIZ, q()), correct: true, combo: -5, difficulty: 1, review: false });
     expect(progressOf().totals.bestCombo).toBe(0);
+  });
+});
+
+describe('hints (a hinted right answer is worth half a point)', () => {
+  const q = () => index().quiz(QUIZ)!.quiz.questions[0];
+  const key = () => `${QUIZ}::${q().id}`;
+  const finish = (over: object) => s().finishQuiz({ quizId: QUIZ, topicId: TOPIC, standardId: 'std3', subjectId: 'math', title: 'T', mode: 'practice', correct: 8, total: 8, seconds: 60, ...over });
+
+  it(`a right answer after a hint earns 1/${REWARDS.hintDivisor} of the XP, no combo bonus and no coin, and still goes to review`, () => {
+    const xp = s().answer({ ctx: contextFor(QUIZ, q()), correct: true, combo: 6, difficulty: 2, review: false, hinted: true });
+    expect(xp).toBe(hintedXp(2));
+    expect(xp).toBe(Math.ceil(xpForAnswer(2, 0) / REWARDS.hintDivisor));
+    expect(xp).toBeLessThan(xpForAnswer(2, 6));
+    const p = progressOf();
+    expect(p.xp).toBe(xp);
+    expect(p.coins).toBe(50);
+    expect(p.totals).toMatchObject({ answered: 1, correct: 1, bestCombo: 0 });
+    expect(p.srs[key()]).toMatchObject({ box: 0, due: Date.now() });
+  });
+
+  it('a hinted answer does not count towards a combo quest, nor as a fixed tricky question', () => {
+    setQuests([quest({ kind: 'combo', target: 3 }), quest({ id: `${dayKey()}-y`, kind: 'review', target: 3 })]);
+    s().answer({ ctx: contextFor(QUIZ, q()), correct: false, combo: 0, difficulty: 1, review: false });
+    s().answer({ ctx: contextFor(QUIZ, q()), correct: true, combo: 2, difficulty: 1, review: false });
+    s().answer({ ctx: contextFor(QUIZ, q()), correct: true, combo: 3, difficulty: 1, review: true, hinted: true });
+    const p = progressOf();
+    expect(p.quests.list.map((x) => x.progress)).toEqual([2, 0]);
+    expect(p.totals.reviews).toBe(0);
+    expect(p.srs[key()]).toMatchObject({ box: 0, lapses: 2 });
+  });
+
+  it('a wrong answer after a hint is simply wrong', () => {
+    expect(s().answer({ ctx: contextFor(QUIZ, q()), correct: false, combo: 0, difficulty: 1, review: false, hinted: true })).toBe(0);
+    expect(progressOf()).toMatchObject({ xp: 0, coins: 50, totals: expect.objectContaining({ correct: 0 }) });
+  });
+
+  it('time attacks have no hints, so the flag changes nothing there', () => {
+    expect(s().answer({ ctx: contextFor(QUIZ, q()), correct: true, combo: 9, difficulty: 3, review: false, fast: true, hinted: true })).toBe(xpForAnswer(3, 9, true));
+    expect(progressOf().coins).toBe(50 + REWARDS.coinPerCorrect);
+  });
+
+  it('a quiz with any hint is not perfect, and hinted answers count half in the topic score', () => {
+    const r = finish({ hinted: 2 });
+    expect(r.xp).toBe(C.xp);
+    expect(r.coins).toBe(C.coins);
+    const p = progressOf();
+    expect(p.totals.perfect).toBe(0);
+    expect(p.topics[TOPIC].best[QUIZ]).toBe(Math.round((quizPoints(8, 2) / 8) * 100));
+    expect(quizPoints(8, 2)).toBe(7);
+    expect(p.attempts[0]).toMatchObject({ correct: 8, total: 8, hinted: 2 });
+    // The same quiz without hints later that day still earns its perfect bonus.
+    expect(finish({}).xp).toBe(P.xp);
+  });
+
+  it('hint counts from the screen are cleaned: whole, at most the right answers, never in time attacks', () => {
+    finish({ correct: 3, hinted: 99.7 });
+    expect(progressOf().attempts[0].hinted).toBe(3);
+    expect(progressOf().topics[TOPIC].best[QUIZ]).toBe(Math.round((quizPoints(3, 3) / 8) * 100));
+    finish({ correct: 5, hinted: -2 });
+    expect(progressOf().attempts[0]).not.toHaveProperty('hinted');
+    s().finishQuiz({ quizId: ARCADE_QUIZ, standardId: 'std3', subjectId: 'math', title: 'T', mode: 'timeAttack', correct: 12, total: 14, seconds: 60, hinted: 5 });
+    expect(progressOf().attempts[0]).not.toHaveProperty('hinted');
   });
 });
 

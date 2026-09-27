@@ -1,39 +1,29 @@
-import { Volume2 } from 'lucide-react-native';
+import { Lightbulb, Volume2 } from 'lucide-react-native';
+import { useMemo, useState } from 'react';
 import { Pressable, View } from 'react-native';
 import Animated from 'react-native-reanimated';
-import { Txt } from '@/components/ui';
+import { Button, Txt } from '@/components/ui';
 import type { Question } from '@/features/content/schema';
 import { fx, speak } from '@/lib/feedback';
 import { colors } from '@/theme';
 import { swapIn } from '@/theme/motion';
 import { FillBlank } from './FillBlank';
+import { hintFor } from './hints';
 import { Match } from './Match';
 import { MCQ } from './MCQ';
 import { Numpad } from './Numpad';
 import { Order } from './Order';
 import { Sort } from './Sort';
 import { TrueFalse } from './TrueFalse';
+import { INSTRUCTION, LABELS } from './types';
 
-const KIND_LABEL: Record<Question['type'], string> = {
-  mcq: 'Choose the answer',
-  trueFalse: 'True or false?',
-  match: 'Draw lines to match',
-  order: 'Put in order',
-  sort: 'Drag into groups',
-  fillBlank: 'Fill in the blanks',
-  numpad: 'Type the answer',
-};
-const KIND_LABEL_MS: Record<Question['type'], string> = {
-  mcq: 'Pilih jawapan',
-  trueFalse: 'Betul atau salah?',
-  match: 'Lukis garisan untuk padankan',
-  order: 'Susun mengikut urutan',
-  sort: 'Seret ke kumpulan',
-  fillBlank: 'Isi tempat kosong',
-  numpad: 'Taip jawapan',
-};
-
-export function QuestionView({ q, onAnswer, locked, fast }: { q: Question; onAnswer: (ok: boolean) => void; locked: boolean; fast?: boolean }) {
+/**
+ * One question: instruction, prompt (with read-aloud) and its engine. Pass `onHint` to offer a
+ * hint button (practice and review only); it is called once, when the child asks for the hint.
+ */
+export function QuestionView({ q, onAnswer, locked, fast, onHint }: { q: Question; onAnswer: (ok: boolean) => void; locked: boolean; fast?: boolean; onHint?: () => void }) {
+  const hint = useMemo(() => (onHint && !fast ? hintFor(q) : null), [q, onHint, fast]);
+  const [hintShown, setHintShown] = useState(false);
   const body = (() => {
     switch (q.type) {
       case 'mcq':
@@ -57,7 +47,7 @@ export function QuestionView({ q, onAnswer, locked, fast }: { q: Question; onAns
     // A quick fade marks the new question; time-attack skips it so answers stay instant.
     <Animated.View entering={fast ? undefined : swapIn} style={{ gap: 18 }}>
       <View style={{ gap: 10 }}>
-        {!fast && <Txt variant="label">{(q.lang === 'ms' ? KIND_LABEL_MS : KIND_LABEL)[q.type]}</Txt>}
+        {!fast && <Txt variant="label">{INSTRUCTION[q.lang][q.type]}</Txt>}
         <View style={{ flexDirection: 'row', alignItems: 'flex-start', gap: 12 }}>
           {q.visual ? (
             <View
@@ -89,7 +79,7 @@ export function QuestionView({ q, onAnswer, locked, fast }: { q: Question; onAns
           {!fast && (
             <Pressable
               accessibilityRole="button"
-              accessibilityLabel="Read question aloud"
+              accessibilityLabel={LABELS[q.lang].readAloud}
               onPress={() => {
                 fx.tap();
                 speak(q.prompt, q.lang);
@@ -109,6 +99,24 @@ export function QuestionView({ q, onAnswer, locked, fast }: { q: Question; onAns
             </Pressable>
           )}
         </View>
+        {hint && hintShown ? (
+          <View style={{ backgroundColor: colors['sun-soft'], borderRadius: 14, borderWidth: 2, borderColor: colors.ink, padding: 10 }} testID="hint">
+            <Txt variant="body">{`💡 ${hint}`}</Txt>
+          </View>
+        ) : hint && !locked ? (
+          <Button
+            label={LABELS[q.lang].hint}
+            tone="paper"
+            size="sm"
+            icon={<Lightbulb size={16} color={colors.ink} strokeWidth={2.5} />}
+            onPress={() => {
+              fx.tap();
+              setHintShown(true);
+              onHint?.();
+            }}
+            testID="hint-button"
+          />
+        ) : null}
       </View>
       {body}
     </Animated.View>

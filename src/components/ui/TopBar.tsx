@@ -2,6 +2,7 @@ import { router } from 'expo-router';
 import { ChevronLeft, X } from 'lucide-react-native';
 import type { ReactNode } from 'react';
 import { View } from 'react-native';
+import { useT } from '@/i18n';
 import { colors } from '@/theme';
 import { PressChunky } from './Chunky';
 import { FrameRow } from './Frame';
@@ -17,9 +18,10 @@ export function IconButton({ icon, onPress, label, bg = colors.paper }: { icon: 
 
 export function BackButton({ close, onPress }: { close?: boolean; onPress?: () => void }) {
   const Icon = close ? X : ChevronLeft;
+  const t = useT();
   return (
     <IconButton
-      label={close ? 'Close' : 'Back'}
+      label={close ? t('common.close') : t('common.back')}
       icon={<Icon size={22} color={colors.ink} strokeWidth={2.75} />}
       onPress={onPress ?? (() => (router.canGoBack() ? router.back() : router.replace('/')))}
     />

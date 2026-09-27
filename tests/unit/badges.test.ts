@@ -1,6 +1,6 @@
-import { buildIndex } from '@/features/content/registry';
+import { buildIndex, getContentIndex } from '@/features/content/registry';
 import { Standard } from '@/features/content/schema';
-import { allBadges, masteryBadges, newlyEarned, STATIC_BADGES } from '@/features/gamify/badges';
+import { allBadges, badgeDescription, badgeTitle, masteryBadges, newlyEarned, STATIC_BADGES } from '@/features/gamify/badges';
 import { xpForLevel } from '@/features/gamify/xp';
 import { emptyProgress } from '@/store/app';
 import type { Progress } from '@/store/types';
@@ -74,6 +74,30 @@ describe('static badges', () => {
         expect(v).toBeLessThanOrEqual(1);
       }
     }
+  });
+});
+
+describe('badges in Bahasa Melayu', () => {
+  it('every badge has a Malay name and description', () => {
+    const sameName = new Set(['correct-500']); // "Genius" in both
+    for (const b of allBadges(getContentIndex())) {
+      expect(badgeTitle(b, 'ms')).toBe(b.ms?.title);
+      expect(badgeDescription(b, 'ms')).toBe(b.ms?.description);
+      expect(badgeDescription(b, 'ms')).not.toBe(b.description);
+      if (!sameName.has(b.id)) expect(badgeTitle(b, 'ms')).not.toBe(b.title);
+      expect([badgeTitle(b, 'en'), badgeDescription(b, 'en')]).toEqual([b.title, b.description]);
+    }
+  });
+
+  it('mastery badges name the subject and standard in Malay', () => {
+    const b = allBadges(getContentIndex()).find((x) => x.id === 'master-std3-math')!;
+    expect(badgeTitle(b, 'ms')).toBe('Pakar Matematik Tahun 3');
+    expect(badgeDescription(b, 'ms')).toBe('Dapat 80%+ dalam setiap kuiz Matematik Tahun 3');
+  });
+
+  it('a badge without a Malay name falls back to English', () => {
+    const b = { ...STATIC_BADGES[0], ms: undefined };
+    expect([badgeTitle(b, 'ms'), badgeDescription(b, 'ms')]).toEqual([b.title, b.description]);
   });
 });
 

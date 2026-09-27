@@ -23,10 +23,12 @@ import { newlyEarned, type BadgeDef } from '@/features/gamify/badges';
 import { applyQuestEvent, generateDailyQuests, type Quest, type QuestEvent } from '@/features/gamify/quests';
 import { advanceStreak, cleanRestDays, liveStreak as streakShown, SHIELD } from '@/features/gamify/streak';
 import { DEFAULT_AVATAR, EYES, FREE_ITEMS, HAIR_COLORS, HAIR_STYLES, itemById, SKIN_TONES, type AvatarConfig, type Slot } from '@/features/gamify/shop';
-import { levelFromXp, REWARDS, xpForAnswer } from '@/features/gamify/xp';
+import { hintedXp, levelFromXp, quizPoints, REWARDS, xpForAnswer } from '@/features/gamify/xp';
 import { topicStatus } from '@/features/progress/selectors';
 import { cleanReminders, DEFAULT_REMINDERS } from '@/features/reminders/plan';
 import { dueCards, srsUpdate, type SrsContext } from '@/features/srs/srs';
+import { isUiLang } from '@/i18n/core';
+import { deviceLang } from '@/i18n/detect';
 import { dayKey } from '@/lib/date';
 import { kv } from '@/lib/storage';
 import { cleanVoiceChoices } from '@/lib/voice';
@@ -58,6 +60,11 @@ export interface AnswerInput {
   review: boolean;
   /** Time-attack answer (smaller per-answer XP). */
   fast?: boolean;
+  /**
+   * A hint was shown first: a right answer earns 1/`REWARDS.hintDivisor` of the XP, no coin and
+   * no combo, and the question still goes to review (it wasn't known unaided).
+   */
+  hinted?: boolean;
 }
 
 export interface FinishInput {
@@ -70,6 +77,8 @@ export interface FinishInput {
   correct: number;
   total: number;
   seconds: number;
+  /** How many of the right answers needed a hint (each counts half; not in time attacks). */
+  hinted?: number;
 }
 
 export interface FinishReward {
@@ -125,7 +134,7 @@ export const REVIEW_QUIZ_ID = 'review';
 
 const NO_REWARD: FinishReward = { xp: 0, coins: 0, newBest: false, badges: [], questsDone: [], streak: 0, shieldEarned: false };
 
-export const DEFAULT_SETTINGS: Settings = { sound: true, haptics: true, voice: true, autoRead: false, restDays: [], voices: {}, reminders: DEFAULT_REMINDERS };
+export const DEFAULT_SETTINGS: Settings = { uiLang: deviceLang(), sound: true, haptics: true, voice: true, autoRead: false, restDays: [], voices: {}, reminders: DEFAULT_REMINDERS };
 const OPTIONAL_SLOTS: Slot[] = ['hat', 'glasses', 'pet'];
 const MAX_NAME = 30;
 export const MAX_ATTEMPTS = 200;
@@ -318,6 +327,7 @@ export const useApp = create<AppState>()(
           set((s) => {
             const settings: Settings = { ...s.settings, ...patch, reminders: s.settings.reminders };
             if (patch.restDays) settings.restDays = cleanRestDays(patch.restDays);
+            if (!isUiLang(settings.uiLang)) settings.uiLang = s.settings.uiLang;
             // Voice choices merge per language; an empty choice goes back to automatic.
             if (patch.voices) settings.voices = cleanVoiceChoices({ ...s.settings.voices, ...patch.voices });
             if (patch.reminders) settings.reminders = cleanReminders({ ...s.settings.reminders, ...patch.reminders }, s.settings.reminders ?? DEFAULT_REMINDERS);
@@ -344,7 +354,7 @@ export const useApp = create<AppState>()(
           mutate((p, profile) => rollDay(p, profile, dayKey()));
         },
 
-        answer: ({ ctx, correct, combo, difficulty, review, fast }) =>
+        answer: ({ ctx, correct, combo, difficulty, review, fast, hinted }) =>
           mutate((p, profile) => {
             const today = dayKey();
             rollDay(p, profile, today);
@@ -356,23 +366,26 @@ export const useApp = create<AppState>()(
               t.answered++;
               t.lastAt = Date.now();
             }
-            const next = srsUpdate(p.srs[ctx.key], ctx, correct);
+            // Time attacks have no hints; elsewhere a hint means it wasn't known unaided.
+            const helped = hinted === true && !fast;
+            const known = correct && !helped;
+            const next = srsUpdate(p.srs[ctx.key], ctx, known);
             if (next === null) delete p.srs[ctx.key];
             else if (next) p.srs[ctx.key] = next;
 
-            const streakNow = Math.max(0, combo);
+            const streakNow = helped ? 0 : Math.max(0, combo);
             questEvent(p, { type: 'answer', correct, combo: streakNow });
-            if (review) questEvent(p, { type: 'review', correct });
+            if (review) questEvent(p, { type: 'review', correct: known });
             if (!correct) return 0;
 
             d.correct++;
             p.totals.correct++;
-            if (review) p.totals.reviews++;
+            if (review && known) p.totals.reviews++;
             p.totals.bestCombo = Math.max(p.totals.bestCombo, streakNow);
             if (ctx.topicId) topicStat(p, ctx.topicId).correct++;
-            const xp = xpForAnswer(difficulty, streakNow, fast);
+            const xp = helped ? hintedXp(difficulty) : xpForAnswer(difficulty, streakNow, fast);
             p.xp += xp;
-            p.coins += REWARDS.coinPerCorrect;
+            if (!helped) p.coins += REWARDS.coinPerCorrect;
             questEvent(p, { type: 'xp', amount: xp });
             return xp;
           }) ?? 0,
@@ -394,7 +407,10 @@ export const useApp = create<AppState>()(
             rollDay(p, profile, today);
             const timeAttack = f.mode === 'timeAttack';
             const review = f.mode === 'review';
-            const perfect = correct === total;
+            const hinted = timeAttack ? 0 : Math.min(correct, whole(f.hinted ?? 0));
+            // A hinted right answer is worth half a point.
+            const points = quizPoints(correct, hinted);
+            const perfect = points === total;
             const bonusEligible = !timeAttack && total >= REWARDS.minBonusQuestions;
             // Only today's entries matter; drop older ones so the record stays small.
             const paid = Object.fromEntries(Object.entries(p.quizBonusDay ?? {}).filter(([, day]) => day === today));
@@ -428,7 +444,7 @@ export const useApp = create<AppState>()(
             }
             if (f.topicId && !review) {
               const best = topicStat(p, f.topicId).best;
-              best[f.quizId] = Math.max(best[f.quizId] ?? 0, Math.round((correct / total) * 100));
+              best[f.quizId] = Math.max(best[f.quizId] ?? 0, Math.round((points / total) * 100));
               markMastered(p, f.topicId);
             }
             p.xp += xp;
@@ -438,7 +454,8 @@ export const useApp = create<AppState>()(
             const d = dayStat(p, today);
             const key = `${f.standardId}/${f.subjectId}`;
             d.seconds[key] = (d.seconds[key] ?? 0) + seconds;
-            p.attempts = [{ ...f, correct, total, seconds, at: Date.now() }, ...p.attempts].slice(0, MAX_ATTEMPTS);
+            const { hinted: _claimed, ...attempt } = f;
+            p.attempts = [{ ...attempt, correct, total, seconds, at: Date.now(), ...(hinted ? { hinted } : {}) }, ...p.attempts].slice(0, MAX_ATTEMPTS);
 
             questEvent(p, { type: 'quizComplete', subjectId: f.subjectId, perfect: perfect && bonusEligible, timeAttack, review });
             if (xp) questEvent(p, { type: 'xp', amount: xp });
@@ -573,7 +590,9 @@ export const useApp = create<AppState>()(
       // Settings added in later versions get their defaults on devices with an older save.
       merge: (persisted, current) => {
         const saved = (persisted ?? {}) as Partial<AppState>;
-        return { ...current, ...saved, settings: { ...current.settings, ...saved.settings } };
+        const settings = { ...current.settings, ...saved.settings };
+        if (!isUiLang(settings.uiLang)) settings.uiLang = current.settings.uiLang;
+        return { ...current, ...saved, settings };
       },
     },
   ),

@@ -100,6 +100,18 @@ describe('syncReminders', () => {
     jest.restoreAllMocks();
   });
 
+  it('switching the app to Bahasa Melayu rewrites the scheduled reminders (and the channel name)', async () => {
+    jest.replaceProperty(Platform, 'OS', 'android');
+    s().updateSettings({ reminders: { daily: true } });
+    await syncReminders();
+    s().updateSettings({ uiLang: 'ms' });
+    await syncReminders();
+    const first = N.__scheduled.find((n) => n.identifier === 'bijak-daily-2026-03-02')! as unknown as { content: { title: string; body: string } };
+    expect(first.content).toMatchObject({ title: 'Masa untuk Bijak 📚', body: 'Misi Adam sudah sedia. Sepuluh minit pun cukup!' });
+    expect(Notifications.setNotificationChannelAsync).toHaveBeenLastCalledWith('reminders', expect.objectContaining({ name: 'Peringatan', description: 'Peringatan belajar yang lembut dan laporan mingguan' }));
+    jest.restoreAllMocks();
+  });
+
   it('is a no-op in the web build', async () => {
     jest.replaceProperty(Platform, 'OS', 'web');
     s().updateSettings({ reminders: { daily: true } });

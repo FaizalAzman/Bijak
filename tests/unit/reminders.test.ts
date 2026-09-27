@@ -2,7 +2,8 @@
  * Gentle reminders: what gets planned, when, and — just as important — when Bijak stays quiet.
  */
 import type { StreakState } from '@/features/gamify/streak';
-import { cleanReminders, DEFAULT_REMINDERS, joinNames, planReminders, PLAN_DAYS, timeLabel, type ChildState, type PlanInput, type Reminders } from '@/features/reminders/plan';
+import { cleanReminders, DEFAULT_REMINDERS, planReminders, PLAN_DAYS, type ChildState, type PlanInput, type Reminders } from '@/features/reminders/plan';
+import { joinNames, timeLabel } from '@/i18n';
 
 const MON = '2026-03-02';
 const at = (local: string) => new Date(local);
@@ -10,7 +11,7 @@ const streak = (over: Partial<StreakState> = {}): StreakState => ({ current: 0, 
 const child = (name: string, s: Partial<StreakState> = {}): ChildState => ({ name, streak: streak(s) });
 const on = (over: Partial<Reminders> = {}): Reminders => ({ ...DEFAULT_REMINDERS, ...over });
 const plan = (over: Partial<PlanInput> = {}) =>
-  planReminders({ now: at(`${MON}T09:00:00`), reminders: on({ daily: true }), restDays: [], children: [child('Adam')], ...over });
+  planReminders({ now: at(`${MON}T09:00:00`), reminders: on({ daily: true }), restDays: [], children: [child('Adam')], lang: 'en', ...over });
 const summary = (input: Partial<PlanInput> = {}) => plan(input).map((r) => `${r.id} ${r.at.toTimeString().slice(0, 5)}`);
 
 describe('daily reminder', () => {
@@ -138,8 +139,25 @@ describe('helpers', () => {
     expect(cleanReminders({ weekly: true }, on({ daily: true, time: '19:00' }))).toEqual({ daily: true, time: '19:00', streak: false, weekly: true });
   });
 
-  it('timeLabel and joinNames read naturally', () => {
-    expect(['00:05', '09:30', '12:00', '17:00', '23:59'].map(timeLabel)).toEqual(['12:05 am', '9:30 am', '12:00 pm', '5:00 pm', '11:59 pm']);
-    expect([[], ['Adam'], ['Adam', 'Aina'], ['Adam', 'Aina', 'Ali']].map(joinNames)).toEqual(['', 'Adam', 'Adam and Aina', 'Adam, Aina and Ali']);
+  it('are written in the app language', () => {
+    const kids = [child('Adam', { current: 3, best: 3, lastDay: '2026-03-01' }), child('Aina', { current: 2, best: 2, lastDay: '2026-03-01' })];
+    const all = plan({ lang: 'ms', children: kids, reminders: on({ daily: true, streak: true, weekly: true, time: '16:00' }) });
+    const [daily, streak] = all;
+    expect(daily).toMatchObject({ kind: 'daily', title: 'Masa untuk Bijak 📚', body: 'Misi sudah sedia untuk Adam dan Aina. Teruskan rentetan itu!' });
+    expect(streak).toMatchObject({ kind: 'streak', title: '🔥 Kekalkan rentetan itu', body: 'Adam (3 hari) dan Aina (2 hari) belum bermain hari ini. Satu kuiz ringkas seorang akan mengekalkannya.' });
+    expect(all.find((r) => r.kind === 'weekly')).toMatchObject({ title: '📊 Laporan mingguan Bijak anda', body: 'Lihat apa yang Adam dan Aina pelajari minggu ini, dan apa yang perlu dilatih seterusnya.' });
+    const one = plan({ lang: 'ms', children: [kids[0]], reminders: on({ daily: true, streak: true, time: '16:00' }) });
+    expect(one[0].body).toBe('Misi Adam sudah sedia, dan ada rentetan 3 hari untuk diteruskan!');
+    expect(one[1]).toMatchObject({ title: '🔥 Kekalkan rentetan 3 hari Adam', body: 'Satu kuiz ringkas sebelum tidur akan mengekalkannya.' });
+    expect(plan({ lang: 'ms' })[0].body).toBe('Misi Adam sudah sedia. Sepuluh minit pun cukup!');
+  });
+
+  it('timeLabel and joinNames read naturally in both languages', () => {
+    const times = ['00:05', '09:30', '12:00', '13:15', '17:00', '19:30', '23:59'];
+    expect(times.map((t) => timeLabel(t, 'en'))).toEqual(['12:05 am', '9:30 am', '12:00 pm', '1:15 pm', '5:00 pm', '7:30 pm', '11:59 pm']);
+    expect(times.map((t) => timeLabel(t, 'ms'))).toEqual(['12:05 pagi', '9:30 pagi', '12:00 tengah hari', '1:15 tengah hari', '5:00 petang', '7:30 malam', '11:59 malam']);
+    const lists = [[], ['Adam'], ['Adam', 'Aina'], ['Adam', 'Aina', 'Ali']];
+    expect(lists.map((n) => joinNames(n, 'en'))).toEqual(['', 'Adam', 'Adam and Aina', 'Adam, Aina and Ali']);
+    expect(lists.map((n) => joinNames(n, 'ms'))).toEqual(['', 'Adam', 'Adam dan Aina', 'Adam, Aina dan Ali']);
   });
 });

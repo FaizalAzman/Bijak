@@ -1,7 +1,8 @@
 import { View } from 'react-native';
 import { Chunky, Grid, ProgressBar, Screen, TopBar, Txt } from '@/components/ui';
 import { useChildContent } from '@/hooks/useChildContent';
-import { allBadges } from '@/features/gamify/badges';
+import { allBadges, badgeDescription, badgeTitle } from '@/features/gamify/badges';
+import { useT } from '@/i18n';
 import { useProgress } from '@/store/app';
 import { accent, colors } from '@/theme';
 
@@ -10,11 +11,12 @@ export default function Trophies() {
   const p = useProgress();
   const badges = allBadges(useChildContent());
   const earned = badges.filter((b) => p.badges[b.id]).length;
+  const t = useT();
   return (
-    <Screen frame="wide" header={<TopBar title="Trophy room" />}>
+    <Screen frame="wide" header={<TopBar title={t('me.trophyRoom')} />}>
       <Chunky bg={colors.ink} shadowColor={colors.sun} innerStyle={{ padding: 18, gap: 10 }}>
         <Txt variant="label" style={{ color: colors.sun }}>
-          Collected
+          {t('trophies.collected')}
         </Txt>
         <Txt variant="hero" style={{ color: colors.paper }}>
           🏆 {earned} / {badges.length}
@@ -45,10 +47,10 @@ export default function Trophies() {
                   <Txt style={{ fontSize: 34, opacity: got ? 1 : 0.3 }}>{b.emoji}</Txt>
                 </View>
                 <Txt variant="subtitle" style={{ textAlign: 'center', fontSize: 14, opacity: got ? 1 : 0.7 }} numberOfLines={2}>
-                  {b.title}
+                  {badgeTitle(b, t.lang)}
                 </Txt>
                 <Txt variant="small" style={{ textAlign: 'center', fontSize: 12 }} numberOfLines={3}>
-                  {b.description}
+                  {badgeDescription(b, t.lang)}
                 </Txt>
                 {!got && b.progress ? (
                   <View style={{ width: '100%', marginTop: 'auto' }}>
@@ -56,7 +58,7 @@ export default function Trophies() {
                   </View>
                 ) : got ? (
                   <Txt variant="small" style={{ color: colors.ink, marginTop: 'auto' }}>
-                    {new Date(p.badges[b.id]).toLocaleDateString()}
+                    {new Date(p.badges[b.id]).toLocaleDateString(t('date.locale'))}
                   </Txt>
                 ) : null}
               </Chunky>

@@ -2,13 +2,14 @@ import { useEffect, useState } from 'react';
 import { View } from 'react-native';
 import { Button, Chip, Txt } from '@/components/ui';
 import { loadVoices, previewVoice, refreshVoices } from '@/lib/feedback';
+import { useT } from '@/i18n';
 import { rankVoices, voiceLabel, withoutOnlineTwins, type SpeechLang, type VoiceInfo } from '@/lib/voice';
 import { useApp } from '@/store/app';
 
-const LANGS: { lang: SpeechLang; title: string }[] = [
-  { lang: 'en', title: 'English' },
-  { lang: 'ms', title: 'Bahasa Melayu' },
-];
+const LANGS = [
+  { lang: 'en', title: 'voice.lang.en' },
+  { lang: 'ms', title: 'voice.lang.ms' },
+] as const satisfies readonly { lang: SpeechLang; title: string }[];
 const SHOWN = 4;
 
 /** Parents pick the read-aloud voice for each language, hearing each one before choosing. */
@@ -16,6 +17,7 @@ export function VoicePicker() {
   const chosen = useApp((s) => s.settings.voices);
   const updateSettings = useApp((s) => s.updateSettings);
   const [voices, setVoices] = useState<VoiceInfo[] | null>(null);
+  const t = useT();
 
   useEffect(() => {
     let alive = true;
@@ -40,32 +42,29 @@ export function VoicePicker() {
         const standIn = lang === 'ms' && ranked[0] && !ranked[0].language.toLowerCase().startsWith('ms');
         return (
           <View key={lang} style={{ gap: 8 }} testID={`voices-${lang}`}>
-            <Txt variant="label">{title}</Txt>
+            <Txt variant="label">{t(title)}</Txt>
             {voices === null ? (
-              <Txt variant="small">Looking for voices…</Txt>
+              <Txt variant="small">{t('voice.looking')}</Txt>
             ) : ranked.length === 0 ? (
-              <Txt variant="small">No {title} voice on this device yet. Bijak will use the system default.</Txt>
+              <Txt variant="small">{t('voice.none', t(title))}</Txt>
             ) : (
               <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
-                <Chip label="Automatic (best)" selected={!current} onPress={() => choose(lang, '')} />
+                <Chip label={t('voice.auto')} selected={!current} onPress={() => choose(lang, '')} />
                 {shown.map((v) => (
-                  <Chip key={v.identifier} label={voiceLabel(v)} selected={current === v.identifier} onPress={() => choose(lang, v.identifier)} />
+                  <Chip key={v.identifier} label={voiceLabel(v, t.lang)} selected={current === v.identifier} onPress={() => choose(lang, v.identifier)} />
                 ))}
               </View>
             )}
             {standIn && (
               <Txt variant="small" testID="ms-stand-in">
-                This device has no Malay voice, so Bijak reads Bahasa Melayu with an Indonesian voice, which sounds very close.
+                {t('voice.standIn')}
               </Txt>
             )}
           </View>
         );
       })}
-      <Txt variant="small">
-        Tap a voice to hear it. Voices come from this device: for the most natural sound, download an “Enhanced” or “Premium” voice (iPhone/iPad: Settings › Accessibility
-        › Spoken Content › Voices) or Google voice data (Android: Settings › Accessibility › Text-to-speech), then tap Refresh.
-      </Txt>
-      <Button label="Refresh voices" tone="paper" size="sm" onPress={() => refreshVoices().then(setVoices)} />
+      <Txt variant="small">{t('voice.tip')}</Txt>
+      <Button label={t('voice.refresh')} tone="paper" size="sm" onPress={() => refreshVoices().then(setVoices)} />
     </View>
   );
 }

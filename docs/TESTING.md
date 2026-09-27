@@ -24,12 +24,13 @@ daily-quest tests are deterministic.
 
 ## Meta tests
 
-- **Curriculum**: every quiz in every standard is built with 20 seeds — in English and again in the Bahasa Melayu build of Maths & Science; every question must pass the schema and semantic checks, generated answers must match the oracle, ids must be unique across standards, and questions must use their subject's language. The BM build must have nothing left in English and keep every id and answer of the original.
+- **Curriculum**: every quiz in every standard is built with 20 seeds — in English and again in the Bahasa Melayu build of Maths & Science; every question must pass the schema and semantic checks, generated answers must match the oracle, ids must be unique across standards, and questions must use their subject's language. The BM build must have nothing left in English and keep every id and answer of the original. Every question can be shown in the after-quiz mistakes list with its whole right answer, and offers a hint unless any hint would be the answer (true/false, two options). Every topic with quizzes prints a clean practice sheet with an answer key, in both teaching languages.
 - **Answerable**: every question a child can meet (in both teaching languages) is rendered in its real engine and answered through the accessible UI — the right answer must be accepted and a wrong one rejected, exactly once.
 - **Renderers**: every lesson-block and question type in the schema has a renderer; every lesson in the syllabus renders; every shop item visibly changes the avatar; every badge appears in the trophy room.
-- **Screens**: every file in `src/app` renders on a phone and a tablet with no crash, no `undefined`/`NaN` on screen, and a name on every button.
+- **Screens**: every file in `src/app` renders on a phone and a tablet with no crash, no `undefined`/`NaN` on screen, and a name on every button — and renders again in the English and in the Malay app with none of the other language's words (syllabus text aside) in its text, labels or placeholders.
+- **Messages** (`tests/unit/i18n.test.ts`): every message exists in both languages with the same arguments, no key is defined twice, and the Malay differs from the English except for a short list of shared words and names.
 - **Routes**: every `router.push`/`replace`/`href` points at a real screen, and no screen is orphaned.
-- **Policy**: the AGENTS.md rules — calm motion, `Grid` instead of `%` widths, `Screen` on every screen, roles on every `Pressable`, network access only in the registry and sync service, no direct store writes from UI.
+- **Policy**: the AGENTS.md rules — calm motion, `Grid` instead of `%` widths, `Screen` on every screen, roles on every `Pressable`, network access only in the registry and sync service, no direct store writes from UI, and no hard-coded words in screens or components (all UI text goes through `t()`).
 - **Suite**: every source file is loaded by some test, no `.only`/`.skip`, every test file asserts, no unseeded randomness, and every store action, reward rule and badge is exercised.
 
 ## Business rules the store enforces
@@ -41,8 +42,10 @@ The UI is never trusted: the store checks everything itself.
 - Completion and perfect bonuses need at least `REWARDS.minBonusQuestions` questions and pay once per quiz per day (a retry that turns perfect still earns the perfect bonus). Time attacks pay per correct answer plus a bonus for a new best.
 - First lesson read pays the lesson reward; re-reads earn a little XP once per topic per day.
 - Streaks count calendar days with a finished quiz or lesson; parent-chosen rest days never break them, and a shield (earned every 7 days or bought, at most 2) covers a missed school day. Quests roll over at local midnight and follow the topics a parent says the class is on.
+- The app language is English or Bahasa Melayu only; anything else (including a broken save) keeps the current one.
 - A child's teaching language and school topics are validated: only known languages, and only topics from the child's own standard (moving up a standard clears them). Topics get a mastery date the first time they are mastered.
 - Reminders are off until a parent turns them on (permission is asked only then), skip rest days and days everyone has played, and are never shown while the app is open.
+- A right answer after a hint is worth half a point: half the XP, no coin, no combo, half a point in the topic score, never a perfect quiz, and the question still goes to review (so hints can't be used to farm mastery). Time attacks have no hints.
 - Spaced repetition never promotes a card before it's due (no cramming).
 - Only owned items can be worn; outfit and background can't be removed; resetting a child's progress also takes off bought items.
 - The parent PIN locks after every 5 wrong tries (30 s, doubling to 15 min), persisted across restarts; changing it needs the new PIN twice.

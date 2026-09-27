@@ -152,15 +152,16 @@ describe('nextTopic', () => {
 
 describe('greeting', () => {
   it.each([
-    [0, 'Selamat pagi'],
-    [11, 'Selamat pagi'],
-    [12, 'Selamat tengah hari'],
-    [14, 'Selamat tengah hari'],
-    [15, 'Selamat petang'],
-    [18, 'Selamat petang'],
-    [19, 'Selamat malam'],
-    [23, 'Selamat malam'],
-  ])('%i:00 → %s', (h, text) => {
-    expect(greeting(new Date(2026, 2, 2, h, 30))).toBe(text);
+    [0, 'Selamat pagi', 'Good morning'],
+    [11, 'Selamat pagi', 'Good morning'],
+    [12, 'Selamat tengah hari', 'Good afternoon'],
+    [14, 'Selamat tengah hari', 'Good afternoon'],
+    [15, 'Selamat petang', 'Good afternoon'],
+    [18, 'Selamat petang', 'Good evening'],
+    [19, 'Selamat malam', 'Good evening'],
+    [23, 'Selamat malam', 'Good evening'],
+  ])('%i:00 → %s / %s', (h, ms, en) => {
+    expect(greeting('ms', new Date(2026, 2, 2, h, 30))).toBe(ms);
+    expect(greeting('en', new Date(2026, 2, 2, h, 30))).toBe(en);
   });
 });

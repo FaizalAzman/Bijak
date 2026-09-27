@@ -96,6 +96,7 @@ function checkChild(
   for (let i = 0; i < p.attempts.length; i++) {
     const a = p.attempts[i];
     if (a.correct < 0 || a.correct > a.total || a.total < 1) fail(`attempt ${a.correct}/${a.total}`);
+    if (a.hinted !== undefined && (!Number.isInteger(a.hinted) || a.hinted < 1 || a.hinted > a.correct || a.mode === 'timeAttack')) fail(`attempt hinted ${a.hinted}`);
     if (i && a.at > p.attempts[i - 1].at) fail('attempts out of order');
   }
   if (Object.keys(p.days).length > MAX_DAYS_KEPT) fail('too many days kept');

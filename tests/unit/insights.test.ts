@@ -82,6 +82,14 @@ describe('time and accuracy', () => {
     expect(timePerSubject(p, index)).toEqual([{ label: 'art', value: 1 }]);
   });
 
+  it('labels follow the app language', () => {
+    const p: Progress = { ...emptyProgress(), topics: { t1: topic(10, 5) } };
+    p.days['2026-03-04'] = { answered: 0, correct: 0, seconds: { 'std3/math': 120 } };
+    expect(minutesPerDay(p, 'ms').map((d) => d.label)).toEqual(['Kha', 'Jum', 'Sab', 'Ahd', 'Isn', 'Sel', 'Rab']);
+    expect(timePerSubject(p, index, 'ms')).toEqual([{ label: '🔢 Maths · Thn 3', value: 2 }]);
+    expect(accuracyPerSubject(p, index, 'ms')).toEqual([{ label: '🔢 Maths', value: 50, hint: '(10 soalan)' }]);
+  });
+
   it('accuracyPerSubject aggregates topics by subject', () => {
     const p: Progress = { ...emptyProgress(), topics: { t1: topic(10, 5), t2: topic(10, 10), t3: topic(4, 1), gone: topic(9, 9) } };
     expect(accuracyPerSubject(p, index)).toEqual([

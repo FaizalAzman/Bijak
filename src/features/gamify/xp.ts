@@ -17,11 +17,11 @@ export function levelProgress(xp: number) {
 }
 
 export const TIERS = [
-  { from: 1, name: 'Rookie', emoji: '🐣' },
-  { from: 5, name: 'Explorer', emoji: '🧭' },
-  { from: 10, name: 'Scholar', emoji: '🎓' },
-  { from: 15, name: 'Champion', emoji: '🏆' },
-  { from: 20, name: 'Legend', emoji: '🐉' },
+  { from: 1, name: 'Rookie', key: 'tier.rookie', emoji: '🐣' },
+  { from: 5, name: 'Explorer', key: 'tier.explorer', emoji: '🧭' },
+  { from: 10, name: 'Scholar', key: 'tier.scholar', emoji: '🎓' },
+  { from: 15, name: 'Champion', key: 'tier.champion', emoji: '🏆' },
+  { from: 20, name: 'Legend', key: 'tier.legend', emoji: '🐉' },
 ] as const;
 
 export function tierFor(level: number) {
@@ -49,4 +49,15 @@ export const REWARDS = {
   lessonReread: { xp: 5, coins: 0 },
   timeAttackPerCorrect: 2,
   newBest: { xp: 15, coins: 10 },
+  /**
+   * A right answer after a hint is worth 1/hintDivisor (half): of the XP (no combo bonus, no
+   * coin) and of a point in the quiz score, so a hinted quiz is never "perfect".
+   */
+  hintDivisor: 2,
 } as const;
+
+/** XP for a right answer that needed a hint. */
+export const hintedXp = (difficulty: number) => Math.ceil(xpForAnswer(difficulty, 0) / REWARDS.hintDivisor);
+
+/** A quiz's score in points, where each hinted right answer counts 1/hintDivisor. */
+export const quizPoints = (correct: number, hinted: number) => correct - hinted + hinted / REWARDS.hintDivisor;

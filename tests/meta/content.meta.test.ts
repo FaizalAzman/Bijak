@@ -7,10 +7,13 @@
 import { readFileSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import { toSlides } from '@/components/lesson/LessonBlocks';
+import { hintFor } from '@/components/quiz/hints';
+import { answerLines } from '@/components/quiz/types';
 import { translatedSubjects } from '@/features/content/localize';
 import { buildQuizQuestions, getContentIndex, questionKey } from '@/features/content/registry';
 import { Question, type Quiz, type Standard, type Subject } from '@/features/content/schema';
 import { crossStandardIssues, questionIssues, semanticIssues, translationGaps } from '@/features/content/validate';
+import { buildWorksheet, worksheetHtml } from '@/features/worksheet/sheet';
 import { seeded } from '@/lib/random';
 import manifest from '../../content/manifest.json';
 import { answerOf, oracle } from '../oracle';
@@ -96,6 +99,28 @@ describe('syllabus', () => {
   });
 });
 
+describe('practice sheets', () => {
+  it.each(['en', 'ms'] as const)('every topic with quizzes prints a clean sheet with an answer key (%s build)', (medium) => {
+    const idx = getContentIndex(medium);
+    let sheets = 0;
+    for (const std of idx.standards) {
+      for (const subject of std.subjects) {
+        for (const topic of subject.topics) {
+          if (!topic.quizzes.some((q) => q.mode !== 'timeAttack')) continue;
+          const sheet = buildWorksheet(idx, { child: 'Adam', topicIds: [topic.id], count: 20, answers: true, seed: 3, day: '2026-03-02' });
+          if (!sheet) throw new Error(`${topic.id}: no sheet`);
+          const html = worksheetHtml(sheet);
+          expect(html).not.toMatch(/undefined|NaN|\[object/);
+          expect(html).toContain(sheet.lang === 'ms' ? 'Skema jawapan' : 'Answer key');
+          expect(sheet.questions.every((q) => q.lang === sheet.lang)).toBe(true);
+          sheets++;
+        }
+      }
+    }
+    expect(sheets).toBeGreaterThan(40);
+  });
+});
+
 describe('Bahasa Melayu medium (non-DLP schools)', () => {
   const pairs = malay.map((ms) => [standards.find((s) => s.id === ms.id)!, ms] as const);
 
@@ -167,6 +192,13 @@ describe.each(quizzes.map((x) => [x.where, x] as const))('%s', (_, { quiz }) => 
         if (!parsed.success) throw new Error(`${q.id}: ${parsed.error.message}`);
         expect(questionIssues(q, q.id)).toEqual([]);
         if (quiz.mode === 'timeAttack') expect(q.type).toBe('mcq');
+        // A missed question can always be looked back at, with its whole right answer.
+        expect(answerLines(q).filter((line) => line.trim() && !/undefined|NaN/.test(line)).length).toBeGreaterThan(0);
+        // Every question can offer a hint, except where any hint would be the answer.
+        const hint = hintFor(q);
+        if (q.type === 'trueFalse' || (q.type === 'mcq' && q.options.length === 2)) expect(hint).toBeNull();
+        else expect(hint).toMatch(/^[^]*\p{L}[^]*$/u);
+        if (hint) expect(hint).not.toMatch(/undefined|NaN|“”/);
         if (quiz.generator && quiz.generator.kind !== 'vocab') expect(answerOf(q)).toEqual(oracle(q));
       }
     }

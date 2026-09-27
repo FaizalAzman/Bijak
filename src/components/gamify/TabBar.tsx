@@ -4,20 +4,22 @@ import { Pressable, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Txt } from '@/components/ui';
 import { useLayout } from '@/hooks/useLayout';
+import { useT } from '@/i18n';
 import { fx } from '@/lib/feedback';
 import { useProgress } from '@/store/app';
 import { colors } from '@/theme';
 
 const ICONS = { home: Home, learn: BookOpen, quests: Target, shop: ShoppingBag, me: UserRound } as const;
-const LABELS = { home: 'Home', learn: 'Learn', quests: 'Quests', shop: 'Shop', me: 'Me' } as const;
+const LABELS = { home: 'tabs.home', learn: 'tabs.learn', quests: 'tabs.quests', shop: 'tabs.shop', me: 'tabs.me' } as const;
 
 function Tab({ name, focused, onPress, badge, small }: { name: keyof typeof ICONS; focused: boolean; onPress: () => void; badge?: number; small: boolean }) {
   const Icon = ICONS[name];
+  const t = useT();
   return (
     <Pressable
       accessibilityRole="tab"
       accessibilityState={{ selected: focused }}
-      accessibilityLabel={LABELS[name]}
+      accessibilityLabel={t(LABELS[name])}
       onPress={() => {
         fx.tap();
         onPress();
@@ -38,7 +40,7 @@ function Tab({ name, focused, onPress, badge, small }: { name: keyof typeof ICON
       >
         <Icon size={small ? 20 : 22} color={colors.ink} strokeWidth={focused ? 2.75 : 2.25} />
         <Txt variant="small" style={{ fontSize: small ? 10 : 11, color: colors.ink, fontFamily: focused ? 'PlusJakartaSans_800ExtraBold' : 'PlusJakartaSans_600SemiBold' }}>
-          {LABELS[name]}
+          {t(LABELS[name])}
         </Txt>
       </View>
       {!!badge && (
